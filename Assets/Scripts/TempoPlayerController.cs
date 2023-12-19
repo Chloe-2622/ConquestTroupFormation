@@ -1,8 +1,10 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.HID;
 using UnityEngine.UIElements;
 
 public class TempoPlayerController : MonoBehaviour
@@ -13,6 +15,9 @@ public class TempoPlayerController : MonoBehaviour
 
     [SerializeField] private InputActionReference goTo;
 
+    private bool isMoving = false;
+    private Vector3 destination;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,55 +27,42 @@ public class TempoPlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        selection_tmp.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
-        selection_tmp.action.started += OnInputStarted; // S'active à la pression initiale des touches
-        selection_tmp.action.canceled += OnInputCanceled; // S'active au relachement des touches
+        goTo.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
+        goTo.action.started += OnInputStarted; // S'active à la pression initiale des touches
     }
 
     // On se désabonne aux évènements du Event System
     private void OnDisable()
     {
-        selection_tmp.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
-        selection_tmp.action.started -= OnInputStarted;
+        goTo.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
+        goTo.action.started -= OnInputStarted;
     }
 
     public void OnInputStarted(InputAction.CallbackContext context)
     {
-        position_1 = selection_tmp.action.ReadValue<Vector2>();
-        isHolding = true;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Update is called once per frame
-    void Update()
-    {
         if (selectionManager.isSelected(transform.gameObject))
         {
-            Ray ray = camera2.ScreenPointToRay(Input.mousePosition);
+            Ray ray = camera2.ScreenPointToRay(goTo.action.ReadValue<Vector2>());
             RaycastHit hit;
-            Debug.Log("Click !");
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
             {
                 GetComponent<NavMeshAgent>().SetDestination(hit.point);
-                Debug.DrawLine(transform.position, hit.point);
+                destination = hit.point;
+                isMoving = true;
             }
+        }
+    }
+
+    public void Update()
+    {
+        if(isMoving)
+        {
+            Debug.DrawLine(transform.position, destination, Color.green);
+        }
+        if(Vector3.Distance(transform.position, destination) < 1)
+        {
+            isMoving = false;
         }
     }
 }

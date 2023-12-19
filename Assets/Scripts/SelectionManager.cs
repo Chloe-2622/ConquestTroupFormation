@@ -18,11 +18,11 @@ public class SelectionManager : MonoBehaviour
 
 
     private Dictionary<GameObject, bool> selectionableObjects = new Dictionary<GameObject, bool>();
-    private List<GameObject> nextSelections = new List<GameObject>();
     private List<GameObject> currentSelections = new List<GameObject>();
 
 
     private bool isHolding = false;
+    private Vector2 lastPosition;
     private Vector2 position_1;
     private Vector2 position_2;
 
@@ -32,6 +32,7 @@ public class SelectionManager : MonoBehaviour
     {
         selectionAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
         selectionAction.action.started += OnInputStarted; // S'active à la pression initiale des touches
+        selectionAction.action.performed += OnInputPerformed; // S'active lorque la valeur de ReadValue change
         selectionAction.action.canceled += OnInputCanceled; // S'active au relachement des touches
     }
 
@@ -40,20 +41,31 @@ public class SelectionManager : MonoBehaviour
     {
         selectionAction.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
         selectionAction.action.started -= OnInputStarted;
+        selectionAction.action.performed -= OnInputPerformed;
         selectionAction.action.canceled -= OnInputCanceled;
     }
 
     public void OnInputStarted(InputAction.CallbackContext context)
     {
-        position_1 = selectionAction.action.ReadValue<Vector2>();
+        position_1 = context.action.ReadValue<Vector2>();
         isHolding = true;
     }
 
+    private void OnInputPerformed(InputAction.CallbackContext context)
+    {
+        lastPosition = context.action.ReadValue<Vector2>();
+    }
+
+
     public void OnInputCanceled(InputAction.CallbackContext context)
     {
-        position_2 = selectionAction.action.ReadValue<Vector2>();
-        Debug.Log(Vector3.Distance(position_1, position_2));
-        if (Vector3.Distance(position_1, position_2) < areaSelectionLimit)
+        position_2 = lastPosition;
+
+        //Debug.Log("position 1 " + position_1.ToString());
+        //Debug.Log("position 2 " + position_2.ToString());
+        //Debug.Log("distance " + Vector2.Distance(position_1, position_2).ToString());
+
+        if (Vector2.Distance(position_1, position_2) < areaSelectionLimit)
         {
             selectUnit();
         }
@@ -76,7 +88,7 @@ public class SelectionManager : MonoBehaviour
     // Sélectionne l'unité la plus proche 
     public void selectUnit()
     {
-        Debug.Log("Unit Selected");
+        Debug.Log("Unit Selection");
         Ray ray_1 = shootingCamera.ScreenPointToRay(position_1);
         RaycastHit hit_1;
         Physics.Raycast(ray_1, out hit_1, Mathf.Infinity);
@@ -97,57 +109,69 @@ public class SelectionManager : MonoBehaviour
     // Détermine les unités qui se situent dans la zone sélectionnée
     public void selectArea()
     {
-        Debug.Log("Area selected");
+        Debug.Log("Area Selection");
         Ray ray_1 = shootingCamera.ScreenPointToRay(position_1);
         RaycastHit hit_1;
-        Ray ray_2 = shootingCamera.ScreenPointToRay(position_2);
+        Ray ray_2 = shootingCamera.ScreenPointToRay(new Vector2(position_2.x, position_1.y));
         RaycastHit hit_2;
+        Ray ray_3 = shootingCamera.ScreenPointToRay(position_2);
+        RaycastHit hit_3;
+        Ray ray_4 = shootingCamera.ScreenPointToRay(new Vector2(position_1.x, position_2.y));
+        RaycastHit hit_4;
 
         Physics.Raycast(ray_1, out hit_1, Mathf.Infinity);
         Physics.Raycast(ray_2, out hit_2, Mathf.Infinity);
+        Physics.Raycast(ray_3, out hit_3, Mathf.Infinity);
+        Physics.Raycast(ray_4, out hit_4, Mathf.Infinity);
 
-        nextSelections = new List<GameObject>();
+        List<GameObject> nextSelections = new List<GameObject>();
         foreach (GameObject selectionableObject in selectionableObjects.Keys)
         {
-            if (isInArea(hit_1.point, hit_2.point, selectionableObject.transform.position))
+            if (isInArea(new Vector3[] { hit_1.point, hit_2.point, hit_3.point, hit_4.point }, selectionableObject.transform.position))
             {
                 nextSelections.Add(selectionableObject);
-                Debug.Log(selectionableObject.name);
             }
         }
         select(nextSelections);
     }
 
     // Vérifie si l'unité en position unitPosition est dans le carré délimité par point_1 et point_2
-    public bool isInArea(Vector3 point_1, Vector3 point_2, Vector3 unitPosition)
+    public bool isInArea(Vector3[] polygon, Vector3 unitPosition)
     {
         bool isIn = false;
 
-        if ((point_1.x < unitPosition.x && unitPosition.x  < point_2.x) || (point_2.x < unitPosition.x && unitPosition.x < point_1.x))
+        float a = Vector3.Cross(polygon[1] - polygon[0], unitPosition - polygon[0]).y;
+        float b = Vector3.Cross(polygon[2] - polygon[1], unitPosition - polygon[1]).y;
+        float c = Vector3.Cross(polygon[3] - polygon[2], unitPosition - polygon[2]).y;
+        float d = Vector3.Cross(polygon[0] - polygon[3], unitPosition - polygon[3]).y;
+
+
+        if (a*b > 0 && a*c > 0 && a*d > 0)
         {
-            if ((point_1.z < unitPosition.z && unitPosition.z < point_2.z) || (point_2.z < unitPosition.z && unitPosition.z < point_1.z))
-            {
-                isIn = true;
-            }
+            isIn = true;
         }
+
         return isIn;
     }
     
     // Sélectionne une liste d'éléments voulus
-    public void select(List<GameObject> selectionedList)
+    public void select(List<GameObject> nextSelections)
     {
         resetSelection();
         foreach (GameObject nextSelection in nextSelections)
         {
-            if (selectionableObjects.ContainsKey(nextSelection))
+            if (nextSelection != null)
             {
-                selectionableObjects[nextSelection] = true;
-                currentSelections.Add(nextSelection);
-                Debug.Log(nextSelection.ToString() + " a été sélectionné");
-            }
-            else
-            {
-                Debug.LogWarning("L'objet n'est pas présent dans le dictionnaire de sélection.");
+                if (selectionableObjects.ContainsKey(nextSelection))
+                {
+                    selectionableObjects[nextSelection] = true;
+                    currentSelections.Add(nextSelection);
+                    Debug.Log(nextSelection.ToString() + " a été sélectionné");
+                }
+                else
+                {
+                    Debug.LogWarning("L'objet n'est pas présent dans le dictionnaire de sélection.");
+                }
             }
         }
     }
@@ -185,6 +209,12 @@ public class SelectionManager : MonoBehaviour
         }
         currentSelections = new List<GameObject>();
     }
+
+
+
+
+
+
 
 
     public void completeDictionnary(GameObject selection)

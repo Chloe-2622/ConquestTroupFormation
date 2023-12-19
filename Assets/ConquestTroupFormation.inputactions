@@ -153,7 +153,7 @@
             ],
             "bindings": [
                 {
-                    "name": "Select",
+                    "name": "Ctrl + Left Click",
                     "id": "ba3b4122-f04a-4824-9e31-8a4bd0e8dae2",
                     "path": "TwoModifiers",
                     "interactions": "",
@@ -166,7 +166,7 @@
                 {
                     "name": "modifier1",
                     "id": "59898dc0-3558-49f5-bdb1-775c9fc9668c",
-                    "path": "<Keyboard>/anyKey",
+                    "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -193,6 +193,56 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Selection",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
+        },
+        {
+            "name": "Units",
+            "id": "d65ca780-1c11-4ab9-9ab6-2fe3d5626532",
+            "actions": [
+                {
+                    "name": "GoTo",
+                    "type": "Value",
+                    "id": "728ba2b7-0295-490a-a981-ce0f53d3fd0a",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "Left Click",
+                    "id": "43ed999a-f55a-4ff3-910c-81a2c2db0e08",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GoTo",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "6c3bee41-db9b-4347-b3f7-6689dd8978b9",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GoTo",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "040679c4-fed7-4c85-a546-c70218efbc1a",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GoTo",
                     "isComposite": false,
                     "isPartOfComposite": true
                 }
