@@ -1,12 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraMovement : MonoBehaviour
 {
-
+    [Header("Movement Customisation")]
     [SerializeField] private float defaultSpeed = 10f;
-    [SerializeField] private float borderSize = 50f;
+    //[SerializeField] private float borderSize = 50f;
+
+    [Header("Input System")]
+    [SerializeField] private InputActionReference movement;
+    [SerializeField] private InputActionReference sprint;
 
     private Camera cameraObject;
     private bool isPaused = false;
@@ -22,31 +28,29 @@ public class CameraMovement : MonoBehaviour
     {
 
         float currentSpeed;
-
-        if (Input.GetKeyDown(KeyCode.Escape)) { isPaused = !isPaused; }
-
-        if (Input.GetKey(KeyCode.LeftShift)) { currentSpeed = 2 * defaultSpeed; } 
+        if (sprint.action.inProgress) { currentSpeed = 2 * defaultSpeed;}
         else { currentSpeed = defaultSpeed; }
 
         float dx = 0f;
         float dz = 0f;
-
-        if (Input.mousePosition.x > cameraObject.pixelWidth - borderSize)
+        
+        Vector2 movementInput = movement.action.ReadValue<Vector2>();
+        if (movementInput.x > 0)
         {
             dx++;
             dz--;
         }
-        if (Input.mousePosition.x < borderSize)
+        if (movementInput.x < 0)
         {
             dx--;
             dz++;
         }
-        if (Input.mousePosition.y > cameraObject.pixelHeight - borderSize)
+        if (movementInput.y > 0)
         {
             dx++;
             dz++;
         }
-        if (Input.mousePosition.y < borderSize)
+        if (movementInput.y < 0)
         {
             dx--;
             dz--;

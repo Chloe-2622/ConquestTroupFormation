@@ -1,11 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PlayerController : MonoBehaviour
+public class TempoPlayerController : MonoBehaviour
 {
     [SerializeField] Camera camera2;
     [SerializeField] LayerMask layerMask;
@@ -33,15 +31,5 @@ public class PlayerController : MonoBehaviour
                 Debug.DrawLine(transform.position, hit.point);
             }
         }
-        
-        //transform.GetChild(0).GetComponent<Animator>().SetFloat("ForwardSpeed", GetComponent<NavMeshAgent>().velocity.magnitude/GetComponent<NavMeshAgent>().speed);
-        //Debug.Log(GetComponent<NavMeshAgent>().velocity.magnitude / GetComponent<NavMeshAgent>().speed);
     }
-
-    /*
-    public void OnMouseDown()
-    {
-        selectionManager.select(transform.gameObject);
-        //Debug.Log(transform.gameObject.ToString() + " is selected");
-    }*/
 }
