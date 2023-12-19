@@ -7,7 +7,7 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] Camera camera;
+    [SerializeField] Camera camera2;
     [SerializeField] LayerMask layerMask;
     [SerializeField] SelectionManager selectionManager;
 
@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     {
         if (selectionManager.isSelected(transform.gameObject) && Input.GetMouseButtonDown(0)) // 
         {
-            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+            Ray ray = camera2.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             Debug.Log("Click !");
 
@@ -38,9 +38,10 @@ public class PlayerController : MonoBehaviour
         //Debug.Log(GetComponent<NavMeshAgent>().velocity.magnitude / GetComponent<NavMeshAgent>().speed);
     }
 
+    /*
     public void OnMouseDown()
     {
         selectionManager.select(transform.gameObject);
         //Debug.Log(transform.gameObject.ToString() + " is selected");
-    }
+    }*/
 }
