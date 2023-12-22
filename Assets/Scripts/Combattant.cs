@@ -6,30 +6,18 @@ using UnityEngine.AI;
 public class Combattant : Troup
 {
 
-    private NavMeshAgent agent;
-
-    // Start is called before the first frame update
-    void Start()
+    protected override void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
+        base.Awake();
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Ray ray = camera1.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+        base.Update();
 
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-            {
-                Debug.Log("Target position clicked : " + hit.point);
-                Debug.DrawLine(transform.position, hit.point);
-                AddAction(new MoveToPosition(agent, hit.point));
-            }
-        }
+        
     }
 
     private void OnMouseOver()
