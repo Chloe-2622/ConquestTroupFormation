@@ -214,7 +214,10 @@ public class SelectionManager : MonoBehaviour
 
 
 
-
+    public Dictionary<GameObject, bool> getDictionnary()
+    {
+        return selectionableObjects;
+    }
 
 
     public void completeDictionnary(GameObject selection)

@@ -30,6 +30,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected TextMeshProUGUI PlaceSelectionPopUp;
     [SerializeField] protected TextMeshProUGUI PatrolSelectionPopUp1;
     [SerializeField] protected TextMeshProUGUI PatrolSelectionPopUp2;
+    [SerializeField] protected TextMeshProUGUI FollowSelectionPopUp;
 
     private Transform SelectionCircle;
     private Queue<IAction> actionQueue = new Queue<IAction>();
@@ -37,6 +38,9 @@ public abstract class Troup : MonoBehaviour
     private bool isActionQueueCoroutineRunning;
 
     [SerializeField] protected SelectionManager selectionManager;
+    private bool isChosingPlacement;
+    private bool isChosingPatrol;
+    private bool isChosingFollow;
 
     protected NavMeshAgent agent;
 
@@ -64,7 +68,6 @@ public abstract class Troup : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     protected virtual void Update()
     {
         // Debug.Log(selectionManager.isSelected(transform.gameObject));
@@ -73,18 +76,59 @@ public abstract class Troup : MonoBehaviour
         {
             SelectionCircle.GetComponent<MeshRenderer>().enabled = true;
 
+            // Placement input
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
+                StopCoroutine(PatrolSelection());
+                StopCoroutine(FollowSelection());
+                PatrolSelectionPopUp1.enabled = false;
+                PatrolSelectionPopUp2.enabled = false;
+                FollowSelectionPopUp.enabled = false;
+                isChosingPatrol = false;
+                isChosingFollow = false;
+
+                isChosingPlacement = true;
                 StartCoroutine(PlaceSelection());                
             }
 
+            // Patrol input
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
+                StopCoroutine(PlaceSelection());
+                StopCoroutine(FollowSelection());
+                PlaceSelectionPopUp.enabled = false;
+                FollowSelectionPopUp.enabled = false;
+                isChosingPlacement = false;
+                isChosingFollow = false;
+
+                isChosingPatrol = true;
                 StartCoroutine(PatrolSelection());
             }
 
+            // Follow input
             if (Input.GetKeyDown(KeyCode.Alpha3))
             {
+                StopCoroutine(PlaceSelection());
+                StopCoroutine(PatrolSelection());
+                PlaceSelectionPopUp.enabled = false;
+                PatrolSelectionPopUp1.enabled = false;
+                PatrolSelectionPopUp2.enabled = false;
+                isChosingPlacement = false;
+                isChosingPatrol = false;
+
+                isChosingFollow = true;
+                StartCoroutine(FollowSelection());
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                StopCoroutine(PlaceSelection());
+                StopCoroutine(PatrolSelection());
+                StopCoroutine(FollowSelection());
+                isChosingPlacement = false;
+                isChosingPatrol = false;
+                isChosingFollow = false;
+
                 AddAction(new Standby());
             }
 
@@ -101,7 +145,7 @@ public abstract class Troup : MonoBehaviour
 
         Debug.Log("Enabling Place Selection");
 
-        while (!hasSelected)
+        while (!hasSelected && isChosingPlacement)
         {
             PlaceSelectionPopUp.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
             // Debug.Log("Est enabled : " + PlaceSelectionPopUp.enabled);
@@ -127,6 +171,57 @@ public abstract class Troup : MonoBehaviour
         
     }
 
+    protected IEnumerator FollowSelection()
+    {
+        FollowSelectionPopUp.enabled = true;
+        bool hasSelected = false;
+
+        GameObject unitToFollow = new GameObject();
+
+        Debug.Log("Enabling Follow Selection");
+
+        while (!hasSelected && isChosingFollow)
+        {
+            FollowSelectionPopUp.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
+            // Debug.Log("Est enabled : " + PlaceSelectionPopUp.enabled);
+
+            if (Input.GetMouseButton(0))
+            {
+                Debug.Log("Unit Selection");
+                Ray ray_1 = camera1.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit_1;
+                Physics.Raycast(ray_1, out hit_1, Mathf.Infinity);
+                float minDistance = 1f;
+                GameObject nearestObject = null;
+                foreach (GameObject selectionableObject in selectionManager.getDictionnary().Keys)
+                {
+                    float distance = Vector3.Distance(hit_1.point, selectionableObject.transform.position);
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        nearestObject = selectionableObject;
+                    }
+                }
+
+                if (nearestObject != null)
+                {
+                    hasSelected = true;
+                    unitToFollow = nearestObject;
+                }
+                
+            }
+
+            yield return null;
+        }
+
+        if (isChosingFollow)
+        {
+            AddAction(new FollowUnit(agent, unitToFollow));
+        }
+        FollowSelectionPopUp.enabled = false;
+
+    }
+
     protected IEnumerator PatrolSelection()
     {
         PatrolSelectionPopUp1.enabled = true;
@@ -138,7 +233,7 @@ public abstract class Troup : MonoBehaviour
 
         Debug.Log("Enabling Patrol Selection");
 
-        while (!hasSelectedFistPos)
+        while (!hasSelectedFistPos && isChosingPatrol)
         {
             PatrolSelectionPopUp1.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
 
@@ -159,10 +254,12 @@ public abstract class Troup : MonoBehaviour
 
             yield return null;
         }
+        
+        if (isChosingPatrol) { PatrolSelectionPopUp2.enabled = true; }
 
-        PatrolSelectionPopUp2.enabled = true;
+        
 
-        while (!hasSelectedSecondPos)
+        while (!hasSelectedSecondPos && isChosingPatrol)
         {
             PatrolSelectionPopUp2.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
 
@@ -184,8 +281,11 @@ public abstract class Troup : MonoBehaviour
             yield return null;
         }
 
-        Debug.Log("Starting patroling between " + firstPos + " and " + secondPos);
-        AddAction(new Patrol(agent, firstPos, secondPos));
+        
+        if (isChosingPatrol) {
+            Debug.Log("Starting patroling between " + firstPos + " and " + secondPos);
+            AddAction(new Patrol(agent, firstPos, secondPos)); 
+        }
     }
 
     protected void AddAction(IAction action)
@@ -258,14 +358,13 @@ public abstract class Troup : MonoBehaviour
     protected interface IAction
     {
         bool IsActionComplete { get; set; }
-        bool IsStandBy { get; set; }
+        // bool IsStandBy { get; set; }
         public void Execute();
     }
 
     protected class Standby : IAction
     {
         public bool IsActionComplete { get; set; }
-        public bool IsStandBy { get; set; }
 
         public void Execute()
         {
@@ -275,14 +374,14 @@ public abstract class Troup : MonoBehaviour
         public IEnumerator StandbyWait()
         {
             yield return new WaitForSeconds(1f);
-            if (IsStandBy) { IsActionComplete = true; }
+            IsActionComplete = true;
         }
     }
 
     protected class Patrol : IAction
     {
         public bool IsActionComplete { get; set; }
-        public bool IsStandBy { get; set; }
+        // public bool IsStandBy { get; set; }
         private Vector3 firstPosition;
         private Vector3 secondPosition;
         private NavMeshAgent navMeshAgent;
@@ -327,7 +426,7 @@ public abstract class Troup : MonoBehaviour
     protected class MoveToPosition : IAction
     {
         public bool IsActionComplete { get; set; }
-        public bool IsStandBy { get; set; }
+        // public bool IsStandBy { get; set; }
         private Vector3 targetPosition;
         private NavMeshAgent navMeshAgent;
 
@@ -344,8 +443,6 @@ public abstract class Troup : MonoBehaviour
 
         public IEnumerator GoToPosition()
         {
-            Vector3 startingPosition = navMeshAgent.transform.position;
-
             navMeshAgent.isStopped = false;
             navMeshAgent.SetDestination(targetPosition);
 
@@ -354,6 +451,46 @@ public abstract class Troup : MonoBehaviour
             while (Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= 1f)
             {
                 // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
+                yield return null;
+            }
+
+            IsActionComplete = true;
+
+            Debug.Log("Movement complete");
+        }
+    }
+
+    protected class FollowUnit : IAction
+    {
+        public bool IsActionComplete { get; set; }
+        public GameObject unitToFollow;
+        private NavMeshAgent navMeshAgent;
+
+        public FollowUnit(NavMeshAgent agent, GameObject unit)
+        {
+            navMeshAgent = agent;
+            unitToFollow = unit;
+        }
+
+        public void Execute()
+        {
+            Debug.Log("Following Unit : " + unitToFollow);
+        }
+
+        public IEnumerator StartFollowing()
+        {
+            navMeshAgent.isStopped = false;
+
+            Vector3 targetPosition = unitToFollow.transform.position;
+            navMeshAgent.SetDestination(targetPosition);
+
+            while (Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= 1f)
+            {
+                // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
+
+                targetPosition = unitToFollow.transform.position;
+                navMeshAgent.SetDestination(targetPosition);
+
                 yield return null;
             }
 
@@ -376,36 +513,46 @@ public abstract class Troup : MonoBehaviour
 
             if (currentAction is MoveToPosition moveToPosition)
             {
-                currentAction.IsStandBy = false;
                 StartCoroutine(moveToPosition.GoToPosition());
             }
             if (currentAction is Patrol patrol)
             {
-                currentAction.IsStandBy = false;
                 StartCoroutine(patrol.StartPatroling());
             }
             if (currentAction is Standby standby)
             {
-                currentAction.IsStandBy = true;
                 StartCoroutine(standby.StandbyWait());
+            }
+            if (currentAction is FollowUnit followUnit)
+            {
+                StartCoroutine(followUnit.StartFollowing());
             }
 
             yield return new WaitUntil(() => currentAction.IsActionComplete);
 
             Debug.Log("Actions en queue : " + actionQueue.Count);
 
-            
+            if (actionQueue.Count == 0)
+            {
+                if (currentAction is Patrol)
+                {
+                    Debug.Log("Action en cours : " + currentAction);
+                    currentAction.IsActionComplete = false;
+                    actionQueue.Enqueue(currentAction);
+                }
+                else if (currentAction is FollowUnit)
+                {
+                    Debug.Log("Action en cours : " + currentAction);
+                    currentAction.IsActionComplete = false;
+                    actionQueue.Enqueue(currentAction);
+                }
+                else
+                {
+                    actionQueue.Enqueue(new Standby());
+                }
+            }
 
-            if (currentAction is Patrol && actionQueue.Count == 0)
-            {
-                Debug.Log("Action en cours : " + currentAction);
-                currentAction.IsActionComplete = false;
-                actionQueue.Enqueue(currentAction);
-            }
-            if (currentAction is not Patrol && actionQueue.Count == 0)
-            {
-                actionQueue.Enqueue(new Standby());
-            }
+            
 
             Debug.Log("Action terminée");
             Debug.Log("Actions en queue après : " + actionQueue.Count);
