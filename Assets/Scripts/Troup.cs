@@ -12,7 +12,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected float movingSpeed;
     [SerializeField] protected float health;
     [SerializeField] protected float armor;
-    [SerializeField] protected float detectionRange = 10f;
+    [SerializeField] protected float detectionRange;
 
     [Header("Attack stats")]
     [SerializeField] protected float attackDamage;
@@ -46,6 +46,7 @@ public abstract class Troup : MonoBehaviour
     private bool isChosingPlacement;
     private bool isChosingPatrol;
     private bool isChosingFollow;
+    private bool isAttackingEnnemy;
     protected NavMeshAgent agent;
 
 
@@ -124,6 +125,28 @@ public abstract class Troup : MonoBehaviour
         } else
         {
             SelectionCircle.GetComponent<MeshRenderer>().enabled = false;
+        }
+
+        Troup nearestEnnemy = FindNearestEnnemy();
+
+        if (nearestEnnemy != null)
+        {
+            if (!isAttackingEnnemy)
+            {
+                isAttackingEnnemy = true;
+                actionQueue.Clear();
+                agent.isStopped = true;
+                agent.ResetPath();
+                // StopAllCoroutines();
+                StopCoroutine(ExecuteActionQueue());
+
+                actionQueue.Enqueue(new FollowUnit(agent, nearestEnnemy.gameObject));
+
+                StartCoroutine(ExecuteActionQueue());
+            } else { return; }
+        } else
+        {
+            isAttackingEnnemy = false;
         }
     }
 
@@ -302,18 +325,15 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
-    // public abstract void Attack();
-
-    public virtual void Follow()
+    protected virtual void Attack()
     {
-        TroupSelectionPopUp.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
-        TroupSelectionPopUp.enabled = true;
+        Debug.Log("Je suis une troupe qui attaque");
     }
 
     public virtual Troup FindNearestEnnemy()
     {
         Vector3 pos = transform.position;
-        float dist = float.PositiveInfinity;
+        float dist = detectionRange;
         Troup targ = null;
 
         if (troupType == TroupType.Ally)

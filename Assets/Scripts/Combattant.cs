@@ -14,19 +14,12 @@ public class Combattant : Troup
     // Update is called once per frame
     protected override void Update()
     {
-
         base.Update();
+    }
 
+    protected override void Attack()
+    {
+        base.Attack();
         
-    }
-
-    private void OnMouseOver()
-    {
-        Follow();
-    }
-
-    private void OnMouseExit()
-    {
-        // Standby();
     }
 }

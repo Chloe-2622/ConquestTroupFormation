@@ -233,7 +233,7 @@ public class SelectionManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("L'objet n'est pas présent dans le dictionnaire de sélection.");
+            // Debug.LogWarning("L'objet n'est pas présent dans le dictionnaire de sélection.");
             return false;
         }
     }
