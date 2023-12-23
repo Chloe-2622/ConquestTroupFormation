@@ -8,9 +8,11 @@ public abstract class Troup : MonoBehaviour
 {
 
     [Header("General stats")]
+    [SerializeField] protected TroupType troupType;
     [SerializeField] protected float movingSpeed;
     [SerializeField] protected float health;
     [SerializeField] protected float armor;
+    [SerializeField] protected float detectionRange = 10f;
 
     [Header("Attack stats")]
     [SerializeField] protected float attackDamage;
@@ -18,30 +20,32 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected float attackRange;
     [SerializeField] protected float specialAttackRechargeTime;
 
-    public enum TroupType { Ally, Ennemy }
-
-    [SerializeField] protected TroupType troupType;
+    [Header("Scene objects")]
     [SerializeField] protected Camera camera1;
+    [SerializeField] protected SelectionManager selectionManager;
 
-    public static HashSet<Troup> Allies = new HashSet<Troup>();
-    public static HashSet<Troup> Ennemies = new HashSet<Troup>();
-
+    [Header("Text PopUps")]
     [SerializeField] protected TextMeshProUGUI TroupSelectionPopUp;
     [SerializeField] protected TextMeshProUGUI PlaceSelectionPopUp;
     [SerializeField] protected TextMeshProUGUI PatrolSelectionPopUp1;
     [SerializeField] protected TextMeshProUGUI PatrolSelectionPopUp2;
     [SerializeField] protected TextMeshProUGUI FollowSelectionPopUp;
 
-    private Transform SelectionCircle;
+    // Allies and Ennemis dictionnary
+    public static HashSet<Troup> Allies = new HashSet<Troup>();
+    public static HashSet<Troup> Ennemies = new HashSet<Troup>();
+
+    // Troup types
+    public enum TroupType { Ally, Ennemy }
+
+    // Action Queue
     private Queue<IAction> actionQueue = new Queue<IAction>();
 
-    private bool isActionQueueCoroutineRunning;
 
-    [SerializeField] protected SelectionManager selectionManager;
+    private Transform SelectionCircle;
     private bool isChosingPlacement;
     private bool isChosingPatrol;
     private bool isChosingFollow;
-
     protected NavMeshAgent agent;
 
 
@@ -60,6 +64,7 @@ public abstract class Troup : MonoBehaviour
         TroupSelectionPopUp.enabled = false;
         PlaceSelectionPopUp.enabled = false;
         agent = GetComponent<NavMeshAgent>();
+        agent.speed = movingSpeed;
 
         SelectionCircle = transform.Find("SelectionCircle");
 
@@ -76,17 +81,23 @@ public abstract class Troup : MonoBehaviour
         {
             SelectionCircle.GetComponent<MeshRenderer>().enabled = true;
 
-            // Placement input
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Alpha4))
             {
+                StopCoroutine(PlaceSelection());
                 StopCoroutine(PatrolSelection());
                 StopCoroutine(FollowSelection());
+                PlaceSelectionPopUp.enabled = false;
                 PatrolSelectionPopUp1.enabled = false;
                 PatrolSelectionPopUp2.enabled = false;
                 FollowSelectionPopUp.enabled = false;
+                isChosingPlacement = false;
                 isChosingPatrol = false;
                 isChosingFollow = false;
+            }
 
+            // Placement input
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
                 isChosingPlacement = true;
                 StartCoroutine(PlaceSelection());                
             }
@@ -94,13 +105,6 @@ public abstract class Troup : MonoBehaviour
             // Patrol input
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                StopCoroutine(PlaceSelection());
-                StopCoroutine(FollowSelection());
-                PlaceSelectionPopUp.enabled = false;
-                FollowSelectionPopUp.enabled = false;
-                isChosingPlacement = false;
-                isChosingFollow = false;
-
                 isChosingPatrol = true;
                 StartCoroutine(PatrolSelection());
             }
@@ -108,27 +112,12 @@ public abstract class Troup : MonoBehaviour
             // Follow input
             if (Input.GetKeyDown(KeyCode.Alpha3))
             {
-                StopCoroutine(PlaceSelection());
-                StopCoroutine(PatrolSelection());
-                PlaceSelectionPopUp.enabled = false;
-                PatrolSelectionPopUp1.enabled = false;
-                PatrolSelectionPopUp2.enabled = false;
-                isChosingPlacement = false;
-                isChosingPatrol = false;
-
                 isChosingFollow = true;
                 StartCoroutine(FollowSelection());
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha4))
             {
-                StopCoroutine(PlaceSelection());
-                StopCoroutine(PatrolSelection());
-                StopCoroutine(FollowSelection());
-                isChosingPlacement = false;
-                isChosingPatrol = false;
-                isChosingFollow = false;
-
                 AddAction(new Standby());
             }
 
@@ -298,8 +287,8 @@ public abstract class Troup : MonoBehaviour
         } else
         {
             actionQueue.Clear();
-            isActionQueueCoroutineRunning = false;
-            GetComponent<NavMeshAgent>().isStopped = true;
+            agent.isStopped = true;
+            agent.ResetPath();
             StopAllCoroutines();
             // StopAllCoroutines(ExecuteActionQueue());
             Debug.Log("Stopping Troup");
@@ -454,6 +443,7 @@ public abstract class Troup : MonoBehaviour
                 yield return null;
             }
 
+            navMeshAgent.ResetPath();
             IsActionComplete = true;
 
             Debug.Log("Movement complete");
@@ -479,21 +469,20 @@ public abstract class Troup : MonoBehaviour
 
         public IEnumerator StartFollowing()
         {
-            navMeshAgent.isStopped = false;
-
             Vector3 targetPosition = unitToFollow.transform.position;
-            navMeshAgent.SetDestination(targetPosition);
+            // navMeshAgent.SetDestination(targetPosition);
 
             while (Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= 1f)
             {
                 // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
-
+                navMeshAgent.isStopped = false;
                 targetPosition = unitToFollow.transform.position;
                 navMeshAgent.SetDestination(targetPosition);
 
                 yield return null;
             }
 
+            navMeshAgent.ResetPath();
             IsActionComplete = true;
 
             Debug.Log("Movement complete");
@@ -503,7 +492,6 @@ public abstract class Troup : MonoBehaviour
     protected IEnumerator ExecuteActionQueue()
     {
         Debug.Log("Start Action Queue");
-        isActionQueueCoroutineRunning = true;
 
         while (actionQueue.Count > 0)
         {
@@ -544,6 +532,7 @@ public abstract class Troup : MonoBehaviour
                 {
                     Debug.Log("Action en cours : " + currentAction);
                     currentAction.IsActionComplete = false;
+                    actionQueue.Enqueue(new Standby());
                     actionQueue.Enqueue(currentAction);
                 }
                 else
@@ -561,7 +550,6 @@ public abstract class Troup : MonoBehaviour
 
         Debug.Log("Execute Action Queue Coroutine ended");
 
-        isActionQueueCoroutineRunning = false;
         yield break;
         
     }
