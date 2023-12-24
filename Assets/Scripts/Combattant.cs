@@ -17,9 +17,14 @@ public class Combattant : Troup
         base.Update();
     }
 
-    protected override void Attack()
+    protected override IEnumerator Attack(Troup ennemy)
     {
-        base.Attack();
-        
+        while (ennemy != null && Vector3.Distance(transform.position, ennemy.transform.position) <= attackRange)
+        {
+            ennemy.TakeDamage(attackDamage);
+            if (ennemy.getHealth() == 0) { Debug.Log("Ennemie tué"); }
+            Debug.Log("Attacking ennemy with " + ennemy.getHealth());
+            yield return new WaitForSeconds(attackRechargeTime);
+        }
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using UnityEngine.AI;
 
@@ -11,6 +12,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected TroupType troupType;
     [SerializeField] protected float movingSpeed;
     [SerializeField] protected float health;
+    protected float maxHealth;
     [SerializeField] protected float armor;
     [SerializeField] protected float detectionRange;
 
@@ -23,6 +25,7 @@ public abstract class Troup : MonoBehaviour
     [Header("Scene objects")]
     [SerializeField] protected Camera camera1;
     [SerializeField] protected SelectionManager selectionManager;
+    [SerializeField] protected Image healthBar;
 
     [Header("Text PopUps")]
     [SerializeField] protected TextMeshProUGUI TroupSelectionPopUp;
@@ -46,7 +49,9 @@ public abstract class Troup : MonoBehaviour
     private bool isChosingPlacement;
     private bool isChosingPatrol;
     private bool isChosingFollow;
+    private bool isFollowingEnnemy;
     private bool isAttackingEnnemy;
+    protected Troup currentAttackedTroup;
     protected NavMeshAgent agent;
 
 
@@ -69,8 +74,12 @@ public abstract class Troup : MonoBehaviour
 
         SelectionCircle = transform.Find("SelectionCircle");
 
+        maxHealth = health;
+        healthBar.enabled = true;
+
         AddAction(new Standby());
         StartCoroutine(ExecuteActionQueue());
+        // StartCoroutine(UpdateHealthBarSmoothly());
 
     }
 
@@ -128,12 +137,46 @@ public abstract class Troup : MonoBehaviour
         }
 
         Troup nearestEnnemy = FindNearestEnnemy();
+        
 
+        // Health Bar control
+
+        float normalizedHealth = health / maxHealth;
+
+        // healthBar.fillAmount = normalizedHealth;
+        Vector3 healthBarPosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + agent.height, transform.position.z));
+        healthBar.transform.position = new Vector3(healthBarPosition.x, healthBarPosition.y, healthBarPosition.z);
+
+        if (normalizedHealth >= .75)
+        {
+            healthBar.color = Color.green;
+        }
+        if (normalizedHealth >= .5 && normalizedHealth <= .75)
+        {
+            healthBar.color = Color.yellow;
+        }
+        if (normalizedHealth >= .25 && normalizedHealth <= .5)
+        {
+            healthBar.color = new Color(1.0f, 0.5f, 0.0f);
+        }
+        if (normalizedHealth <= .25)
+        {
+            healthBar.color = Color.red;
+        }
+
+        if (currentAttackedTroup == null)
+        {
+            isAttackingEnnemy = false;
+        }
+
+        // Find Nearby ennemy and attack them if in attack range distance
         if (nearestEnnemy != null)
         {
-            if (!isAttackingEnnemy)
+            
+
+            if (!isFollowingEnnemy)
             {
-                isAttackingEnnemy = true;
+                isFollowingEnnemy = true;
                 actionQueue.Clear();
                 agent.isStopped = true;
                 agent.ResetPath();
@@ -143,10 +186,29 @@ public abstract class Troup : MonoBehaviour
                 actionQueue.Enqueue(new FollowUnit(agent, nearestEnnemy.gameObject));
 
                 StartCoroutine(ExecuteActionQueue());
-            } else { return; }
+            }
+
+            if (Vector3.Distance(transform.position, nearestEnnemy.transform.position) <= attackRange)
+            {
+                if (!isAttackingEnnemy)
+                {
+                    isAttackingEnnemy = true;
+                    Debug.Log("Started attacking");
+                    currentAttackedTroup = nearestEnnemy;
+                    StartCoroutine(Attack(nearestEnnemy));
+                }
+
+            }
+            else
+            {
+                isAttackingEnnemy = false;
+                currentAttackedTroup = null;
+                StopCoroutine(Attack(nearestEnnemy));
+            }
+
         } else
         {
-            isAttackingEnnemy = false;
+            isFollowingEnnemy = false;
         }
     }
 
@@ -300,6 +362,21 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
+    protected IEnumerator UpdateHealthBar()
+    {
+        float targetFillAmount = health / maxHealth;
+        float t = 0f;
+        while (t < 1f && healthBar.fillAmount != targetFillAmount)
+        {
+            t += Time.deltaTime / 0.5f; // 0.5f est la durée de la transition en secondes, ajustez selon vos besoins
+            healthBar.fillAmount = Mathf.Lerp(healthBar.fillAmount, targetFillAmount, t);
+            Debug.Log("Je passe le fillAmount à : " + healthBar.fillAmount);
+            yield return null;
+        }
+
+        healthBar.fillAmount = targetFillAmount;
+    }
+
     protected void AddAction(IAction action)
     {
 
@@ -312,8 +389,7 @@ public abstract class Troup : MonoBehaviour
             actionQueue.Clear();
             agent.isStopped = true;
             agent.ResetPath();
-            StopAllCoroutines();
-            // StopAllCoroutines(ExecuteActionQueue());
+            StopCoroutine(ExecuteActionQueue());
             Debug.Log("Stopping Troup");
 
             actionQueue.Enqueue(action);
@@ -325,9 +401,30 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
-    protected virtual void Attack()
+    protected abstract IEnumerator Attack(Troup ennemy);
+
+    public virtual void TakeDamage(float damage)
     {
-        Debug.Log("Je suis une troupe qui attaque");
+        health -= damage;
+        
+
+        Debug.Log("J'ai " + health + " vie");
+
+        if (health <= 0)
+        {
+            if (troupType == TroupType.Ally) { Allies.Remove(this); }
+            if (troupType == TroupType.Ennemy) { Ennemies.Remove(this); }
+            selectionManager.removeObject(gameObject);
+            Destroy(gameObject);
+        } else
+        {
+            StartCoroutine(UpdateHealthBar());
+        }
+    }
+
+    public float getHealth()
+    {
+        return health;
     }
 
     public virtual Troup FindNearestEnnemy()
@@ -340,7 +437,7 @@ public abstract class Troup : MonoBehaviour
         {
             foreach (var ennemy in Ennemies)
             {
-                var d = (pos - ennemy.transform.position).sqrMagnitude;
+                var d = Vector3.Distance(pos, ennemy.transform.position); // (pos - ennemy.transform.position).sqrMagnitude;
                 if (d < dist)
                 {
                     targ = ennemy;
@@ -352,7 +449,7 @@ public abstract class Troup : MonoBehaviour
         {
             foreach (var ally in Allies)
             {
-                var d = (pos - ally.transform.position).sqrMagnitude;
+                var d = Vector3.Distance(pos, ally.transform.position); //  (pos - ally.transform.position).sqrMagnitude;
                 if (d < dist)
                 {
                     targ = ally;
@@ -360,6 +457,8 @@ public abstract class Troup : MonoBehaviour
                 }
             }
         }
+
+        // Debug.Log("Nearest ennemy is far by : " + dist);
 
         return targ;
     }
@@ -489,14 +588,21 @@ public abstract class Troup : MonoBehaviour
 
         public IEnumerator StartFollowing()
         {
-            Vector3 targetPosition = unitToFollow.transform.position;
+            Vector3 targetPosition = new Vector3();
+            if (unitToFollow != null) { targetPosition = unitToFollow.transform.position; }
+
+            // if (unitToFollow != null)
+
+            Debug.Log("Following unit at position : " + targetPosition);
+            
             // navMeshAgent.SetDestination(targetPosition);
 
-            while (Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= 1f)
+            while (unitToFollow != null && Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= 1f)
             {
                 // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
                 navMeshAgent.isStopped = false;
-                targetPosition = unitToFollow.transform.position;
+                if (unitToFollow != null) { targetPosition = unitToFollow.transform.position; }
+                
                 navMeshAgent.SetDestination(targetPosition);
 
                 yield return null;

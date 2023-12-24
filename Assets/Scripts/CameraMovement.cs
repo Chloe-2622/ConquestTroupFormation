@@ -35,22 +35,23 @@ public class CameraMovement : MonoBehaviour
         float dz = 0f;
         
         Vector2 movementInput = movement.action.ReadValue<Vector2>();
-        if (movementInput.x > 0)
+
+        if (movementInput.x > 0 || Input.GetKey(KeyCode.D))
         {
             dx++;
             dz--;
         }
-        if (movementInput.x < 0)
+        if (movementInput.x < 0 || Input.GetKey(KeyCode.A))
         {
             dx--;
             dz++;
         }
-        if (movementInput.y > 0)
+        if (movementInput.y > 0 || Input.GetKey(KeyCode.W))
         {
             dx++;
             dz++;
         }
-        if (movementInput.y < 0)
+        if (movementInput.y < 0 || Input.GetKey(KeyCode.S))
         {
             dx--;
             dz--;

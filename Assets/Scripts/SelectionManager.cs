@@ -237,4 +237,9 @@ public class SelectionManager : MonoBehaviour
             return false;
         }
     }
+
+    public void removeObject(GameObject obj)
+    {
+        selectionableObjects.Remove(obj);
+    }
 }
