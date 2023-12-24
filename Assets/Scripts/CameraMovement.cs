@@ -57,6 +57,29 @@ public class CameraMovement : MonoBehaviour
             dz--;
         }
 
+        if (Input.mouseScrollDelta.y != 0)
+        {
+            // Adjust the speed of scrolling by multiplying with a factor if needed
+            float scrollSpeed = transform.position.y / 10;
+
+            // Calculate the new position
+            Vector3 newPosition = transform.position + (transform.forward * Input.mouseScrollDelta.y * scrollSpeed);
+
+            // Clamp the y component between 6 and 30
+            newPosition.y = Mathf.Clamp(newPosition.y, 6f, 30f);
+
+            // Apply the new position
+            if ((newPosition.y == 6f && Input.mouseScrollDelta.y > 0) || (newPosition.y == 30f && Input.mouseScrollDelta.y < 0))
+            {
+                // Scroll is not allowed at the current position, do not update the position
+            }
+            else
+            {
+                // Apply the new position
+                transform.position = newPosition;
+            }
+        }
+
         if (!isPaused)
         {
             cameraObject.transform.Translate(new Vector3(dx * currentSpeed * Time.deltaTime, 0, dz * currentSpeed * Time.deltaTime), Space.World);
