@@ -26,6 +26,8 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected Camera camera1;
     [SerializeField] protected SelectionManager selectionManager;
     [SerializeField] protected Image healthBar;
+    [SerializeField] protected GameObject selectionArrow;
+    public bool hasCrown = false;
 
     [Header("Text PopUps")]
     [SerializeField] protected TextMeshProUGUI TroupSelectionPopUp;
@@ -221,10 +223,28 @@ public abstract class Troup : MonoBehaviour
 
         while (!hasSelected && isChosingPlacement)
         {
-            PlaceSelectionPopUp.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
+            // PlaceSelectionPopUp.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
+            selectionArrow.transform.Find("Model").GetComponent<MeshRenderer>().enabled = true;
+            
             // Debug.Log("Est enabled : " + PlaceSelectionPopUp.enabled);
 
-            if (Input.GetMouseButton(0))
+            Ray ray = camera1.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            {
+                selectionArrow.transform.position = new Vector3(hit.point.x, hit.point.y, hit.point.z);
+
+                if (Input.GetMouseButton(0))
+                {
+                    Debug.Log("Target position clicked : " + hit.point);
+                    AddAction(new MoveToPosition(agent, hit.point));
+                    hasSelected = true;
+                    PlaceSelectionPopUp.enabled = false;
+                }
+            }
+
+            /* if (Input.GetMouseButton(0))
             {
                 Ray ray = camera1.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
@@ -237,7 +257,7 @@ public abstract class Troup : MonoBehaviour
 
                 hasSelected = true;
                 PlaceSelectionPopUp.enabled = false;
-            }
+            } */
             
             yield return null;
         }
@@ -256,7 +276,7 @@ public abstract class Troup : MonoBehaviour
 
         while (!hasSelected && isChosingFollow)
         {
-            FollowSelectionPopUp.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
+            // FollowSelectionPopUp.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
             // Debug.Log("Est enabled : " + PlaceSelectionPopUp.enabled);
 
             if (Input.GetMouseButton(0))
@@ -309,7 +329,7 @@ public abstract class Troup : MonoBehaviour
 
         while (!hasSelectedFistPos && isChosingPatrol)
         {
-            PatrolSelectionPopUp1.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
+            // PatrolSelectionPopUp1.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
 
             if (Input.GetMouseButtonDown(0))
             {
@@ -335,7 +355,7 @@ public abstract class Troup : MonoBehaviour
 
         while (!hasSelectedSecondPos && isChosingPatrol)
         {
-            PatrolSelectionPopUp2.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
+            // PatrolSelectionPopUp2.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
 
             if (Input.GetMouseButtonDown(0))
             {
@@ -375,6 +395,11 @@ public abstract class Troup : MonoBehaviour
         }
 
         healthBar.fillAmount = targetFillAmount;
+    }
+
+    protected void showArrows()
+    {
+
     }
 
     protected void AddAction(IAction action)
