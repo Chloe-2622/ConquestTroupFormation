@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class Combattant : Troup
+public class Guerisseur : Troup
 {
+
+    [SerializeField] private float radius;
+    [SerializeField] private LayerMask tombeMask;
 
     protected override void Awake()
     {
@@ -30,7 +32,26 @@ public class Combattant : Troup
 
     protected override IEnumerator SpecialAbility()
     {
-        Debug.Log("Combattant special ability activated");
+        Debug.Log("Guerisseur ability activated");
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, radius, tombeMask);
+        
+
+        foreach(Collider collider in colliders)
+        {
+            Debug.Log(collider);
+            
+            if (collider.GetComponent<Tombe>().tombeTroupType == Tombe.TombeTroupType.Ally)
+            {
+                collider.GetComponent<Tombe>().Revive();
+            }
+        }
+
         yield return null;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(transform.position, radius);
     }
 }

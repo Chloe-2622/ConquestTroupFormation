@@ -83,12 +83,35 @@ public class SelectionManager : MonoBehaviour
         {
             drawSquare();
         }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            foreach (GameObject selectionableObject in selectionableObjects.Keys)
+            {
+                Debug.Log("clé : " + selectionableObject + " et value : " + selectionableObjects[selectionableObject]);
+            }
+        }
     }
 
     // Sélectionne l'unité la plus proche 
     public void selectUnit()
     {
-        Debug.Log("Unit Selection");
+        RemoveNullKeys(selectionableObjects);
+        Debug.Log("Clé Unit Selection");
+        /* foreach (GameObject selectionableObject in selectionableObjects.Keys)
+        {
+            if (selectionableObject == null)
+            {
+                selectionableObjects.Remove(selectionableObject);
+            }
+            
+        } */
+        foreach (GameObject selectionableObject in selectionableObjects.Keys)
+        {
+
+            Debug.Log("clé : " + selectionableObject + " et value : " + selectionableObjects[selectionableObject]);
+
+        }
         Ray ray_1 = shootingCamera.ScreenPointToRay(position_1);
         RaycastHit hit_1;
         Physics.Raycast(ray_1, out hit_1, Mathf.Infinity);
@@ -96,6 +119,8 @@ public class SelectionManager : MonoBehaviour
         GameObject nearestObject = null;
         foreach (GameObject selectionableObject in selectionableObjects.Keys)
         {
+            Debug.Log("Point 1 : " + hit_1);
+            Debug.Log("Point selObj : " + selectionableObject);
             float distance = Vector3.Distance(hit_1.point, selectionableObject.transform.position);
             if (distance < minDistance)
             {
@@ -103,7 +128,8 @@ public class SelectionManager : MonoBehaviour
                 nearestObject = selectionableObject;
             }
         }
-        select(new List<GameObject> { nearestObject });
+        if ((System.Object)nearestObject != null) { select(new List<GameObject> { nearestObject }); }
+        
     }
 
     // Détermine les unités qui se situent dans la zone sélectionnée
@@ -205,7 +231,7 @@ public class SelectionManager : MonoBehaviour
     {
         foreach (GameObject currentSelection in currentSelections)
         {
-            selectionableObjects[currentSelection] = false;
+            if (currentSelection != null) { selectionableObjects[currentSelection] = false; }
         }
         currentSelections = new List<GameObject>();
     }
@@ -240,6 +266,28 @@ public class SelectionManager : MonoBehaviour
 
     public void removeObject(GameObject obj)
     {
+        selectionableObjects[obj] = false;
         selectionableObjects.Remove(obj);
+    }
+
+    static void RemoveNullKeys<TKey, TValue>(Dictionary<TKey, TValue> dictionary)
+    {
+        // Create a list to store keys with null values
+        List<TKey> keysToRemove = new List<TKey>();
+
+        // Find keys with null values and add them to the list
+        foreach (var kvp in dictionary)
+        {
+            if (kvp.Key == null)
+            {
+                keysToRemove.Add(kvp.Key);
+            }
+        }
+
+        // Remove entries with null keys
+        foreach (var key in keysToRemove)
+        {
+            dictionary.Remove(key);
+        }
     }
 }

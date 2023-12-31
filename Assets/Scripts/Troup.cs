@@ -10,6 +10,8 @@ public abstract class Troup : MonoBehaviour
 
     [Header("General stats")]
     [SerializeField] protected TroupType troupType;
+    [SerializeField] protected UnitType unitType;
+    [SerializeField] protected bool isSelected;
     [SerializeField] protected float movingSpeed;
     [SerializeField] protected float health;
     protected float maxHealth;
@@ -20,13 +22,15 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected float attackDamage;
     [SerializeField] protected float attackRechargeTime;
     [SerializeField] protected float attackRange;
-    [SerializeField] protected float specialAttackRechargeTime;
+    [SerializeField] protected float specialAbilityRechargeTime;
+    [SerializeField] protected float specialAbilityDelay = 0f;
 
     [Header("Scene objects")]
     [SerializeField] protected Camera camera1;
     [SerializeField] protected SelectionManager selectionManager;
     [SerializeField] protected Image healthBar;
     [SerializeField] protected GameObject selectionArrow;
+    [SerializeField] protected GameObject tombe;
     public bool hasCrown = false;
 
     [Header("Text PopUps")]
@@ -42,10 +46,15 @@ public abstract class Troup : MonoBehaviour
 
     // Troup types
     public enum TroupType { Ally, Ennemy }
+    public enum UnitType
+    {
+        Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
+    }
 
     // Action Queue
     private Queue<IAction> actionQueue = new Queue<IAction>();
 
+    // protected float specialAbilityDelay = 0f;
 
     private Transform SelectionCircle;
     private bool isChosingPlacement;
@@ -59,6 +68,31 @@ public abstract class Troup : MonoBehaviour
 
     protected virtual void Awake() 
     {
+        // Children variable setup
+        SelectionCircle = transform.Find("SelectionCircle");
+        healthBar = transform.Find("Canvas").Find("Vie").GetComponent<Image>();
+        if (troupType == TroupType.Ally) { selectionArrow = transform.Find("SelectionArrow").gameObject; }
+
+        // Setup and show Health Bar
+        maxHealth = health;
+        healthBar.enabled = true;
+
+        // Agent setup
+        agent = GetComponent<NavMeshAgent>();
+        agent.speed = movingSpeed;
+
+        // GameManager variable setup
+        Debug.Log("GameManager of " + troupType + " " + unitType + " = " + GameManager.Instance);
+        camera1 = GameManager.Instance.mainCamera;
+        selectionManager = GameManager.Instance.selectionManager;
+        tombe = GameManager.Instance.tombe;
+        TroupSelectionPopUp = GameManager.Instance.TroupSelectionPopUp;
+        PlaceSelectionPopUp = GameManager.Instance.PlaceSelectionPopUp;
+        PatrolSelectionPopUp1 = GameManager.Instance.PatrolSelectionPopUp1;
+        PatrolSelectionPopUp2 = GameManager.Instance.PatrolSelectionPopUp2;
+        FollowSelectionPopUp = GameManager.Instance.FollowSelectionPopUp;
+
+        // Ally or Ennemy
         if (troupType == TroupType.Ally)
         {
             Allies.Add(this);
@@ -69,25 +103,20 @@ public abstract class Troup : MonoBehaviour
             Ennemies.Add(this);
         }
 
-        TroupSelectionPopUp.enabled = false;
-        PlaceSelectionPopUp.enabled = false;
-        agent = GetComponent<NavMeshAgent>();
-        agent.speed = movingSpeed;
-
-        SelectionCircle = transform.Find("SelectionCircle");
-
-        maxHealth = health;
-        healthBar.enabled = true;
-
+        // Start Action Queue
         AddAction(new Standby());
         StartCoroutine(ExecuteActionQueue());
-        // StartCoroutine(UpdateHealthBarSmoothly());
-
     }
 
     protected virtual void Update()
     {
-        // Debug.Log(selectionManager.isSelected(transform.gameObject));
+        // Special Ability
+        if (specialAbilityDelay > 0)
+        {
+            specialAbilityDelay--;
+        }
+
+        isSelected = selectionManager.isSelected(this.gameObject);
 
         if (selectionManager.isSelected(this.gameObject))
         {
@@ -133,12 +162,22 @@ public abstract class Troup : MonoBehaviour
                 AddAction(new Standby());
             }
 
+            if (Input.GetKeyDown(KeyCode.F) && specialAbilityDelay == 0f)
+            {
+                StartCoroutine(SpecialAbility());
+                Debug.Log("Special Ability 1");
+                specialAbilityDelay = specialAbilityRechargeTime;
+            }
+
         } else
         {
             SelectionCircle.GetComponent<MeshRenderer>().enabled = false;
         }
 
         Troup nearestEnnemy = FindNearestEnnemy();
+
+        
+        
         
 
         // Health Bar control
@@ -225,6 +264,7 @@ public abstract class Troup : MonoBehaviour
         {
             // PlaceSelectionPopUp.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
             selectionArrow.transform.Find("Model").GetComponent<MeshRenderer>().enabled = true;
+            selectionArrow.transform.LookAt(camera1.transform.position);
             
             // Debug.Log("Est enabled : " + PlaceSelectionPopUp.enabled);
 
@@ -240,6 +280,7 @@ public abstract class Troup : MonoBehaviour
                     Debug.Log("Target position clicked : " + hit.point);
                     AddAction(new MoveToPosition(agent, hit.point));
                     hasSelected = true;
+                    selectionArrow.transform.Find("Model").GetComponent<MeshRenderer>().enabled = false;
                     PlaceSelectionPopUp.enabled = false;
                 }
             }
@@ -428,6 +469,8 @@ public abstract class Troup : MonoBehaviour
 
     protected abstract IEnumerator Attack(Troup ennemy);
 
+    protected abstract IEnumerator SpecialAbility();
+
     public virtual void TakeDamage(float damage)
     {
         health -= damage;
@@ -439,6 +482,10 @@ public abstract class Troup : MonoBehaviour
         {
             if (troupType == TroupType.Ally) { Allies.Remove(this); }
             if (troupType == TroupType.Ennemy) { Ennemies.Remove(this); }
+            GameObject tombeMort = Instantiate(tombe, transform.position, transform.rotation, null);
+            // if (troupType == TroupType.Ennemy) { tombeMort.transform.position += Vector3.up * 3; }
+            tombeMort.GetComponent<Tombe>().SetUnitType((Tombe.TombeUnitType)unitType);
+            tombeMort.GetComponent<Tombe>().SetTroupType((Tombe.TombeTroupType)troupType);
             selectionManager.removeObject(gameObject);
             Destroy(gameObject);
         } else
