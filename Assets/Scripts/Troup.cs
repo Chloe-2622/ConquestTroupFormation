@@ -12,9 +12,9 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected TroupType troupType;
     [SerializeField] protected UnitType unitType;
     [SerializeField] protected bool isSelected;
+    [SerializeField] protected bool hasCrown = false;
     [SerializeField] protected float movingSpeed;
     [SerializeField] protected float health;
-    protected float maxHealth;
     [SerializeField] protected float armor;
     [SerializeField] protected float detectionRange;
 
@@ -31,7 +31,9 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected Image healthBar;
     [SerializeField] protected GameObject selectionArrow;
     [SerializeField] protected GameObject tombe;
-    public bool hasCrown = false;
+    [SerializeField] protected Transform SelectionCircle;
+    [SerializeField] protected NavMeshAgent agent;
+
 
     [Header("Text PopUps")]
     [SerializeField] protected TextMeshProUGUI TroupSelectionPopUp;
@@ -40,31 +42,29 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected TextMeshProUGUI PatrolSelectionPopUp2;
     [SerializeField] protected TextMeshProUGUI FollowSelectionPopUp;
 
-    // Allies and Ennemis dictionnary
+    // Allies and Ennemis dictionnary -----------------------------------------------------------------------------
     public static HashSet<Troup> Allies = new HashSet<Troup>();
     public static HashSet<Troup> Ennemies = new HashSet<Troup>();
 
-    // Troup types
+    // Troup types ------------------------------------------------------------------------------------------------
     public enum TroupType { Ally, Ennemy }
     public enum UnitType
     {
         Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
     }
 
-    // Action Queue
+    // Action Queue -----------------------------------------------------------------------------------------------
     private Queue<IAction> actionQueue = new Queue<IAction>();
 
-    // protected float specialAbilityDelay = 0f;
-
-    private Transform SelectionCircle;
+    // Private variables ------------------------------------------------------------------------------------------
     private bool isChosingPlacement;
     private bool isChosingPatrol;
     private bool isChosingFollow;
     private bool isFollowingEnnemy;
     private bool isAttackingEnnemy;
-    protected Troup currentAttackedTroup;
-    protected NavMeshAgent agent;
-
+    private bool hasSpawnedTombe;
+    private float maxHealth;
+    private Troup currentAttackedTroup;
 
     protected virtual void Awake() 
     {
@@ -111,10 +111,10 @@ public abstract class Troup : MonoBehaviour
     protected virtual void Update()
     {
         // Special Ability
-        if (specialAbilityDelay > 0)
+        /* if (specialAbilityDelay > 0)
         {
             specialAbilityDelay--;
-        }
+        } */
 
         isSelected = selectionManager.isSelected(this.gameObject);
 
@@ -167,6 +167,22 @@ public abstract class Troup : MonoBehaviour
                 StartCoroutine(SpecialAbility());
                 Debug.Log("Special Ability 1");
                 specialAbilityDelay = specialAbilityRechargeTime;
+                StartCoroutine(SpecialAbilityCountdown());
+            }
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                if (specialAbilityDelay == 0f)
+                {
+                    StartCoroutine(SpecialAbility());
+                    specialAbilityDelay = specialAbilityRechargeTime;
+                    StartCoroutine(SpecialAbilityCountdown());
+                }
+                if (specialAbilityDelay == -1f)
+                {
+                    StartCoroutine(SpecialAbility());
+                    specialAbilityDelay = Mathf.Infinity;
+                }
             }
 
         } else
@@ -253,6 +269,7 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
+    // Selection Coroutines ---------------------------------------------------------------------------------------
     protected IEnumerator PlaceSelection()
     {
         PlaceSelectionPopUp.enabled = true;
@@ -423,6 +440,7 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
+    // Misc -------------------------------------------------------------------------------------------------------
     protected IEnumerator UpdateHealthBar()
     {
         float targetFillAmount = health / maxHealth;
@@ -438,67 +456,17 @@ public abstract class Troup : MonoBehaviour
         healthBar.fillAmount = targetFillAmount;
     }
 
-    protected void showArrows()
-    {
-
-    }
-
-    protected void AddAction(IAction action)
-    {
-
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            actionQueue.Enqueue(action);
-
-        } else
-        {
-            actionQueue.Clear();
-            agent.isStopped = true;
-            agent.ResetPath();
-            StopCoroutine(ExecuteActionQueue());
-            Debug.Log("Stopping Troup");
-
-            actionQueue.Enqueue(action);
-
-            Debug.Log("Actions en queue après 2 : " + actionQueue.Count);
-
-            Debug.Log("Starting new ExecuteActionQueue Coroutine");
-            StartCoroutine(ExecuteActionQueue());
-        }
-    }
-
-    protected abstract IEnumerator Attack(Troup ennemy);
-
-    protected abstract IEnumerator SpecialAbility();
-
-    public virtual void TakeDamage(float damage)
-    {
-        health -= damage;
-        
-
-        Debug.Log("J'ai " + health + " vie");
-
-        if (health <= 0)
-        {
-            if (troupType == TroupType.Ally) { Allies.Remove(this); }
-            if (troupType == TroupType.Ennemy) { Ennemies.Remove(this); }
-            GameObject tombeMort = Instantiate(tombe, transform.position, transform.rotation, null);
-            // if (troupType == TroupType.Ennemy) { tombeMort.transform.position += Vector3.up * 3; }
-            tombeMort.GetComponent<Tombe>().SetUnitType((Tombe.TombeUnitType)unitType);
-            tombeMort.GetComponent<Tombe>().SetTroupType((Tombe.TombeTroupType)troupType);
-            selectionManager.removeObject(gameObject);
-            Destroy(gameObject);
-        } else
-        {
-            StartCoroutine(UpdateHealthBar());
-        }
-    }
-
     public float getHealth()
     {
         return health;
     }
 
+    protected void showArrows()
+    {
+
+    }
+
+    // Attack and ability -----------------------------------------------------------------------------------------
     public virtual Troup FindNearestEnnemy()
     {
         Vector3 pos = transform.position;
@@ -535,11 +503,77 @@ public abstract class Troup : MonoBehaviour
         return targ;
     }
 
+    protected abstract IEnumerator Attack(Troup ennemy);
+
+    protected abstract IEnumerator SpecialAbility();
+
+    protected IEnumerator SpecialAbilityCountdown()
+    {
+        while (specialAbilityDelay > 0)
+        {
+            specialAbilityDelay--;
+            yield return new WaitForSeconds(1f);
+        }
+    }
+
+    public virtual void TakeDamage(float damage)
+    {
+        float beforeHealth = health;
+
+        health -= damage;
+
+        float newHealth = health;
+
+        Debug.Log("J'ai " + health + " vie");
+
+        if (beforeHealth * newHealth <= 0 && !hasSpawnedTombe)
+        {
+            if (troupType == TroupType.Ally) { Allies.Remove(this); }
+            if (troupType == TroupType.Ennemy) { Ennemies.Remove(this); }
+            GameObject tombeMort = Instantiate(tombe, transform.position, transform.rotation, null);
+            hasSpawnedTombe = true;
+            // if (troupType == TroupType.Ennemy) { tombeMort.transform.position += Vector3.up * 3; }
+            tombeMort.GetComponent<Tombe>().SetUnitType((Tombe.TombeUnitType)unitType);
+            tombeMort.GetComponent<Tombe>().SetTroupType((Tombe.TombeTroupType)troupType);
+            selectionManager.removeObject(gameObject);
+            Destroy(gameObject);
+        } else
+        {
+            StartCoroutine(UpdateHealthBar());
+        }
+    }
+
+    // IAction Interface ------------------------------------------------------------------------------------------
     protected interface IAction
     {
         bool IsActionComplete { get; set; }
         // bool IsStandBy { get; set; }
         public void Execute();
+    }
+
+    protected void AddAction(IAction action)
+    {
+
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            actionQueue.Enqueue(action);
+
+        }
+        else
+        {
+            actionQueue.Clear();
+            agent.isStopped = true;
+            agent.ResetPath();
+            StopCoroutine(ExecuteActionQueue());
+            Debug.Log("Stopping Troup");
+
+            actionQueue.Enqueue(action);
+
+            Debug.Log("Actions en queue après 2 : " + actionQueue.Count);
+
+            Debug.Log("Starting new ExecuteActionQueue Coroutine");
+            StartCoroutine(ExecuteActionQueue());
+        }
     }
 
     protected class Standby : IAction
@@ -687,6 +721,7 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
+    // Action Queue execution -------------------------------------------------------------------------------------
     protected IEnumerator ExecuteActionQueue()
     {
         Debug.Log("Start Action Queue");

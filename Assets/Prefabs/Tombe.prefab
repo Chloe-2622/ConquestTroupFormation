@@ -311,7 +311,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tombeUnitType: 0
   tombeTroupType: 0
-  lifeTime: 15
+  lifeTime: 30
   lifeCircle: {fileID: 8122613372080909871}
   camera1: {fileID: 4313879581609688195, guid: 7a0ad85c673440d4fab4704a68687b71, type: 3}
 --- !u!65 &1621258281031625007
