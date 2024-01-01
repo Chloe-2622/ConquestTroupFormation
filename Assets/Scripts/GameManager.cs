@@ -27,10 +27,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI PatrolSelectionPopUp2;
     public TextMeshProUGUI FollowSelectionPopUp;
 
+    [Header("Misc")]
     public SelectionManager selectionManager;
     public GameObject tombe;
-
-    // Autres variables globales
     public Camera mainCamera;
 
     private void Awake()

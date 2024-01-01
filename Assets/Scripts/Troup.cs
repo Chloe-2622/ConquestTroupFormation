@@ -29,6 +29,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected Camera camera1;
     [SerializeField] protected SelectionManager selectionManager;
     [SerializeField] protected Image healthBar;
+    [SerializeField] protected Image flecheUI;
     [SerializeField] protected GameObject selectionArrow;
     [SerializeField] protected GameObject tombe;
     [SerializeField] protected Transform SelectionCircle;
@@ -280,8 +281,10 @@ public abstract class Troup : MonoBehaviour
         while (!hasSelected && isChosingPlacement)
         {
             // PlaceSelectionPopUp.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
-            selectionArrow.transform.Find("Model").GetComponent<MeshRenderer>().enabled = true;
-            selectionArrow.transform.LookAt(camera1.transform.position);
+            // selectionArrow.transform.Find("Model").GetComponent<MeshRenderer>().enabled = true;
+            // selectionArrow.transform.LookAt(camera1.transform.position);
+
+            // flecheUI.enabled = true;
             
             // Debug.Log("Est enabled : " + PlaceSelectionPopUp.enabled);
 
@@ -290,7 +293,8 @@ public abstract class Troup : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
-                selectionArrow.transform.position = new Vector3(hit.point.x, hit.point.y, hit.point.z);
+                // selectionArrow.transform.position = new Vector3(hit.point.x, hit.point.y, hit.point.z);
+                // flecheUI.transform.position = Input.mousePosition;
 
                 if (Input.GetMouseButton(0))
                 {

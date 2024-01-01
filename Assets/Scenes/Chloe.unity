@@ -618,6 +618,7 @@ MonoBehaviour:
   camera1: {fileID: 0}
   selectionManager: {fileID: 0}
   healthBar: {fileID: 0}
+  flecheUI: {fileID: 0}
   selectionArrow: {fileID: 0}
   tombe: {fileID: 0}
   SelectionCircle: {fileID: 0}
@@ -1743,6 +1744,7 @@ MonoBehaviour:
   camera1: {fileID: 1152333479}
   selectionManager: {fileID: 2107619706}
   healthBar: {fileID: 1977925115}
+  flecheUI: {fileID: 0}
   selectionArrow: {fileID: 33616441}
   tombe: {fileID: 8754737974659679140, guid: cf5713f7f4e857340ac275da5ea97ef3, type: 3}
   SelectionCircle: {fileID: 0}
@@ -2894,6 +2896,7 @@ MonoBehaviour:
   camera1: {fileID: 1152333479}
   selectionManager: {fileID: 2107619706}
   healthBar: {fileID: 53883421}
+  flecheUI: {fileID: 0}
   selectionArrow: {fileID: 1219064450}
   tombe: {fileID: 8754737974659679140, guid: cf5713f7f4e857340ac275da5ea97ef3, type: 3}
   SelectionCircle: {fileID: 0}
@@ -2944,6 +2947,17 @@ Transform:
   - {fileID: 1219064451}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1542153372 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8012775446490796849, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
+  m_PrefabInstance: {fileID: 8223604649741985874}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1635736398
 GameObject:
   m_ObjectHideFlags: 0
@@ -2990,6 +3004,7 @@ MonoBehaviour:
   camera1: {fileID: 0}
   selectionManager: {fileID: 0}
   healthBar: {fileID: 0}
+  flecheUI: {fileID: 0}
   selectionArrow: {fileID: 0}
   tombe: {fileID: 0}
   SelectionCircle: {fileID: 0}
@@ -55040,6 +55055,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 833892303060703301, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3140712140878663487, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
+      propertyPath: flecheUI
+      value: 
+      objectReference: {fileID: 1542153372}
     - target: {fileID: 3140712140878663487, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
       propertyPath: selectionManager
       value: 
@@ -55067,6 +55090,18 @@ PrefabInstance:
     - target: {fileID: 3630770809780813079, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
       propertyPath: m_Name
       value: Combattant
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256735249816616777, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.90145516
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256735249816616777, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.43287244
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256735249816616777, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 51.3
       objectReference: {fileID: 0}
     - target: {fileID: 7738217919041393844, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
       propertyPath: m_LocalPosition.x
@@ -55106,6 +55141,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7738217919041393844, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8012775446490796849, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

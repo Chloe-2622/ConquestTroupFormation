@@ -6,12 +6,18 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class SelectionManager : MonoBehaviour
 {
     [SerializeField] Camera shootingCamera;
     [SerializeField] int areaSelectionLimit = 1;
     [SerializeField] int unitSelectionDistanceLimit = 1;
+
+    [SerializeField] private UnityEngine.UI.Image SquareBarTop;
+    [SerializeField] private UnityEngine.UI.Image SquareBarRight;
+    [SerializeField] private UnityEngine.UI.Image SquareBarBottom;
+    [SerializeField] private UnityEngine.UI.Image SquareBarLeft;
 
     [Header("Input System")]
     [SerializeField] private InputActionReference selectionAction;
@@ -79,6 +85,11 @@ public class SelectionManager : MonoBehaviour
     // Sactive en permanence, pour afficher la zone sélectionner
     private void Update()
     {
+        SquareBarTop.enabled = isHolding;
+        SquareBarRight.enabled = isHolding;
+        SquareBarBottom.enabled = isHolding;
+        SquareBarLeft.enabled = isHolding;
+
         if (isHolding)
         {
             drawSquare();
@@ -206,24 +217,41 @@ public class SelectionManager : MonoBehaviour
     public void drawSquare()
     {
         Vector2 currentPosition = selectionAction.action.ReadValue<Vector2>();
-        Ray ray_1 = shootingCamera.ScreenPointToRay(position_1);
+        /* Ray ray_1 = shootingCamera.ScreenPointToRay(position_1);
         RaycastHit hit_1;
         Ray ray_2 = shootingCamera.ScreenPointToRay(new Vector2(currentPosition.x, position_1.y));
         RaycastHit hit_2;
         Ray ray_3 = shootingCamera.ScreenPointToRay(currentPosition);
         RaycastHit hit_3;
         Ray ray_4 = shootingCamera.ScreenPointToRay(new Vector2(position_1.x, currentPosition.y));
-        RaycastHit hit_4;
+        RaycastHit hit_4; */
 
-        Physics.Raycast(ray_1, out hit_1, Mathf.Infinity);
+        /* Physics.Raycast(ray_1, out hit_1, Mathf.Infinity);
         Physics.Raycast(ray_2, out hit_2, Mathf.Infinity);
         Physics.Raycast(ray_3, out hit_3, Mathf.Infinity);
-        Physics.Raycast(ray_4, out hit_4, Mathf.Infinity);
+        Physics.Raycast(ray_4, out hit_4, Mathf.Infinity); */
+
         
-        Debug.DrawLine(hit_1.point, hit_2.point, Color.red);
+
+        SquareBarTop.transform.position = new Vector2((position_1.x + currentPosition.x) / 2, position_1.y);
+        SquareBarTop.transform.localScale = new Vector3((currentPosition.x - position_1.x) / 20, SquareBarTop.transform.localScale.y, SquareBarTop.transform.localScale.z);
+
+        SquareBarRight.transform.position = new Vector2(currentPosition.x, (position_1.y + currentPosition.y) / 2);
+        SquareBarRight.transform.localScale = new Vector3((currentPosition.y - position_1.y) / 20, SquareBarRight.transform.localScale.y, SquareBarRight.transform.localScale.z);
+
+        SquareBarBottom.transform.position = new Vector2((position_1.x + currentPosition.x) / 2, currentPosition.y);
+        SquareBarBottom.transform.localScale = new Vector3((currentPosition.x - position_1.x) / 20, SquareBarTop.transform.localScale.y, SquareBarTop.transform.localScale.z);
+
+        SquareBarLeft.transform.position = new Vector2(position_1.x, (position_1.y + currentPosition.y) / 2);
+        SquareBarLeft.transform.localScale = new Vector3((currentPosition.y - position_1.y) / 20, SquareBarLeft.transform.localScale.y, SquareBarLeft.transform.localScale.z);
+
+
+
+        /*  Debug.DrawLine(hit_1.point, hit_2.point, Color.red);
         Debug.DrawLine(hit_2.point, hit_3.point, Color.red);
         Debug.DrawLine(hit_3.point, hit_4.point, Color.red);
         Debug.DrawLine(hit_4.point, hit_1.point, Color.red);
+        */
     }
 
     // Désélectionne tous les éléments précédements sélectionnés
