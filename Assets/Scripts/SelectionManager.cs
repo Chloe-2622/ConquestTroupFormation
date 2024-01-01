@@ -95,13 +95,13 @@ public class SelectionManager : MonoBehaviour
             drawSquare();
         }
 
-        if (Input.GetKeyDown(KeyCode.K))
+        /*if (Input.GetKeyDown(KeyCode.K))
         {
             foreach (GameObject selectionableObject in selectionableObjects.Keys)
             {
                 Debug.Log("clé : " + selectionableObject + " et value : " + selectionableObjects[selectionableObject]);
             }
-        }
+        }*/
     }
 
     // Sélectionne l'unité la plus proche 
