@@ -10,10 +10,12 @@ using UnityEngine.UI;
 
 public class SelectionManager : MonoBehaviour
 {
+    [Header("Selection Parameters")]
     [SerializeField] Camera shootingCamera;
     [SerializeField] int areaSelectionLimit = 1;
     [SerializeField] int unitSelectionDistanceLimit = 1;
 
+    [Header("Selection Representation")]
     [SerializeField] private UnityEngine.UI.Image SquareBarTop;
     [SerializeField] private UnityEngine.UI.Image SquareBarRight;
     [SerializeField] private UnityEngine.UI.Image SquareBarBottom;
@@ -94,14 +96,6 @@ public class SelectionManager : MonoBehaviour
         {
             drawSquare();
         }
-
-        /*if (Input.GetKeyDown(KeyCode.K))
-        {
-            foreach (GameObject selectionableObject in selectionableObjects.Keys)
-            {
-                Debug.Log("clé : " + selectionableObject + " et value : " + selectionableObjects[selectionableObject]);
-            }
-        }*/
     }
 
     // Sélectionne l'unité la plus proche 

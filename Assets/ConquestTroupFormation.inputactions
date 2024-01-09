@@ -223,48 +223,162 @@
             "id": "d65ca780-1c11-4ab9-9ab6-2fe3d5626532",
             "actions": [
                 {
-                    "name": "GoTo",
-                    "type": "Value",
-                    "id": "728ba2b7-0295-490a-a981-ce0f53d3fd0a",
-                    "expectedControlType": "Vector2",
+                    "name": "Placement",
+                    "type": "Button",
+                    "id": "743f5429-d313-40eb-a42b-0cc02e9de542",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Patrol",
+                    "type": "Button",
+                    "id": "47fb2464-b28b-4bec-aabd-ddd5afd070cb",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Follow",
+                    "type": "Button",
+                    "id": "4b5fdb32-b39a-4743-80f2-0281c8bd4743",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Standby",
+                    "type": "Button",
+                    "id": "2d89749b-e9c2-4269-a6aa-b8c917b33780",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Special Ability",
+                    "type": "Button",
+                    "id": "22aa5481-ba06-428c-b067-b1267909557e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
                 {
-                    "name": "Left Click",
-                    "id": "43ed999a-f55a-4ff3-910c-81a2c2db0e08",
-                    "path": "OneModifier",
+                    "name": "",
+                    "id": "4ecb9352-f4fc-48bd-bf4b-96c647be8fd3",
+                    "path": "<Keyboard>/1",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "GoTo",
-                    "isComposite": true,
+                    "action": "Placement",
+                    "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "modifier",
-                    "id": "6c3bee41-db9b-4347-b3f7-6689dd8978b9",
-                    "path": "<Mouse>/leftButton",
+                    "name": "",
+                    "id": "3658323f-4b0d-4b45-8e61-1fda6d9d485f",
+                    "path": "<Keyboard>/2",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "GoTo",
+                    "action": "Patrol",
                     "isComposite": false,
-                    "isPartOfComposite": true
+                    "isPartOfComposite": false
                 },
                 {
-                    "name": "binding",
-                    "id": "040679c4-fed7-4c85-a546-c70218efbc1a",
-                    "path": "<Mouse>/position",
+                    "name": "",
+                    "id": "198cf4f2-e6ab-4955-92a4-c0e5e55bf22c",
+                    "path": "<Keyboard>/3",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "GoTo",
+                    "action": "Follow",
                     "isComposite": false,
-                    "isPartOfComposite": true
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2248f8ed-eb1b-4da9-98ea-9d2dc71243d8",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Special Ability",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "45d3d4fd-8e84-4604-91fe-8c968d8bdf9e",
+                    "path": "<Keyboard>/4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Standby",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "InGame",
+            "id": "1363c5cd-5d7a-4114-8b4f-fa64166b2384",
+            "actions": [
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "3e8a4833-e1e3-4e76-92bd-e98419962142",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "3ab60972-6571-4edf-87b0-9ab59eb9b4f4",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Menu",
+            "id": "f8eb06ee-822e-462a-92e1-04b8d1b1202d",
+            "actions": [
+                {
+                    "name": "Return",
+                    "type": "Button",
+                    "id": "089714fc-ea70-4a6d-b898-64632f07cd12",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "e526ee9e-7e81-4d65-8dec-5830f27fb85a",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Return",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
