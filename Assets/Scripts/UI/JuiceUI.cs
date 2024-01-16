@@ -12,14 +12,14 @@ public class JuiceUI : MonoBehaviour
     public void resizeUp()
     {
         inBox = true;
-        Debug.Log("Start Up");
+        //Debug.Log("Start Up");
         StartCoroutine(resizeUpAnimation());
     }
 
     public void resizeDown()
     {
         inBox = false;
-        Debug.Log("Start Down");
+        //Debug.Log("Start Down");
         //StartCoroutine(resizeDownAnimation());
     }
 
