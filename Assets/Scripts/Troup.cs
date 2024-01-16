@@ -36,6 +36,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected Transform SelectionArrow;
     [SerializeField] protected GameObject FirstPatrolPoint;
     [SerializeField] protected GameObject SecondPatrolPoint;
+    [SerializeField] protected GameObject SelectionParticleCircle;
     [SerializeField] protected GameObject QueueUI;
     [SerializeField] protected NavMeshAgent agent;
     [SerializeField] protected LayerMask troupMask;
@@ -66,15 +67,17 @@ public abstract class Troup : MonoBehaviour
     private bool isChosingPlacement;
     [SerializeField] private bool isChosingPatrol;
     private bool isChosingFollow;
-    private bool isFollowingEnnemy;
-    private bool isAttackingEnnemy;
+    [SerializeField] private bool isFollowingEnnemy;
+    [SerializeField] private bool isAttackingEnnemy;
     private bool hasSpawnedTombe;
     private float maxHealth;
     [SerializeField] private bool isPatroling;
-    [SerializeField] private Vector3 FirstPatrolPosCo;
-    [SerializeField] private Vector3 SecondPatrolPosCo;
-    private Troup currentAttackedTroup;
+    private Vector3 FirstPatrolPosCo;
+    private Vector3 SecondPatrolPosCo;
+    [SerializeField] private GameObject currentAttackedTroup;
+    [SerializeField] private GameObject currentFollowedTroup;
     private bool enqueuingNewAction;
+    private bool isPlayingCircleAnim;
     private IEnumerator currentActionCoroutine;
 
     // Awake
@@ -111,6 +114,7 @@ public abstract class Troup : MonoBehaviour
         FollowSelectionPopUp = GameManager.Instance.FollowSelectionPopUp;
         FirstPatrolPoint = Instantiate(GameManager.Instance.FirstPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
         SecondPatrolPoint = Instantiate(GameManager.Instance.SecondPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
+        SelectionParticleCircle = Instantiate(GameManager.Instance.SelectionParticleCirclePrefab, GameManager.Instance.SelectionParticleCircles.transform);
         troupMask = GameManager.Instance.troupMask;
 
         // Ally or Ennemy
@@ -145,7 +149,15 @@ public abstract class Troup : MonoBehaviour
 
         if (selectionManager.isSelected(this.gameObject))
         {
-            SelectionCircle.GetComponent<MeshRenderer>().enabled = true;
+            // SelectionCircle.GetComponent<MeshRenderer>().enabled = true;
+            SelectionParticleCircle.SetActive(true);
+            if (!isPlayingCircleAnim)
+            {
+                SelectionParticleCircle.GetComponent<ParticleSystem>().Play();
+                isPlayingCircleAnim = true;
+            }
+            
+            SelectionParticleCircle.transform.position = new Vector3(transform.position.x, transform.position.y + 0.3f, transform.position.z);
             
             
             if (troupType == TroupType.Ally)
@@ -153,16 +165,6 @@ public abstract class Troup : MonoBehaviour
                 if (selectionManager.numberOfSelected() == 1)
                 {
                     QueueUI.SetActive(true);
-
-                    string queueText = "";
-
-                    /* foreach (IAction action in actionQueue)
-                    {
-                        Debug.Log("Action " + action + " ajoutée à la liste");
-                        queueText += action.ToString();
-                    } */
-
-                    // QueueUI.GetComponent<TextMeshProUGUI>().text = "Action Queue:" + queueText;
                 }
                 else
                 {
@@ -249,6 +251,9 @@ public abstract class Troup : MonoBehaviour
             SelectionCircle.GetComponent<MeshRenderer>().enabled = false;
             FirstPatrolPoint.GetComponent<Renderer>().enabled = false;
             SecondPatrolPoint.GetComponent<Renderer>().enabled = false;
+            SelectionParticleCircle.SetActive(false);
+            SelectionParticleCircle.GetComponent<ParticleSystem>().Stop();
+            isPlayingCircleAnim = false;
 
             if (troupType == TroupType.Ally)
             {
@@ -287,12 +292,14 @@ public abstract class Troup : MonoBehaviour
             healthBar.color = Color.red;
         }
 
-        if (currentAttackedTroup == null)
+        /* if (currentAttackedTroup == null)
         {
             isAttackingEnnemy = false;
-        }
+        } */
 
         // Find Nearby ennemy and attack them if in attack range distance
+        
+        /* 
         if (nearestEnnemy != null)
         {
             
@@ -341,7 +348,7 @@ public abstract class Troup : MonoBehaviour
         {
             isFollowingEnnemy = false;
             agent.isStopped = false;
-        }
+        } */
 
         AttackBehaviour();
     }
@@ -611,15 +618,133 @@ public abstract class Troup : MonoBehaviour
 
     protected void AttackBehaviour()
     {
-        Collider[] detectedEnnemies = Physics.OverlapSphere(transform.position, detectionRange, troupMask);
-        foreach(Collider ennemie in detectedEnnemies)
+
+        HashSet<GameObject> detectedEnnemies = new HashSet<GameObject>();
+        if (troupType == TroupType.Ally)
         {
-            if (ennemie.gameObject.GetComponent<Troup>().troupType == TroupType.Ennemy)
+            foreach(Troup ennemy in Ennemies)
             {
-                Debug.Log("Collider ennemie : " + ennemie.gameObject);
+                if (Vector3.Distance(transform.position, ennemy.transform.position) <= detectionRange)
+                {
+                    detectedEnnemies.Add(ennemy.gameObject);
+                }
             }
+        } else
+        {
+            foreach (Troup ally in Allies)
+            {
+                if (Vector3.Distance(transform.position, ally.transform.position) <= detectionRange)
+                {
+                    detectedEnnemies.Add(ally.gameObject);
+                }
+            }
+        }
+
+        float closestDistance = Mathf.Infinity;
+        GameObject closestEnnemy = null;
+
+        foreach (GameObject ennemy in detectedEnnemies)
+        {
+            float distance = Vector3.Distance(transform.position, ennemy.transform.position);
+
+            if (distance <= closestDistance)
+            {
+                closestDistance = distance;
+                closestEnnemy = ennemy;
+            }
+        }
+
+        // Follow closestEnnemy until it's in range
+
+        if (closestEnnemy != null && !isFollowingEnnemy)
+        {
+            isFollowingEnnemy = true;
+            currentFollowedTroup = closestEnnemy;
+            actionQueue.Clear();
+            agent.isStopped = true;
+            agent.ResetPath();
+
+            Debug.Log("Getting closer to ennemy : " + closestEnnemy);
+            StopCoroutine(currentActionCoroutine);
+            actionQueue.Enqueue(new MoveToEnnemy(agent, closestEnnemy, attackRange));
+            StartCoroutine(currentActionCoroutine);
+
             
         }
+        if (currentFollowedTroup == null)
+        {
+            isFollowingEnnemy = false;
+        }
+        
+
+        HashSet<GameObject> inRangeEnnemies = new HashSet<GameObject>();
+        if (troupType == TroupType.Ally)
+        {
+            foreach (Troup ennemy in Ennemies)
+            {
+                if (Vector3.Distance(transform.position, ennemy.transform.position) <= attackRange)
+                {
+                    inRangeEnnemies.Add(ennemy.gameObject);
+                }
+            }
+        }
+        else
+        {
+            foreach (Troup ally in Allies)
+            {
+                if (Vector3.Distance(transform.position, ally.transform.position) <= attackRange)
+                {
+                    inRangeEnnemies.Add(ally.gameObject);
+                }
+            }
+        }
+
+        float closestDistanceInRange = Mathf.Infinity;
+        GameObject closestEnnemyInRange = null;
+
+        foreach (GameObject ennemy in inRangeEnnemies)
+        {
+            float distance = Vector3.Distance(transform.position, ennemy.transform.position);
+
+            if (distance <= closestDistanceInRange)
+            {
+                closestDistanceInRange = distance;
+                closestEnnemyInRange = ennemy;
+            }
+        }
+
+        if (currentAttackedTroup == null)
+        {
+            isAttackingEnnemy = false;
+            if (closestEnnemyInRange != null) 
+            {
+                currentAttackedTroup = closestEnnemyInRange;
+
+                actionQueue.Clear();
+                agent.isStopped = true;
+                agent.ResetPath();
+                Debug.Log("Stopping path");
+
+                StopCoroutine(currentActionCoroutine);
+                actionQueue.Enqueue(new Standby());
+                StartCoroutine(currentActionCoroutine);
+
+                StartCoroutine(Attack(currentAttackedTroup.GetComponent<Troup>()));
+                isAttackingEnnemy = true;
+            }
+        }
+        /* if (currentAttackedTroup == null && closestEnnemyInRange != null && !isAttackingEnnemy)
+        {
+            currentAttackedTroup = closestEnnemyInRange;
+            StartCoroutine(Attack(currentAttackedTroup.GetComponent<Troup>()));
+            isAttackingEnnemy = true;
+        } */
+        if (closestEnnemyInRange == null)
+        {
+            currentAttackedTroup = null;
+            isAttackingEnnemy = false;
+        }
+
     }
 
     protected abstract IEnumerator Attack(Troup ennemy);
@@ -827,13 +952,63 @@ public abstract class Troup : MonoBehaviour
                 // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
                 navMeshAgent.isStopped = false;
                 if (unitToFollow != null) { targetPosition = unitToFollow.transform.position; }
-                
+                // Debug.Log("Going to " + targetPosition);
                 navMeshAgent.SetDestination(targetPosition);
 
                 yield return null;
             }
 
             navMeshAgent.ResetPath();
+            IsActionComplete = true;
+
+            Debug.Log("Movement complete");
+        }
+    }
+
+    protected class MoveToEnnemy : IAction
+    {
+        public bool IsActionComplete { get; set; }
+        public GameObject unitToFollow;
+        private NavMeshAgent navMeshAgent;
+        private float range;
+
+        public MoveToEnnemy(NavMeshAgent agent, GameObject unit, float attackRange)
+        {
+            navMeshAgent = agent;
+            unitToFollow = unit;
+            range = attackRange;
+        }
+
+        public void Execute()
+        {
+            Debug.Log("Moving to Unit : " + unitToFollow);
+        }
+
+        public IEnumerator StartFollowing()
+        {
+            Vector3 targetPosition = new Vector3();
+            if (unitToFollow != null) { targetPosition = unitToFollow.transform.position; }
+
+            // if (unitToFollow != null)
+
+            Debug.Log("Following unit at position : " + targetPosition);
+
+            // navMeshAgent.SetDestination(targetPosition);
+
+            while (unitToFollow != null && Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= range)
+            {
+                // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
+                navMeshAgent.isStopped = false;
+                if (unitToFollow != null) { targetPosition = unitToFollow.transform.position; }
+                // Debug.Log("Going to ennemy " + targetPosition);
+                navMeshAgent.SetDestination(targetPosition);
+
+                yield return null;
+            }
+
+            navMeshAgent.SetDestination(navMeshAgent.transform.position);
+            navMeshAgent.isStopped = true;
+            // navMeshAgent.ResetPath();
             IsActionComplete = true;
 
             Debug.Log("Movement complete");
@@ -888,6 +1063,10 @@ public abstract class Troup : MonoBehaviour
             if (currentAction is FollowUnit followUnit)
             {
                 StartCoroutine(followUnit.StartFollowing());
+            }
+            if (currentAction is MoveToEnnemy moveToEnnemy)
+            {
+                StartCoroutine(moveToEnnemy.StartFollowing());
             }
 
             yield return new WaitUntil(() => currentAction.IsActionComplete);

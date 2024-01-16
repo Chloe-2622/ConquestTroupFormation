@@ -19,7 +19,7 @@ public class Combattant : Troup
 
     protected override IEnumerator Attack(Troup ennemy)
     {
-        while (ennemy != null && Vector3.Distance(transform.position, ennemy.transform.position) <= attackRange)
+        while (ennemy != null)
         {
             ennemy.TakeDamage(attackDamage);
             if (ennemy.getHealth() == 0) { Debug.Log("Ennemie tué"); }
