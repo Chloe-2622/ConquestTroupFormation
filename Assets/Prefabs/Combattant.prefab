@@ -94,7 +94,8 @@ GameObject:
   - component: {fileID: 7738217919041393844}
   - component: {fileID: 8753042273054374063}
   - component: {fileID: 3140712140878663487}
-  m_Layer: 0
+  - component: {fileID: 3232482504679713669}
+  m_Layer: 8
   m_Name: Combattant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -181,6 +182,9 @@ MonoBehaviour:
   SecondPatrolPoint: {fileID: 0}
   QueueUI: {fileID: 0}
   agent: {fileID: 0}
+  troupMask:
+    serializedVersion: 2
+    m_Bits: 0
   TroupSelectionPopUp: {fileID: 0}
   PlaceSelectionPopUp: {fileID: 0}
   PatrolSelectionPopUp1: {fileID: 0}
@@ -190,6 +194,29 @@ MonoBehaviour:
   isPatroling: 0
   FirstPatrolPosCo: {x: 0, y: 0, z: 0}
   SecondPatrolPosCo: {x: 0, y: 0, z: 0}
+--- !u!136 &3232482504679713669
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3630770809780813079}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3734902876993795461
 GameObject:
   m_ObjectHideFlags: 0

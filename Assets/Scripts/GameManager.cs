@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     public Camera mainCamera;
     public LayerMask floorMask;
     public GameObject PatrolingCircles;
+    public LayerMask troupMask;
 
     private void Awake()
     {

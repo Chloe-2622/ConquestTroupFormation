@@ -38,6 +38,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected GameObject SecondPatrolPoint;
     [SerializeField] protected GameObject QueueUI;
     [SerializeField] protected NavMeshAgent agent;
+    [SerializeField] protected LayerMask troupMask;
 
 
     [Header("Text PopUps")]
@@ -59,7 +60,7 @@ public abstract class Troup : MonoBehaviour
     }
 
     // Action Queue -----------------------------------------------------------------------------------------------
-    [SerializeField] private Queue<IAction> actionQueue = new Queue<IAction>();
+    private Queue<IAction> actionQueue = new Queue<IAction>();
 
     // Private variables ------------------------------------------------------------------------------------------
     private bool isChosingPlacement;
@@ -73,6 +74,8 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] private Vector3 FirstPatrolPosCo;
     [SerializeField] private Vector3 SecondPatrolPosCo;
     private Troup currentAttackedTroup;
+    private bool enqueuingNewAction;
+    private IEnumerator currentActionCoroutine;
 
     // Awake
     protected virtual void Awake() 
@@ -108,6 +111,7 @@ public abstract class Troup : MonoBehaviour
         FollowSelectionPopUp = GameManager.Instance.FollowSelectionPopUp;
         FirstPatrolPoint = Instantiate(GameManager.Instance.FirstPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
         SecondPatrolPoint = Instantiate(GameManager.Instance.SecondPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
+        troupMask = GameManager.Instance.troupMask;
 
         // Ally or Ennemy
         if (troupType == TroupType.Ally)
@@ -121,8 +125,9 @@ public abstract class Troup : MonoBehaviour
         }
 
         // Start Action Queue
+        currentActionCoroutine = ExecuteActionQueue();
         AddAction(new Standby());
-        StartCoroutine(ExecuteActionQueue());
+        StartCoroutine(currentActionCoroutine);
     }
 
     // Update
@@ -134,11 +139,13 @@ public abstract class Troup : MonoBehaviour
             specialAbilityDelay--;
         } */
 
+
         isSelected = selectionManager.isSelected(this.gameObject);
 
         if (selectionManager.isSelected(this.gameObject))
         {
             SelectionCircle.GetComponent<MeshRenderer>().enabled = true;
+            
             
             if (troupType == TroupType.Ally)
             {
@@ -148,13 +155,13 @@ public abstract class Troup : MonoBehaviour
 
                     string queueText = "";
 
-                    foreach (IAction action in actionQueue)
+                    /* foreach (IAction action in actionQueue)
                     {
                         Debug.Log("Action " + action + " ajoutée à la liste");
                         queueText += action.ToString();
-                    }
+                    } */
 
-                    QueueUI.GetComponent<TextMeshProUGUI>().text = "Action Queue:" + queueText;
+                    // QueueUI.GetComponent<TextMeshProUGUI>().text = "Action Queue:" + queueText;
                 }
                 else
                 {
@@ -307,6 +314,13 @@ public abstract class Troup : MonoBehaviour
             {
                 if (!isAttackingEnnemy)
                 {
+                    agent.isStopped = true;
+                    agent.ResetPath();
+                    // StopAllCoroutines();
+                    StopCoroutine(ExecuteActionQueue());
+                    actionQueue.Enqueue(new Standby());
+                    StartCoroutine(ExecuteActionQueue());
+                    
                     isAttackingEnnemy = true;
                     Debug.Log("Started attacking");
                     currentAttackedTroup = nearestEnnemy;
@@ -317,6 +331,7 @@ public abstract class Troup : MonoBehaviour
             else
             {
                 isAttackingEnnemy = false;
+                agent.isStopped = false;
                 currentAttackedTroup = null;
                 StopCoroutine(Attack(nearestEnnemy));
             }
@@ -324,7 +339,10 @@ public abstract class Troup : MonoBehaviour
         } else
         {
             isFollowingEnnemy = false;
+            agent.isStopped = false;
         }
+
+        AttackBehaviour();
     }
 
     // Selection Coroutines ---------------------------------------------------------------------------------------
@@ -542,6 +560,17 @@ public abstract class Troup : MonoBehaviour
 
     }
 
+    private void OnDrawGizmos()
+    {
+        if (selectionManager != null && selectionManager.isSelected(this.gameObject))
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(transform.position, detectionRange);
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, attackRange);
+        }
+    }
+
     // Attack and ability -----------------------------------------------------------------------------------------
     public virtual Troup FindNearestEnnemy()
     {
@@ -577,6 +606,19 @@ public abstract class Troup : MonoBehaviour
         // Debug.Log("Nearest ennemy is far by : " + dist);
 
         return targ;
+    }
+
+    protected void AttackBehaviour()
+    {
+        Collider[] detectedEnnemies = Physics.OverlapSphere(transform.position, detectionRange, troupMask);
+        foreach(Collider ennemie in detectedEnnemies)
+        {
+            if (ennemie.gameObject.GetComponent<Troup>().troupType == TroupType.Ennemy)
+            {
+                Debug.Log("Collider ennemie : " + ennemie.gameObject);
+            }
+            
+        }
     }
 
     protected abstract IEnumerator Attack(Troup ennemy);
@@ -640,7 +682,7 @@ public abstract class Troup : MonoBehaviour
             actionQueue.Clear();
             agent.isStopped = true;
             agent.ResetPath();
-            StopCoroutine(ExecuteActionQueue());
+            StopCoroutine(currentActionCoroutine);
             Debug.Log("Stopping Troup");
 
             actionQueue.Enqueue(action);
@@ -648,7 +690,7 @@ public abstract class Troup : MonoBehaviour
             Debug.Log("Actions en queue après 2 : " + actionQueue.Count);
 
             Debug.Log("Starting new ExecuteActionQueue Coroutine");
-            StartCoroutine(ExecuteActionQueue());
+            StartCoroutine(currentActionCoroutine);
         }
     }
 
@@ -691,7 +733,7 @@ public abstract class Troup : MonoBehaviour
             navMeshAgent.isStopped = false;
             navMeshAgent.SetDestination(firstPosition);
 
-            // Debug.Log("Distance initiale : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
+            Debug.Log("Distance initiale : ");
 
             while (Vector3.Distance(navMeshAgent.transform.position, firstPosition) >= 1f)
             {
@@ -744,7 +786,7 @@ public abstract class Troup : MonoBehaviour
                 yield return null;
             }
 
-            navMeshAgent.ResetPath();
+            navMeshAgent.isStopped = true;
             IsActionComplete = true;
 
             Debug.Log("Movement complete");
@@ -801,10 +843,27 @@ public abstract class Troup : MonoBehaviour
     protected IEnumerator ExecuteActionQueue()
     {
         Debug.Log("Start Action Queue");
+        bool hasToStop = false;
 
-        while (actionQueue.Count > 0)
+        while (actionQueue.Count > 0 && !hasToStop)
         {
             IAction currentAction = actionQueue.Dequeue();
+
+            // Affichage des actions de la queue
+            if (troupType == TroupType.Ally)
+            {
+                QueueUI.GetComponent<TextMeshProUGUI>().text = "Current action: " + (currentAction.ToString().StartsWith("Troup+") ? currentAction.ToString().Substring("Troup+".Length) : currentAction.ToString());
+
+                string queueText = "";
+
+                foreach (IAction action in actionQueue)
+                {
+                    Debug.Log("Action " + action + " ajoutée à la liste");
+                    queueText += "\n" + (action.ToString().StartsWith("Troup+") ? action.ToString().Substring("Troup+".Length) : action.ToString());
+                }
+                QueueUI.GetComponent<TextMeshProUGUI>().text += "\n Enqueued action: ";
+                QueueUI.GetComponent<TextMeshProUGUI>().text += queueText;
+            }
 
             Debug.Log("Treating action : " + currentAction);
 
@@ -851,6 +910,7 @@ public abstract class Troup : MonoBehaviour
                 }
                 else if (!isPatroling)
                 {
+                    Debug.Log("Ajout du standby");
                     actionQueue.Enqueue(new Standby());
                 }
             }
