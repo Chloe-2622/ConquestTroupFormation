@@ -57,6 +57,10 @@ public class Tombe : MonoBehaviour
     public void SetTroupType(TombeTroupType type)
     {
         tombeTroupType = type;
+        if (tombeTroupType == TombeTroupType.Ennemy)
+        {
+            lifeCircle.color = Color.red;
+        }
     }
 
     public void Revive()
@@ -104,8 +108,6 @@ public class Tombe : MonoBehaviour
 
     public IEnumerator Timer()
     {
-        
-
         while (lifeTimeLeft > 0f)
         {
             // Debug.Log(lifeCircle.transform.position);

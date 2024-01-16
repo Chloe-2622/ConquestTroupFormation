@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     // Instance statique du GameManager
     public static GameManager Instance { get; private set; }
 
-    [Header("Troup Prefabs")]
+    [Header("Prefabs")]
     public GameObject Combattant;
     public GameObject Archer;
     public GameObject Cavalier;
@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     public GameObject Porte_etendard;
     public GameObject Batisseur;
     public GameObject Belier;
+    public GameObject FirstPatrolPointPrefab;
+    public GameObject SecondPatrolPointPrefab;
 
     [Header("Text PopUps")]
     public TextMeshProUGUI TroupSelectionPopUp;
@@ -29,8 +31,11 @@ public class GameManager : MonoBehaviour
 
     [Header("Misc")]
     public SelectionManager selectionManager;
+    public Transform selectionArrow;
     public GameObject tombe;
     public Camera mainCamera;
+    public LayerMask floorMask;
+    public GameObject PatrolingCircles;
 
     private void Awake()
     {
