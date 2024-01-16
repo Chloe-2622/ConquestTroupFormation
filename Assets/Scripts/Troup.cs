@@ -33,6 +33,10 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected GameObject selectionArrow;
     [SerializeField] protected GameObject tombe;
     [SerializeField] protected Transform SelectionCircle;
+    [SerializeField] protected Transform SelectionArrow;
+    [SerializeField] protected GameObject FirstPatrolPoint;
+    [SerializeField] protected GameObject SecondPatrolPoint;
+    [SerializeField] protected GameObject QueueUI;
     [SerializeField] protected NavMeshAgent agent;
 
 
@@ -55,24 +59,33 @@ public abstract class Troup : MonoBehaviour
     }
 
     // Action Queue -----------------------------------------------------------------------------------------------
-    private Queue<IAction> actionQueue = new Queue<IAction>();
+    [SerializeField] private Queue<IAction> actionQueue = new Queue<IAction>();
 
     // Private variables ------------------------------------------------------------------------------------------
     private bool isChosingPlacement;
-    private bool isChosingPatrol;
+    [SerializeField] private bool isChosingPatrol;
     private bool isChosingFollow;
     private bool isFollowingEnnemy;
     private bool isAttackingEnnemy;
     private bool hasSpawnedTombe;
     private float maxHealth;
+    [SerializeField] private bool isPatroling;
+    [SerializeField] private Vector3 FirstPatrolPosCo;
+    [SerializeField] private Vector3 SecondPatrolPosCo;
     private Troup currentAttackedTroup;
 
+    // Awake
     protected virtual void Awake() 
     {
         // Children variable setup
         SelectionCircle = transform.Find("SelectionCircle");
         healthBar = transform.Find("Canvas").Find("Vie").GetComponent<Image>();
-        if (troupType == TroupType.Ally) { selectionArrow = transform.Find("SelectionArrow").gameObject; }
+
+        if (troupType == TroupType.Ally)
+        {
+            flecheUI = transform.Find("Canvas").Find("Fleche").GetComponent<Image>();
+            QueueUI = transform.Find("Canvas").Find("Queue").gameObject;
+        }
 
         // Setup and show Health Bar
         maxHealth = health;
@@ -86,12 +99,15 @@ public abstract class Troup : MonoBehaviour
         Debug.Log("GameManager of " + troupType + " " + unitType + " = " + GameManager.Instance);
         camera1 = GameManager.Instance.mainCamera;
         selectionManager = GameManager.Instance.selectionManager;
+        SelectionArrow = GameManager.Instance.selectionArrow;
         tombe = GameManager.Instance.tombe;
         TroupSelectionPopUp = GameManager.Instance.TroupSelectionPopUp;
         PlaceSelectionPopUp = GameManager.Instance.PlaceSelectionPopUp;
         PatrolSelectionPopUp1 = GameManager.Instance.PatrolSelectionPopUp1;
         PatrolSelectionPopUp2 = GameManager.Instance.PatrolSelectionPopUp2;
         FollowSelectionPopUp = GameManager.Instance.FollowSelectionPopUp;
+        FirstPatrolPoint = Instantiate(GameManager.Instance.FirstPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
+        SecondPatrolPoint = Instantiate(GameManager.Instance.SecondPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
 
         // Ally or Ennemy
         if (troupType == TroupType.Ally)
@@ -109,6 +125,7 @@ public abstract class Troup : MonoBehaviour
         StartCoroutine(ExecuteActionQueue());
     }
 
+    // Update
     protected virtual void Update()
     {
         // Special Ability
@@ -122,6 +139,47 @@ public abstract class Troup : MonoBehaviour
         if (selectionManager.isSelected(this.gameObject))
         {
             SelectionCircle.GetComponent<MeshRenderer>().enabled = true;
+            
+            if (troupType == TroupType.Ally)
+            {
+                if (selectionManager.numberOfSelected() == 1)
+                {
+                    QueueUI.SetActive(true);
+
+                    string queueText = "";
+
+                    foreach (IAction action in actionQueue)
+                    {
+                        Debug.Log("Action " + action + " ajoutée à la liste");
+                        queueText += action.ToString();
+                    }
+
+                    QueueUI.GetComponent<TextMeshProUGUI>().text = "Action Queue:" + queueText;
+                }
+                else
+                {
+                    QueueUI.SetActive(false);
+                }
+            }
+            
+            
+
+            if (!isChosingPatrol)
+            {
+                if (isPatroling)
+                {
+                    // FirstPatrolPos.transform.position = FirstPatrolPosCo;
+                    // SecondPatrolPos.transform.position = SecondPatrolPosCo;
+
+                    FirstPatrolPoint.GetComponent<Renderer>().enabled = true;
+                    SecondPatrolPoint.GetComponent<Renderer>().enabled = true;
+                }
+                else
+                {
+                    FirstPatrolPoint.GetComponent<Renderer>().enabled = false;
+                    SecondPatrolPoint.GetComponent<Renderer>().enabled = false;
+                }
+            }
 
             if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Alpha4))
             {
@@ -141,7 +199,7 @@ public abstract class Troup : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 isChosingPlacement = true;
-                StartCoroutine(PlaceSelection());                
+                StartCoroutine(PlaceSelection());
             }
 
             // Patrol input
@@ -163,14 +221,6 @@ public abstract class Troup : MonoBehaviour
                 AddAction(new Standby());
             }
 
-            if (Input.GetKeyDown(KeyCode.F) && specialAbilityDelay == 0f)
-            {
-                StartCoroutine(SpecialAbility());
-                Debug.Log("Special Ability 1");
-                specialAbilityDelay = specialAbilityRechargeTime;
-                StartCoroutine(SpecialAbilityCountdown());
-            }
-
             if (Input.GetKeyDown(KeyCode.F))
             {
                 if (specialAbilityDelay == 0f)
@@ -189,6 +239,13 @@ public abstract class Troup : MonoBehaviour
         } else
         {
             SelectionCircle.GetComponent<MeshRenderer>().enabled = false;
+            FirstPatrolPoint.GetComponent<Renderer>().enabled = false;
+            SecondPatrolPoint.GetComponent<Renderer>().enabled = false;
+
+            if (troupType == TroupType.Ally)
+            {
+                QueueUI.SetActive(false);
+            }
         }
 
         Troup nearestEnnemy = FindNearestEnnemy();
@@ -280,8 +337,8 @@ public abstract class Troup : MonoBehaviour
 
         while (!hasSelected && isChosingPlacement)
         {
-            // PlaceSelectionPopUp.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
-            // selectionArrow.transform.Find("Model").GetComponent<MeshRenderer>().enabled = true;
+            //PlaceSelectionPopUp.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
+            SelectionArrow.GetComponent<MeshRenderer>().enabled = true;
             // selectionArrow.transform.LookAt(camera1.transform.position);
 
             // flecheUI.enabled = true;
@@ -293,15 +350,16 @@ public abstract class Troup : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
-                // selectionArrow.transform.position = new Vector3(hit.point.x, hit.point.y, hit.point.z);
-                // flecheUI.transform.position = Input.mousePosition;
+                SelectionArrow.transform.position = new Vector3(hit.point.x, hit.point.y + 1, hit.point.z);
+                flecheUI.transform.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y + 15);
 
                 if (Input.GetMouseButton(0))
                 {
                     Debug.Log("Target position clicked : " + hit.point);
                     AddAction(new MoveToPosition(agent, hit.point));
                     hasSelected = true;
-                    selectionArrow.transform.Find("Model").GetComponent<MeshRenderer>().enabled = false;
+                    flecheUI.enabled = false;
+                    SelectionArrow.GetComponent<MeshRenderer>().enabled = false;
                     PlaceSelectionPopUp.enabled = false;
                 }
             }
@@ -341,31 +399,35 @@ public abstract class Troup : MonoBehaviour
             // FollowSelectionPopUp.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
             // Debug.Log("Est enabled : " + PlaceSelectionPopUp.enabled);
 
-            if (Input.GetMouseButton(0))
+            Debug.Log("Unit Selection");
+            Ray ray_1 = camera1.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit_1;
+            Physics.Raycast(ray_1, out hit_1, Mathf.Infinity);
+            float minDistance = 1f;
+            GameObject nearestObject = null;
+            foreach (GameObject selectionableObject in selectionManager.getDictionnary().Keys)
             {
-                Debug.Log("Unit Selection");
-                Ray ray_1 = camera1.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit_1;
-                Physics.Raycast(ray_1, out hit_1, Mathf.Infinity);
-                float minDistance = 1f;
-                GameObject nearestObject = null;
-                foreach (GameObject selectionableObject in selectionManager.getDictionnary().Keys)
+                float distance = Vector3.Distance(hit_1.point, selectionableObject.transform.position);
+                if (selectionableObject.transform.Find("FollowingArrow") != null)
                 {
-                    float distance = Vector3.Distance(hit_1.point, selectionableObject.transform.position);
-                    if (distance < minDistance)
-                    {
-                        minDistance = distance;
-                        nearestObject = selectionableObject;
-                    }
+                    selectionableObject.transform.Find("FollowingArrow").GetComponent<Renderer>().enabled = false;
                 }
-
-                if (nearestObject != null)
+                if (distance < minDistance)
                 {
-                    hasSelected = true;
-                    unitToFollow = nearestObject;
+                    minDistance = distance;
+                    nearestObject = selectionableObject;
+                    nearestObject.transform.Find("FollowingArrow").GetComponent<Renderer>().enabled = true;
                 }
-                
             }
+            
+
+            if (Input.GetMouseButton(0) && nearestObject != null)
+            {
+                hasSelected = true;
+                unitToFollow = nearestObject;
+                nearestObject.transform.Find("FollowingArrow").GetComponent<Renderer>().enabled = false;
+            }
+
 
             yield return null;
         }
@@ -387,23 +449,28 @@ public abstract class Troup : MonoBehaviour
         Vector3 firstPos = new Vector3();
         Vector3 secondPos = new Vector3();
 
+        FirstPatrolPoint.GetComponent<Renderer>().enabled = true;
+
         Debug.Log("Enabling Patrol Selection");
 
         while (!hasSelectedFistPos && isChosingPatrol)
         {
             // PatrolSelectionPopUp1.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
 
+            Ray ray = camera1.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            {
+                Debug.Log("Target position clicked : " + hit.point);
+                firstPos = hit.point;
+                Debug.Log("firstPos : " + firstPos);
+                FirstPatrolPosCo = new Vector3(firstPos.x, firstPos.y + 0.1f, firstPos.z);
+                FirstPatrolPoint.transform.position= new Vector3(firstPos.x, firstPos.y + 0.1f, firstPos.z);
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
-                Ray ray = camera1.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-                {
-                    Debug.Log("Target position clicked : " + hit.point);
-                    firstPos = hit.point;
-                }
-
                 hasSelectedFistPos = true;
                 PatrolSelectionPopUp1.enabled = false;
             }
@@ -411,25 +478,29 @@ public abstract class Troup : MonoBehaviour
             yield return null;
         }
         
-        if (isChosingPatrol) { PatrolSelectionPopUp2.enabled = true; }
-
-        
+        if (isChosingPatrol) 
+        { 
+            PatrolSelectionPopUp2.enabled = true;
+            SecondPatrolPoint.GetComponent<Renderer>().enabled = true;
+        }
 
         while (!hasSelectedSecondPos && isChosingPatrol)
         {
             // PatrolSelectionPopUp2.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 10, Input.mousePosition.z);
 
+            Ray ray = camera1.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            {
+                Debug.Log("Target position clicked : " + hit.point);
+                secondPos = hit.point;
+                SecondPatrolPosCo = new Vector3(secondPos.x, secondPos.y + 0.1f, secondPos.z);
+                SecondPatrolPoint.transform.position = new Vector3(secondPos.x, secondPos.y + 0.1f, secondPos.z);
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
-                Ray ray = camera1.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-                {
-                    Debug.Log("Target position clicked : " + hit.point);
-                    secondPos = hit.point;
-                }
-
                 hasSelectedSecondPos = true;
                 PatrolSelectionPopUp2.enabled = false;
             }
@@ -440,7 +511,8 @@ public abstract class Troup : MonoBehaviour
         
         if (isChosingPatrol) {
             Debug.Log("Starting patroling between " + firstPos + " and " + secondPos);
-            AddAction(new Patrol(agent, firstPos, secondPos)); 
+            AddAction(new Patrol(agent, firstPos, secondPos));
+            isChosingPatrol = false;
         }
     }
 
@@ -736,6 +808,9 @@ public abstract class Troup : MonoBehaviour
 
             Debug.Log("Treating action : " + currentAction);
 
+            isPatroling = false;
+            Debug.Log("isPatroling false");
+
             if (currentAction is MoveToPosition moveToPosition)
             {
                 StartCoroutine(moveToPosition.GoToPosition());
@@ -743,6 +818,8 @@ public abstract class Troup : MonoBehaviour
             if (currentAction is Patrol patrol)
             {
                 StartCoroutine(patrol.StartPatroling());
+                isPatroling = true;
+                Debug.Log("isPatroling true");
             }
             if (currentAction is Standby standby)
             {
@@ -772,7 +849,7 @@ public abstract class Troup : MonoBehaviour
                     actionQueue.Enqueue(new Standby());
                     actionQueue.Enqueue(currentAction);
                 }
-                else
+                else if (!isPatroling)
                 {
                     actionQueue.Enqueue(new Standby());
                 }

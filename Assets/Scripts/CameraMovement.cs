@@ -65,8 +65,27 @@ public class CameraMovement : MonoBehaviour
         // Clamp the y component between 6 and 30
         newPosition.y = Mathf.Clamp(newPosition.y, 6f, 30f);
 
-        // Apply the new position
-        if ((newPosition.y == 6f && zoomVector.y > 0) || (newPosition.y == 30f && zoomVector.y < 0))
+        // Physics.Raycast(transform.position, Vector3.down, 5f);
+
+        if (Physics.Raycast(transform.position, Vector3.down, 5f))
+        {
+            if (zoomVector.y < 0)
+            {
+                transform.position = newPosition;
+            }
+        } else if (newPosition.y == 30f)
+        {
+            if (zoomVector.y > 0)
+            {
+                transform.position = newPosition;
+            }
+        } else
+        {
+            transform.position = newPosition;
+        }
+
+        /*
+         if ((newPosition.y == 6f && zoomVector.y > 0) || (newPosition.y == 30f && zoomVector.y < 0))
         {
             // Scroll is not allowed at the current position, do not update the position
         }
@@ -75,6 +94,8 @@ public class CameraMovement : MonoBehaviour
             // Apply the new position
             transform.position = newPosition;
         }
+        */
+
     }
 
     // Update is called once per frame

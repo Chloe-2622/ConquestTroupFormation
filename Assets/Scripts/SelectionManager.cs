@@ -318,4 +318,15 @@ public class SelectionManager : MonoBehaviour
             dictionary.Remove(key);
         }
     }
+
+    public int numberOfSelected()
+    {
+        int count = 0;
+        foreach (var (unit,selection) in selectionableObjects)
+        {
+            if (selection) { count++; }
+        }
+
+        return count;
+    }
 }
