@@ -9,72 +9,66 @@ public class PauseMenu : MonoBehaviour
 {
     [Header("Pause")]
     [SerializeField] private GameObject pausePanel;
-    [SerializeField] private InputActionReference pause;
+    [SerializeField] private InputActionReference pauseAction;
 
     [SerializeField] private TextMeshProUGUI areneText;
-
-    private bool isInPause = false;
 
     // Start is called before the first frame update
     void Start()
     {
         areneText.text = SceneManager.GetActiveScene().name;
+        resumeGame();
 
-        pausePanel.SetActive(false);
-        isInPause = false;
         if (OptionsManager.Instance.getPreviousScene() == SceneManager.GetActiveScene().name)
         {
             pausePanel.SetActive(true);
-            isInPause = true;
+            pauseGame();
         }
     }
 
     // On s'abonne aux évènements du Event System
     private void OnEnable()
     {
-        pause.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
-        pause.action.started += OnInputStarted; // S'active à la pression initiale des touches
+        pauseAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
+        pauseAction.action.started += OnInputStarted; // S'active à la pression initiale des touches
     }
 
     // On se désabonne aux évènements du Event System
     private void OnDisable()
     {
-        pause.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
-        pause.action.started -= OnInputStarted;
+        pauseAction.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
+        pauseAction.action.started -= OnInputStarted;
     }
 
     public void OnInputStarted(InputAction.CallbackContext context)
     {
-        isInPause = !isInPause;
-        pausePanel.SetActive(isInPause);
+        Debug.Log(GameManager.Instance.isInPause());
+        if (!GameManager.Instance.isInPause())
+        {
+            pauseGame();
+        }
+        else
+        {
+            resumeGame();
+        }
     }
 
-    public void restart()
+    public void pauseGame()
     {
-        isInPause = !isInPause;
-        pausePanel.SetActive(isInPause);
+        pausePanel.SetActive(true);
+        GameManager.Instance.PauseGame();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public void resumeGame()
+    {
+        pausePanel.SetActive(false);
+        GameManager.Instance.ResumeGame();
+    }    
 
     public void goToOptions()
     {
         OptionsManager.Instance.setPreviousScene(SceneManager.GetActiveScene().name);
         SceneManager.LoadScene("Options");
     }
-
 
     public void goToTitleScreen()
     {

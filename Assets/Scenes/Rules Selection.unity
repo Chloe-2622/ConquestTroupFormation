@@ -2486,6 +2486,7 @@ MonoBehaviour:
   playButton: {fileID: 257559755}
   arenaSelection: {fileID: 592863962}
   playerNameInput: {fileID: 1599957911}
+  returnAction: {fileID: -3169318288096097693, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
 --- !u!1 &2030479133
 GameObject:
   m_ObjectHideFlags: 0

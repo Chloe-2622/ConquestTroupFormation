@@ -53,8 +53,6 @@ public class CameraMovement : MonoBehaviour
         Vector2 zoomVector = zoom.action.ReadValue<Vector2>();
         zoomVector.Normalize();
 
-        Debug.Log(zoomVector);
-
         // Adjust the speed of scrolling by multiplying with a factor if needed
         float scrollSpeed = transform.position.y / 10;
 
