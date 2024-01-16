@@ -37,6 +37,8 @@ public class GameManager : MonoBehaviour
     public LayerMask floorMask;
     public GameObject PatrolingCircles;
 
+    private bool pause;
+
     private void Awake()
     {
         // Assurez-vous qu'il n'y a qu'une seule instance du GameManager
@@ -49,5 +51,19 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject); // Détruisez les doublons
         }
+    }
+
+    // Pause
+    public bool isInPause() { return pause; }
+
+    public void PauseGame()
+    {
+        pause = true;
+        Time.timeScale = 0;
+    }
+    public void ResumeGame()
+    {
+        pause = false;
+        Time.timeScale = 1; 
     }
 }

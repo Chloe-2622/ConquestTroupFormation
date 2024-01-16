@@ -95,26 +95,11 @@ public class OptionsManager : MonoBehaviour
         }
         return playerName;
     }
-
-    public void setPlayerName(string name)
-    {
-        playerName = name;
-    }
+    public void setPlayerName(string name) { playerName = name; }
 
     // Previous Scene
-    public string getPreviousScene()
-    {
-        return previousScene;
-    }
-
-    public void setPreviousScene(string previousScene)
-    {
-        this.previousScene = previousScene;
-    }
-
-
-
-
+    public string getPreviousScene() { return previousScene; }
+    public void setPreviousScene(string previousScene) { this.previousScene = previousScene; }
 
 
     public bool isReady()
