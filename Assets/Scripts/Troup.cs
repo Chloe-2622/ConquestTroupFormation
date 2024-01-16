@@ -139,6 +139,7 @@ public abstract class Troup : MonoBehaviour
             specialAbilityDelay--;
         } */
 
+        healthBar.enabled = !GameManager.Instance.isInPause();
 
         isSelected = selectionManager.isSelected(this.gameObject);
 
