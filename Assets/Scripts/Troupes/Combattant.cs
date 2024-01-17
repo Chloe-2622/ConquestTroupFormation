@@ -19,11 +19,11 @@ public class Combattant : Troup
         AttackBehaviour();
     }
 
-    protected override IEnumerator Attack(Troup ennemy)
+    protected override IEnumerator Attack(Troup enemy)
     {
-        while (ennemy != null)
+        while (enemy != null)
         {
-            ennemy.TakeDamage(attackDamage);
+            enemy.TakeDamage(attackDamage);
             yield return new WaitForSeconds(attackRechargeTime);
         }
     }

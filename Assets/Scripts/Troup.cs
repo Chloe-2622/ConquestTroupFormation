@@ -10,7 +10,7 @@ public abstract class Troup : MonoBehaviour
 
     [Header("General stats")]
     [SerializeField] protected TroupType troupType;
-    [SerializeField] protected UnitType unitType;
+    [SerializeField] public UnitType unitType;
     [SerializeField] protected bool isSelected;
     [SerializeField] protected bool hasCrown = false;
     [SerializeField] protected float movingSpeed;
@@ -43,12 +43,8 @@ public abstract class Troup : MonoBehaviour
     protected TextMeshProUGUI FollowSelectionPopUp;
     protected Image healthBar;
 
-    // Allies and Ennemis dictionnary -----------------------------------------------------------------------------
-    public static HashSet<Troup> Allies = new HashSet<Troup>();
-    public static HashSet<Troup> Ennemies = new HashSet<Troup>();
-
     // Troup types ------------------------------------------------------------------------------------------------
-    public enum TroupType { Ally, Ennemy }
+    public enum TroupType { Ally, Enemy }
     public enum UnitType
     {
         Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
@@ -60,8 +56,8 @@ public abstract class Troup : MonoBehaviour
     // Private variables ------------------------------------------------------------------------------------------
     [Header("Debug Variables")]
     [SerializeField] private bool isChosingPatrol;
-    [SerializeField] private bool isFollowingEnnemy;
-    [SerializeField] private bool isAttackingEnnemy;
+    [SerializeField] private bool isFollowingEnemy;
+    [SerializeField] private bool isAttackingEnemy;
     [SerializeField] private bool isPatroling;
     [SerializeField] private GameObject currentAttackedTroup;
     [SerializeField] private GameObject currentFollowedTroup;
@@ -75,7 +71,7 @@ public abstract class Troup : MonoBehaviour
     private IEnumerator currentActionCoroutine;
     private IEnumerator attackCoroutine;
 
-    // TODO : Capa spécial Combattant
+    // TODO : Capa spï¿½cial Combattant
 
 
     // Awake
@@ -115,15 +111,15 @@ public abstract class Troup : MonoBehaviour
         SelectionParticleCircle = Instantiate(GameManager.Instance.SelectionParticleCirclePrefab, GameManager.Instance.SelectionParticleCircles.transform);
         troupMask = GameManager.Instance.troupMask;
 
-        // Ally or Ennemy
+        // Ally or Enemy
         if (troupType == TroupType.Ally)
         {
-            Allies.Add(this);
+            GameManager.Instance.addAlly(this);
             selectionManager.completeDictionnary(transform.gameObject);
         }
-        if (troupType == TroupType.Ennemy)
+        if (troupType == TroupType.Enemy)
         {
-            Ennemies.Add(this);
+            GameManager.Instance.addEnemy(this);
         }
 
         // Start Action Queue
@@ -137,8 +133,8 @@ public abstract class Troup : MonoBehaviour
     {
         if (isFollowingOrders)
         {
-            isFollowingEnnemy = false;
-            isAttackingEnnemy = false;
+            isFollowingEnemy = false;
+            isAttackingEnemy = false;
         }
         
         SelectedBehaviour();
@@ -453,9 +449,9 @@ public abstract class Troup : MonoBehaviour
         float t = 0f;
         while (t < 1f && healthBar.fillAmount != targetFillAmount)
         {
-            t += Time.deltaTime / 0.5f; // 0.5f est la durée de la transition en secondes, ajustez selon vos besoins
+            t += Time.deltaTime / 0.5f; // 0.5f est la durï¿½e de la transition en secondes, ajustez selon vos besoins
             healthBar.fillAmount = Mathf.Lerp(healthBar.fillAmount, targetFillAmount, t);
-            Debug.Log("Je passe le fillAmount à : " + healthBar.fillAmount);
+            Debug.Log("Je passe le fillAmount ï¿½ : " + healthBar.fillAmount);
             yield return null;
         }
 
@@ -504,57 +500,59 @@ public abstract class Troup : MonoBehaviour
     protected void AttackBehaviour()
     {
         
-        // Find all ennemies in detection range
-        HashSet<GameObject> detectedEnnemies = new HashSet<GameObject>();
+        // Find all enemies in detection range
+        HashSet<GameObject> detectedEnemies = new HashSet<GameObject>();
         if (troupType == TroupType.Ally)
         {
-            foreach(Troup ennemy in Ennemies)
+            HashSet<Troup> enemies = GameManager.Instance.getEnemies();
+            foreach (Troup enemie in enemies)
             {
-                if (Vector3.Distance(transform.position, ennemy.transform.position) <= detectionRange)
+                if (Vector3.Distance(transform.position, enemie.transform.position) <= detectionRange)
                 {
-                    detectedEnnemies.Add(ennemy.gameObject);
+                    detectedEnemies.Add(enemie.gameObject);
                 }
             }
         } else
         {
-            foreach (Troup ally in Allies)
+            HashSet<Troup> allies = GameManager.Instance.getAllies();
+            foreach (Troup ally in allies)
             {
                 if (Vector3.Distance(transform.position, ally.transform.position) <= detectionRange)
                 {
-                    detectedEnnemies.Add(ally.gameObject);
+                    detectedEnemies.Add(ally.gameObject);
                 }
             }
         }
 
 
-        // Find the closest ennemy
+        // Find the closest enemy
         float closestDistance = Mathf.Infinity;
-        GameObject closestEnnemy = null;
+        GameObject closestEnemy = null;
 
-        foreach (GameObject ennemy in detectedEnnemies)
+        foreach (GameObject enemy in detectedEnemies)
         {
-            float distance = Vector3.Distance(transform.position, ennemy.transform.position);
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
 
             if (distance <= closestDistance)
             {
                 closestDistance = distance;
-                closestEnnemy = ennemy;
+                closestEnemy = enemy;
             }
         }
 
-        // Follow closestEnnemy until it's in range
+        // Follow closestEnemy until it's in range
 
-        if (closestEnnemy != null && !isFollowingEnnemy && !isFollowingOrders)
+        if (closestEnemy != null && !isFollowingEnemy && !isFollowingOrders)
         {
-            isFollowingEnnemy = true;
-            currentFollowedTroup = closestEnnemy;
+            isFollowingEnemy = true;
+            currentFollowedTroup = closestEnemy;
             actionQueue.Clear();
             agent.isStopped = true;
             agent.ResetPath();
 
-            Debug.Log("Getting closer to ennemy : " + closestEnnemy);
+            Debug.Log("Getting closer to enemy : " + closestEnemy);
             StopCoroutine(currentActionCoroutine);
-            actionQueue.Enqueue(new MoveToEnnemy(agent, closestEnnemy, attackRange));
+            actionQueue.Enqueue(new MoveToEnemy(agent, closestEnemy, attackRange));
             StartCoroutine(currentActionCoroutine);
 
             
@@ -565,59 +563,61 @@ public abstract class Troup : MonoBehaviour
         }
         if (currentFollowedTroup == null)
         {
-            isFollowingEnnemy = false;
+            isFollowingEnemy = false;
         }
 
         
         
 
-        HashSet<GameObject> inRangeEnnemies = new HashSet<GameObject>();
+        HashSet<GameObject> inRangeEnemies = new HashSet<GameObject>();
         if (troupType == TroupType.Ally)
         {
-            foreach (Troup ennemy in Ennemies)
+            HashSet<Troup> enemies = GameManager.Instance.getEnemies();
+            foreach (var enemy in enemies)
             {
-                if (Vector3.Distance(transform.position, ennemy.transform.position) <= attackRange)
+                if (Vector3.Distance(transform.position, enemy.transform.position) <= attackRange)
                 {
-                    inRangeEnnemies.Add(ennemy.gameObject);
+                    inRangeEnemies.Add(enemy.gameObject);
                 }
             }
         }
         else
         {
-            foreach (Troup ally in Allies)
+            HashSet<Troup>  allies = GameManager.Instance.getAllies();
+            foreach (var ally in allies)
             {
                 if (Vector3.Distance(transform.position, ally.transform.position) <= attackRange)
                 {
-                    inRangeEnnemies.Add(ally.gameObject);
+                    inRangeEnemies.Add(ally.gameObject);
                 }
             }
         }
 
         float closestDistanceInRange = Mathf.Infinity;
-        GameObject closestEnnemyInRange = null;
+        GameObject closestEnemyInRange = null;
 
-        foreach (GameObject ennemy in inRangeEnnemies)
+        foreach (GameObject enemy in inRangeEnemies)
         {
-            float distance = Vector3.Distance(transform.position, ennemy.transform.position);
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
 
             if (distance <= closestDistanceInRange)
             {
                 closestDistanceInRange = distance;
-                closestEnnemyInRange = ennemy;
+                closestEnemyInRange = enemy;
             }
         }
 
         if (currentAttackedTroup == null && !isFollowingOrders)
         {
-            isAttackingEnnemy = false;
+            isAttackingEnemy = false;
             if (attackCoroutine != null)
             {
                 StopCoroutine(attackCoroutine);
             }
             
-            if (closestEnnemyInRange != null) 
+            if (closestEnemyInRange != null) 
             {
-                currentAttackedTroup = closestEnnemyInRange;
+                currentAttackedTroup = closestEnemyInRange;
 
                 actionQueue.Clear();
                 agent.isStopped = true;
@@ -630,30 +630,30 @@ public abstract class Troup : MonoBehaviour
 
                 attackCoroutine = Attack(currentAttackedTroup.GetComponent<Troup>());
                 StartCoroutine(attackCoroutine);
-                isAttackingEnnemy = true;
+                isAttackingEnemy = true;
             }
         }
 
-        if (troupType == TroupType.Ennemy && currentAttackedTroup == null && currentFollowedTroup != null)
+        if (troupType == TroupType.Enemy && currentAttackedTroup == null && currentFollowedTroup != null)
         {
-            isFollowingEnnemy = false;
+            isFollowingEnemy = false;
         }
 
-        /* if (currentAttackedTroup == null && closestEnnemyInRange != null && !isAttackingEnnemy)
+        /* if (currentAttackedTroup == null && closestEnemyInRange != null && !isAttackingEnemy)
         {
-            currentAttackedTroup = closestEnnemyInRange;
+            currentAttackedTroup = closestEemyInRange;
             StartCoroutine(Attack(currentAttackedTroup.GetComponent<Troup>()));
-            isAttackingEnnemy = true;
+            isAttackingEnemy = true;
         } */
-        if (closestEnnemyInRange == null)
+        if (closestEnemyInRange == null)
         {
             currentAttackedTroup = null;
-            isAttackingEnnemy = false;
+            isAttackingEnemy = false;
         }
 
     }
 
-    protected abstract IEnumerator Attack(Troup ennemy);
+    protected abstract IEnumerator Attack(Troup enemy);
 
     protected abstract IEnumerator SpecialAbility();
 
@@ -678,11 +678,11 @@ public abstract class Troup : MonoBehaviour
 
         if (beforeHealth * newHealth <= 0 && !hasSpawnedTombe)
         {
-            if (troupType == TroupType.Ally) { Allies.Remove(this); }
-            if (troupType == TroupType.Ennemy) { Ennemies.Remove(this); }
+            if (troupType == TroupType.Ally) { GameManager.Instance.removeAlly(this); }
+            if (troupType == TroupType.Enemy) { GameManager.Instance.removeEnemy(this);  }
             GameObject tombeMort = Instantiate(tombe, transform.position, transform.rotation, null);
             hasSpawnedTombe = true;
-            // if (troupType == TroupType.Ennemy) { tombeMort.transform.position += Vector3.up * 3; }
+            // if (troupType == TroupType.Enemy) { tombeMort.transform.position += Vector3.up * 3; }
             tombeMort.GetComponent<Tombe>().SetUnitType((Tombe.TombeUnitType)unitType);
             tombeMort.GetComponent<Tombe>().SetTroupType((Tombe.TombeTroupType)troupType);
             Destroy(SelectionParticleCircle);
@@ -722,7 +722,7 @@ public abstract class Troup : MonoBehaviour
 
             actionQueue.Enqueue(action);
 
-            Debug.Log("Actions en queue après 2 : " + actionQueue.Count);
+            Debug.Log("Actions en queue aprï¿½s 2 : " + actionQueue.Count);
 
             Debug.Log("Starting new ExecuteActionQueue Coroutine");
             StartCoroutine(currentActionCoroutine);
@@ -874,14 +874,14 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
-    protected class MoveToEnnemy : IAction
+    protected class MoveToEnemy : IAction
     {
         public bool IsActionComplete { get; set; }
         public GameObject unitToFollow;
         private NavMeshAgent navMeshAgent;
         private float range;
 
-        public MoveToEnnemy(NavMeshAgent agent, GameObject unit, float attackRange)
+        public MoveToEnemy(NavMeshAgent agent, GameObject unit, float attackRange)
         {
             navMeshAgent = agent;
             unitToFollow = unit;
@@ -909,7 +909,7 @@ public abstract class Troup : MonoBehaviour
                 // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
                 navMeshAgent.isStopped = false;
                 if (unitToFollow != null) { targetPosition = unitToFollow.transform.position; }
-                // Debug.Log("Going to ennemy " + targetPosition);
+                // Debug.Log("Going to enemy " + targetPosition);
                 navMeshAgent.SetDestination(targetPosition);
 
                 yield return null;
@@ -945,7 +945,7 @@ public abstract class Troup : MonoBehaviour
 
                 foreach (IAction action in actionQueue)
                 {
-                    Debug.Log("Action " + action + " ajoutée à la liste");
+                    Debug.Log("Action " + action + " ajoutï¿½e ï¿½ la liste");
                     queueText += "\n" + (action.ToString().StartsWith("Troup+") ? action.ToString().Substring("Troup+".Length) : action.ToString());
                 }
                 QueueUI.GetComponent<TextMeshProUGUI>().text += "\n Enqueued action: ";
@@ -977,9 +977,9 @@ public abstract class Troup : MonoBehaviour
                 isFollowingOrders = true;
                 StartCoroutine(followUnit.StartFollowing());
             }
-            if (currentAction is MoveToEnnemy moveToEnnemy)
+            if (currentAction is MoveToEnemy moveToEnemy)
             {
-                StartCoroutine(moveToEnnemy.StartFollowing());
+                StartCoroutine(moveToEnemy.StartFollowing());
             }
 
             yield return new WaitUntil(() => currentAction.IsActionComplete);
@@ -1010,8 +1010,8 @@ public abstract class Troup : MonoBehaviour
 
             
 
-            Debug.Log("Action terminée");
-            Debug.Log("Actions en queue après : " + actionQueue.Count);
+            Debug.Log("Action terminï¿½e");
+            Debug.Log("Actions en queue aprï¿½s : " + actionQueue.Count);
 
         }
 

@@ -19,11 +19,11 @@ public class Guerisseur : Troup
         base.Update();
     }
 
-    protected override IEnumerator Attack(Troup ennemy)
+    protected override IEnumerator Attack(Troup enemy)
     {
-        while (ennemy != null && Vector3.Distance(transform.position, ennemy.transform.position) <= attackRange)
+        while (enemy != null && Vector3.Distance(transform.position, enemy.transform.position) <= attackRange)
         {
-            ennemy.TakeDamage(attackDamage);
+            enemy.TakeDamage(attackDamage);
             yield return new WaitForSeconds(attackRechargeTime);
         }
     }

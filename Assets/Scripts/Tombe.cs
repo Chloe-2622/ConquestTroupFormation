@@ -16,7 +16,7 @@ public class Tombe : MonoBehaviour
     [SerializeField] private Camera camera1;
 
 
-    public enum TombeTroupType { Ally, Ennemy }
+    public enum TombeTroupType { Ally, Enemy }
 
     public enum TombeUnitType
     {
@@ -57,7 +57,7 @@ public class Tombe : MonoBehaviour
     public void SetTroupType(TombeTroupType type)
     {
         tombeTroupType = type;
-        if (tombeTroupType == TombeTroupType.Ennemy)
+        if (tombeTroupType == TombeTroupType.Enemy)
         {
             lifeCircle.color = Color.red;
         }

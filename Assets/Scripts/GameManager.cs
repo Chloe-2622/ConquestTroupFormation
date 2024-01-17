@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
@@ -42,8 +43,16 @@ public class GameManager : MonoBehaviour
 
     private bool pause;
 
+    // Allies and Enemis dictionnary -----------------------------------------------------------------------------
+    private static HashSet<Troup> Allies = new HashSet<Troup>();
+    private static HashSet<Troup> Enemies = new HashSet<Troup>();
+    public UnityEvent updateTroupCounter;
+
     private void Awake()
     {
+        if (updateTroupCounter == null)
+            updateTroupCounter = new UnityEvent();
+
         // Assurez-vous qu'il n'y a qu'une seule instance du GameManager
         if (Instance == null)
         {
@@ -69,4 +78,16 @@ public class GameManager : MonoBehaviour
         pause = false;
         Time.timeScale = 1; 
     }
+
+    // Allies
+    public void addAlly(Troup troup) { Allies.Add(troup); }
+    public void removeAlly(Troup troup) { Allies.Remove(troup); updateTroupCounter.Invoke();  }
+    public HashSet<Troup> getAllies() { return Allies; }
+    public int alliesCount() { return Allies.Count; }
+
+    // Enemies
+    public void addEnemy(Troup troup) { Enemies.Add(troup); }
+    public void removeEnemy(Troup troup) { Enemies.Remove(troup); updateTroupCounter.Invoke(); }
+    public HashSet<Troup> getEnemies() { return Enemies; }
+    public int enemiesCount() { return Enemies.Count; }
 }
