@@ -15,15 +15,15 @@ public class Combattant : Troup
     protected override void Update()
     {
         base.Update();
+
+        AttackBehaviour();
     }
 
-    protected override IEnumerator Attack(Troup ennemy)
+    protected override IEnumerator Attack(Troup enemy)
     {
-        while (ennemy != null && Vector3.Distance(transform.position, ennemy.transform.position) <= attackRange)
+        while (enemy != null)
         {
-            ennemy.TakeDamage(attackDamage);
-            if (ennemy.getHealth() == 0) { Debug.Log("Ennemie tué"); }
-            Debug.Log("Attacking ennemy with " + ennemy.getHealth());
+            enemy.TakeDamage(attackDamage);
             yield return new WaitForSeconds(attackRechargeTime);
         }
     }

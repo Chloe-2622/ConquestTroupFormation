@@ -36,6 +36,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected Transform SelectionArrow;
     [SerializeField] protected GameObject FirstPatrolPoint;
     [SerializeField] protected GameObject SecondPatrolPoint;
+    [SerializeField] protected GameObject SelectionParticleCircle;
     [SerializeField] protected GameObject QueueUI;
     [SerializeField] protected NavMeshAgent agent;
     [SerializeField] protected LayerMask troupMask;
@@ -49,7 +50,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected TextMeshProUGUI FollowSelectionPopUp;
 
     // Troup types ------------------------------------------------------------------------------------------------
-    public enum TroupType { Ally, Ennemy }
+    public enum TroupType { Ally, Enemy }
     public enum UnitType
     {
         Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
@@ -62,16 +63,23 @@ public abstract class Troup : MonoBehaviour
     private bool isChosingPlacement;
     [SerializeField] private bool isChosingPatrol;
     private bool isChosingFollow;
-    private bool isFollowingEnnemy;
-    private bool isAttackingEnnemy;
+    [SerializeField] private bool isFollowingEnemy;
+    [SerializeField] private bool isAttackingEnemy;
     private bool hasSpawnedTombe;
     private float maxHealth;
     [SerializeField] private bool isPatroling;
-    [SerializeField] private Vector3 FirstPatrolPosCo;
-    [SerializeField] private Vector3 SecondPatrolPosCo;
-    private Troup currentAttackedTroup;
+    private Vector3 FirstPatrolPosCo;
+    private Vector3 SecondPatrolPosCo;
+    [SerializeField] private GameObject currentAttackedTroup;
+    [SerializeField] private GameObject currentFollowedTroup;
     private bool enqueuingNewAction;
+    private bool isPlayingCircleAnim;
     private IEnumerator currentActionCoroutine;
+    private IEnumerator attackCoroutine;
+
+    // TODO : Cleanup variables + Utiliser le GameManager et le Awake pour ne pas avoir de Serialized Field à modifier à la mano
+    // TODO : Capa spécial Combattant
+
 
     // Awake
     protected virtual void Awake() 
@@ -107,15 +115,16 @@ public abstract class Troup : MonoBehaviour
         FollowSelectionPopUp = GameManager.Instance.FollowSelectionPopUp;
         FirstPatrolPoint = Instantiate(GameManager.Instance.FirstPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
         SecondPatrolPoint = Instantiate(GameManager.Instance.SecondPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
+        SelectionParticleCircle = Instantiate(GameManager.Instance.SelectionParticleCirclePrefab, GameManager.Instance.SelectionParticleCircles.transform);
         troupMask = GameManager.Instance.troupMask;
 
-        // Ally or Ennemy
+        // Ally or Enemy
         if (troupType == TroupType.Ally)
         {
             GameManager.Instance.addAlly(this);
             selectionManager.completeDictionnary(transform.gameObject);
         }
-        if (troupType == TroupType.Ennemy)
+        if (troupType == TroupType.Enemy)
         {
             GameManager.Instance.addEnemy(this);
         }
@@ -129,44 +138,42 @@ public abstract class Troup : MonoBehaviour
     // Update
     protected virtual void Update()
     {
-        // Special Ability
-        /* if (specialAbilityDelay > 0)
-        {
-            specialAbilityDelay--;
-        } */
+        SelectedBehaviour();
 
-        healthBar.enabled = !GameManager.Instance.isInPause();
+        HealthBarControl();
+    }
 
+    // SelectedBehaviour
+    protected virtual void SelectedBehaviour()
+    {
         isSelected = selectionManager.isSelected(this.gameObject);
 
         if (selectionManager.isSelected(this.gameObject))
         {
-            SelectionCircle.GetComponent<MeshRenderer>().enabled = true;
-            
-            
+            // SelectionCircle.GetComponent<MeshRenderer>().enabled = true;
+            SelectionParticleCircle.SetActive(true);
+            if (!isPlayingCircleAnim)
+            {
+                SelectionParticleCircle.GetComponent<ParticleSystem>().Play();
+                isPlayingCircleAnim = true;
+            }
+
+            SelectionParticleCircle.transform.position = new Vector3(transform.position.x, transform.position.y + 0.3f, transform.position.z);
+
+
             if (troupType == TroupType.Ally)
             {
                 if (selectionManager.numberOfSelected() == 1)
                 {
                     QueueUI.SetActive(true);
-
-                    string queueText = "";
-
-                    /* foreach (IAction action in actionQueue)
-                    {
-                        Debug.Log("Action " + action + " ajoutée à la liste");
-                        queueText += action.ToString();
-                    } */
-
-                    // QueueUI.GetComponent<TextMeshProUGUI>().text = "Action Queue:" + queueText;
                 }
                 else
                 {
                     QueueUI.SetActive(false);
                 }
             }
-            
-            
+
+
 
             if (!isChosingPatrol)
             {
@@ -240,106 +247,21 @@ public abstract class Troup : MonoBehaviour
                 }
             }
 
-        } else
+        }
+        else
         {
             SelectionCircle.GetComponent<MeshRenderer>().enabled = false;
             FirstPatrolPoint.GetComponent<Renderer>().enabled = false;
             SecondPatrolPoint.GetComponent<Renderer>().enabled = false;
+            SelectionParticleCircle.SetActive(false);
+            SelectionParticleCircle.GetComponent<ParticleSystem>().Stop();
+            isPlayingCircleAnim = false;
 
             if (troupType == TroupType.Ally)
             {
                 QueueUI.SetActive(false);
             }
         }
-
-        Troup nearestEnnemy = FindNearestEnnemy();
-
-        
-        
-        
-
-        // Health Bar control
-
-        float normalizedHealth = health / maxHealth;
-
-        // healthBar.fillAmount = normalizedHealth;
-        Vector3 healthBarPosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + agent.height, transform.position.z));
-        healthBar.transform.position = new Vector3(healthBarPosition.x, healthBarPosition.y, healthBarPosition.z);
-
-        if (normalizedHealth >= .75)
-        {
-            healthBar.color = Color.green;
-        }
-        if (normalizedHealth >= .5 && normalizedHealth <= .75)
-        {
-            healthBar.color = Color.yellow;
-        }
-        if (normalizedHealth >= .25 && normalizedHealth <= .5)
-        {
-            healthBar.color = new Color(1.0f, 0.5f, 0.0f);
-        }
-        if (normalizedHealth <= .25)
-        {
-            healthBar.color = Color.red;
-        }
-
-        if (currentAttackedTroup == null)
-        {
-            isAttackingEnnemy = false;
-        }
-
-        // Find Nearby ennemy and attack them if in attack range distance
-        if (nearestEnnemy != null)
-        {
-            
-
-            if (!isFollowingEnnemy)
-            {
-                isFollowingEnnemy = true;
-                actionQueue.Clear();
-                agent.isStopped = true;
-                agent.ResetPath();
-                // StopAllCoroutines();
-                StopCoroutine(ExecuteActionQueue());
-
-                actionQueue.Enqueue(new FollowUnit(agent, nearestEnnemy.gameObject));
-
-                StartCoroutine(ExecuteActionQueue());
-            }
-
-            if (Vector3.Distance(transform.position, nearestEnnemy.transform.position) <= attackRange)
-            {
-                if (!isAttackingEnnemy)
-                {
-                    agent.isStopped = true;
-                    agent.ResetPath();
-                    // StopAllCoroutines();
-                    StopCoroutine(ExecuteActionQueue());
-                    actionQueue.Enqueue(new Standby());
-                    StartCoroutine(ExecuteActionQueue());
-                    
-                    isAttackingEnnemy = true;
-                    Debug.Log("Started attacking");
-                    currentAttackedTroup = nearestEnnemy;
-                    StartCoroutine(Attack(nearestEnnemy));
-                }
-
-            }
-            else
-            {
-                isAttackingEnnemy = false;
-                agent.isStopped = false;
-                currentAttackedTroup = null;
-                StopCoroutine(Attack(nearestEnnemy));
-            }
-
-        } else
-        {
-            isFollowingEnnemy = false;
-            agent.isStopped = false;
-        }
-
-        AttackBehaviour();
     }
 
     // Selection Coroutines ---------------------------------------------------------------------------------------
@@ -547,14 +469,31 @@ public abstract class Troup : MonoBehaviour
         healthBar.fillAmount = targetFillAmount;
     }
 
-    public float getHealth()
+    protected void HealthBarControl()
     {
-        return health;
-    }
+        // Health Bar control
+        float normalizedHealth = health / maxHealth;
+        healthBar.enabled = !GameManager.Instance.isInPause();
 
-    protected void showArrows()
-    {
+        Vector3 healthBarPosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + agent.height, transform.position.z));
+        healthBar.transform.position = new Vector3(healthBarPosition.x, healthBarPosition.y, healthBarPosition.z);
 
+        if (normalizedHealth >= .75)
+        {
+            healthBar.color = Color.green;
+        }
+        if (normalizedHealth >= .5 && normalizedHealth <= .75)
+        {
+            healthBar.color = Color.yellow;
+        }
+        if (normalizedHealth >= .25 && normalizedHealth <= .5)
+        {
+            healthBar.color = new Color(1.0f, 0.5f, 0.0f);
+        }
+        if (normalizedHealth <= .25)
+        {
+            healthBar.color = Color.red;
+        }
     }
 
     private void OnDrawGizmos()
@@ -569,58 +508,163 @@ public abstract class Troup : MonoBehaviour
     }
 
     // Attack and ability -----------------------------------------------------------------------------------------
-    public virtual Troup FindNearestEnnemy()
+    protected void AttackBehaviour()
     {
-        Vector3 pos = transform.position;
-        float dist = detectionRange;
-        Troup targ = null;
-
+        
+        // Find all enemies in detection range
+        HashSet<GameObject> detectedEnemies = new HashSet<GameObject>();
         if (troupType == TroupType.Ally)
         {
             HashSet<Troup> enemies = GameManager.Instance.getEnemies();
-            foreach (var ennemy in enemies)
+            foreach (Troup enemie in enemies)
             {
-                var d = Vector3.Distance(pos, ennemy.transform.position); // (pos - ennemy.transform.position).sqrMagnitude;
-                if (d < dist)
+                if (Vector3.Distance(transform.position, enemie.transform.position) <= detectionRange)
                 {
-                    targ = ennemy;
-                    dist = d;
+                    detectedEnemies.Add(enemie.gameObject);
+                }
+            }
+        } else
+        {
+            HashSet<Troup> allies = GameManager.Instance.getAllies();
+            foreach (Troup ally in allies)
+            {
+                if (Vector3.Distance(transform.position, ally.transform.position) <= detectionRange)
+                {
+                    detectedEnemies.Add(ally.gameObject);
                 }
             }
         }
-        if (troupType == TroupType.Ennemy)
+
+
+        // Find the closest enemy
+        float closestDistance = Mathf.Infinity;
+        GameObject closestEnemy = null;
+
+        foreach (GameObject enemy in detectedEnemies)
+        {
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+
+            if (distance <= closestDistance)
+            {
+                closestDistance = distance;
+                closestEnemy = enemy;
+            }
+        }
+
+        // Follow closestEnemy until it's in range
+
+        if (closestEnemy != null && !isFollowingEnemy)
+        {
+            isFollowingEnemy = true;
+            currentFollowedTroup = closestEnemy;
+            actionQueue.Clear();
+            agent.isStopped = true;
+            agent.ResetPath();
+
+            Debug.Log("Getting closer to enemy : " + closestEnemy);
+            StopCoroutine(currentActionCoroutine);
+            actionQueue.Enqueue(new MoveToEnemy(agent, closestEnemy, attackRange));
+            StartCoroutine(currentActionCoroutine);
+
+            
+        }
+        if (currentFollowedTroup != null && Vector3.Distance(transform.position, currentFollowedTroup.transform.position) >= detectionRange)
+        {
+            currentFollowedTroup = null;
+        }
+        if (currentFollowedTroup == null)
+        {
+            isFollowingEnemy = false;
+        }
+
+        
+        
+
+        HashSet<GameObject> inRangeEnemies = new HashSet<GameObject>();
+        if (troupType == TroupType.Ally)
+        {
+            HashSet<Troup> enemies = GameManager.Instance.getEnemies();
+            foreach (var enemy in enemies)
+            {
+                if (Vector3.Distance(transform.position, enemy.transform.position) <= attackRange)
+                {
+                    inRangeEnemies.Add(enemy.gameObject);
+                }
+            }
+        }
+        else
         {
             HashSet<Troup>  allies = GameManager.Instance.getAllies();
             foreach (var ally in allies)
             {
-                var d = Vector3.Distance(pos, ally.transform.position); //  (pos - ally.transform.position).sqrMagnitude;
-                if (d < dist)
+                if (Vector3.Distance(transform.position, ally.transform.position) <= attackRange)
                 {
-                    targ = ally;
-                    dist = d;
+                    inRangeEnemies.Add(ally.gameObject);
                 }
             }
         }
 
-        // Debug.Log("Nearest ennemy is far by : " + dist);
+        float closestDistanceInRange = Mathf.Infinity;
+        GameObject closestEnemyInRange = null;
 
-        return targ;
-    }
-
-    protected void AttackBehaviour()
-    {
-        Collider[] detectedEnnemies = Physics.OverlapSphere(transform.position, detectionRange, troupMask);
-        foreach(Collider ennemie in detectedEnnemies)
+        foreach (GameObject enemy in inRangeEnemies)
         {
-            if (ennemie.gameObject.GetComponent<Troup>().troupType == TroupType.Ennemy)
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+
+            if (distance <= closestDistanceInRange)
             {
-                Debug.Log("Collider ennemie : " + ennemie.gameObject);
+                closestDistanceInRange = distance;
+                closestEnemyInRange = enemy;
+            }
+        }
+
+        if (currentAttackedTroup == null)
+        {
+            isAttackingEnemy = false;
+            if (attackCoroutine != null)
+            {
+                StopCoroutine(attackCoroutine);
             }
             
+            if (closestEnemyInRange != null) 
+            {
+                currentAttackedTroup = closestEnemyInRange;
+
+                actionQueue.Clear();
+                agent.isStopped = true;
+                agent.ResetPath();
+                Debug.Log("Stopping path");
+
+                StopCoroutine(currentActionCoroutine);
+                actionQueue.Enqueue(new Standby());
+                StartCoroutine(currentActionCoroutine);
+
+                attackCoroutine = Attack(currentAttackedTroup.GetComponent<Troup>());
+                StartCoroutine(attackCoroutine);
+                isAttackingEnemy = true;
+            }
         }
+
+        if (troupType == TroupType.Enemy && currentAttackedTroup == null && currentFollowedTroup != null)
+        {
+            isFollowingEnemy = false;
+        }
+
+        /* if (currentAttackedTroup == null && closestEnemyInRange != null && !isAttackingEnemy)
+        {
+            currentAttackedTroup = closestEemyInRange;
+            StartCoroutine(Attack(currentAttackedTroup.GetComponent<Troup>()));
+            isAttackingEnemy = true;
+        } */
+        if (closestEnemyInRange == null)
+        {
+            currentAttackedTroup = null;
+            isAttackingEnemy = false;
+        }
+
     }
 
-    protected abstract IEnumerator Attack(Troup ennemy);
+    protected abstract IEnumerator Attack(Troup enemy);
 
     protected abstract IEnumerator SpecialAbility();
 
@@ -646,12 +690,15 @@ public abstract class Troup : MonoBehaviour
         if (beforeHealth * newHealth <= 0 && !hasSpawnedTombe)
         {
             if (troupType == TroupType.Ally) { GameManager.Instance.removeAlly(this); }
-            if (troupType == TroupType.Ennemy) { GameManager.Instance.removeEnemy(this);  }
+            if (troupType == TroupType.Enemy) { GameManager.Instance.removeEnemy(this);  }
             GameObject tombeMort = Instantiate(tombe, transform.position, transform.rotation, null);
             hasSpawnedTombe = true;
-            // if (troupType == TroupType.Ennemy) { tombeMort.transform.position += Vector3.up * 3; }
+            // if (troupType == TroupType.Enemy) { tombeMort.transform.position += Vector3.up * 3; }
             tombeMort.GetComponent<Tombe>().SetUnitType((Tombe.TombeUnitType)unitType);
             tombeMort.GetComponent<Tombe>().SetTroupType((Tombe.TombeTroupType)troupType);
+            Destroy(SelectionParticleCircle);
+            Destroy(FirstPatrolPoint);
+            Destroy(SecondPatrolPoint);
             selectionManager.removeObject(gameObject);
             Destroy(gameObject);
         } else
@@ -825,13 +872,63 @@ public abstract class Troup : MonoBehaviour
                 // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
                 navMeshAgent.isStopped = false;
                 if (unitToFollow != null) { targetPosition = unitToFollow.transform.position; }
-                
+                // Debug.Log("Going to " + targetPosition);
                 navMeshAgent.SetDestination(targetPosition);
 
                 yield return null;
             }
 
             navMeshAgent.ResetPath();
+            IsActionComplete = true;
+
+            Debug.Log("Movement complete");
+        }
+    }
+
+    protected class MoveToEnemy : IAction
+    {
+        public bool IsActionComplete { get; set; }
+        public GameObject unitToFollow;
+        private NavMeshAgent navMeshAgent;
+        private float range;
+
+        public MoveToEnemy(NavMeshAgent agent, GameObject unit, float attackRange)
+        {
+            navMeshAgent = agent;
+            unitToFollow = unit;
+            range = attackRange;
+        }
+
+        public void Execute()
+        {
+            Debug.Log("Moving to Unit : " + unitToFollow);
+        }
+
+        public IEnumerator StartFollowing()
+        {
+            Vector3 targetPosition = new Vector3();
+            if (unitToFollow != null) { targetPosition = unitToFollow.transform.position; }
+
+            // if (unitToFollow != null)
+
+            Debug.Log("Following unit at position : " + targetPosition);
+
+            // navMeshAgent.SetDestination(targetPosition);
+
+            while (unitToFollow != null && Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= range)
+            {
+                // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
+                navMeshAgent.isStopped = false;
+                if (unitToFollow != null) { targetPosition = unitToFollow.transform.position; }
+                // Debug.Log("Going to enemy " + targetPosition);
+                navMeshAgent.SetDestination(targetPosition);
+
+                yield return null;
+            }
+
+            navMeshAgent.SetDestination(navMeshAgent.transform.position);
+            navMeshAgent.isStopped = true;
+            // navMeshAgent.ResetPath();
             IsActionComplete = true;
 
             Debug.Log("Movement complete");
@@ -886,6 +983,10 @@ public abstract class Troup : MonoBehaviour
             if (currentAction is FollowUnit followUnit)
             {
                 StartCoroutine(followUnit.StartFollowing());
+            }
+            if (currentAction is MoveToEnemy moveToEnemy)
+            {
+                StartCoroutine(moveToEnemy.StartFollowing());
             }
 
             yield return new WaitUntil(() => currentAction.IsActionComplete);

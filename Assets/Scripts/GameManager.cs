@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public GameObject Belier;
     public GameObject FirstPatrolPointPrefab;
     public GameObject SecondPatrolPointPrefab;
+    public GameObject SelectionParticleCirclePrefab;
 
     [Header("Text PopUps")]
     public TextMeshProUGUI TroupSelectionPopUp;
@@ -37,11 +38,12 @@ public class GameManager : MonoBehaviour
     public Camera mainCamera;
     public LayerMask floorMask;
     public GameObject PatrolingCircles;
+    public GameObject SelectionParticleCircles;
     public LayerMask troupMask;
 
     private bool pause;
 
-    // Allies and Ennemis dictionnary -----------------------------------------------------------------------------
+    // Allies and Enemis dictionnary -----------------------------------------------------------------------------
     private static HashSet<Troup> Allies = new HashSet<Troup>();
     private static HashSet<Troup> Enemies = new HashSet<Troup>();
     public UnityEvent updateTroupCounter;
