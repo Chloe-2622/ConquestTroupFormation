@@ -24,8 +24,6 @@ public class Guerisseur : Troup
         while (ennemy != null && Vector3.Distance(transform.position, ennemy.transform.position) <= attackRange)
         {
             ennemy.TakeDamage(attackDamage);
-            if (ennemy.getHealth() == 0) { Debug.Log("Ennemie tué"); }
-            Debug.Log("Attacking ennemy with " + ennemy.getHealth());
             yield return new WaitForSeconds(attackRechargeTime);
         }
     }

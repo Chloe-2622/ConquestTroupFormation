@@ -15,6 +15,8 @@ public class Combattant : Troup
     protected override void Update()
     {
         base.Update();
+
+        AttackBehaviour();
     }
 
     protected override IEnumerator Attack(Troup ennemy)
@@ -22,8 +24,6 @@ public class Combattant : Troup
         while (ennemy != null)
         {
             ennemy.TakeDamage(attackDamage);
-            if (ennemy.getHealth() == 0) { Debug.Log("Ennemie tué"); }
-            Debug.Log("Attacking ennemy with " + ennemy.getHealth());
             yield return new WaitForSeconds(attackRechargeTime);
         }
     }
