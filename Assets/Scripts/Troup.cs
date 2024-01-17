@@ -23,31 +23,25 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected float attackRechargeTime;
     [SerializeField] protected float attackRange;
     [SerializeField] protected float specialAbilityRechargeTime;
-    [SerializeField] protected float specialAbilityDelay = 0f;
 
-    [Header("Scene objects")]
-    [SerializeField] protected Camera camera1;
-    [SerializeField] protected SelectionManager selectionManager;
-    [SerializeField] protected Image healthBar;
-    [SerializeField] protected Image flecheUI;
-    [SerializeField] protected GameObject selectionArrow;
-    [SerializeField] protected GameObject tombe;
-    [SerializeField] protected Transform SelectionCircle;
-    [SerializeField] protected Transform SelectionArrow;
-    [SerializeField] protected GameObject FirstPatrolPoint;
-    [SerializeField] protected GameObject SecondPatrolPoint;
-    [SerializeField] protected GameObject SelectionParticleCircle;
-    [SerializeField] protected GameObject QueueUI;
-    [SerializeField] protected NavMeshAgent agent;
-    [SerializeField] protected LayerMask troupMask;
+    protected Camera camera1;
+    protected SelectionManager selectionManager;
+    protected GameObject selectionArrow;
+    protected GameObject tombe;
+    protected Transform SelectionCircle;
+    protected Transform SelectionArrow;
+    protected GameObject FirstPatrolPoint;
+    protected GameObject SecondPatrolPoint;
+    protected GameObject SelectionParticleCircle;
+    protected GameObject QueueUI;
+    protected NavMeshAgent agent;
+    protected LayerMask troupMask;
 
-
-    [Header("Text PopUps")]
-    [SerializeField] protected TextMeshProUGUI TroupSelectionPopUp;
-    [SerializeField] protected TextMeshProUGUI PlaceSelectionPopUp;
-    [SerializeField] protected TextMeshProUGUI PatrolSelectionPopUp1;
-    [SerializeField] protected TextMeshProUGUI PatrolSelectionPopUp2;
-    [SerializeField] protected TextMeshProUGUI FollowSelectionPopUp;
+    protected TextMeshProUGUI PlaceSelectionPopUp;
+    protected TextMeshProUGUI PatrolSelectionPopUp1;
+    protected TextMeshProUGUI PatrolSelectionPopUp2;
+    protected TextMeshProUGUI FollowSelectionPopUp;
+    protected Image healthBar;
 
     // Allies and Ennemis dictionnary -----------------------------------------------------------------------------
     public static HashSet<Troup> Allies = new HashSet<Troup>();
@@ -64,24 +58,23 @@ public abstract class Troup : MonoBehaviour
     private Queue<IAction> actionQueue = new Queue<IAction>();
 
     // Private variables ------------------------------------------------------------------------------------------
-    private bool isChosingPlacement;
+    [Header("Debug Variables")]
     [SerializeField] private bool isChosingPatrol;
-    private bool isChosingFollow;
     [SerializeField] private bool isFollowingEnnemy;
     [SerializeField] private bool isAttackingEnnemy;
-    private bool hasSpawnedTombe;
-    private float maxHealth;
     [SerializeField] private bool isPatroling;
-    private Vector3 FirstPatrolPosCo;
-    private Vector3 SecondPatrolPosCo;
     [SerializeField] private GameObject currentAttackedTroup;
     [SerializeField] private GameObject currentFollowedTroup;
-    private bool enqueuingNewAction;
+    [SerializeField] protected float specialAbilityDelay = 0f;
     private bool isPlayingCircleAnim;
+    private bool isChosingPlacement;
+    private bool isChosingFollow;
+    private bool isFollowingOrders;
+    private bool hasSpawnedTombe;
+    private float maxHealth;
     private IEnumerator currentActionCoroutine;
     private IEnumerator attackCoroutine;
 
-    // TODO : Cleanup variables + Utiliser le GameManager et le Awake pour ne pas avoir de Serialized Field à modifier à la mano
     // TODO : Capa spécial Combattant
 
 
@@ -89,12 +82,13 @@ public abstract class Troup : MonoBehaviour
     protected virtual void Awake() 
     {
         // Children variable setup
+        healthBar = transform.Find("Canvas").Find("Vie").GetComponent<Image>();
+
         SelectionCircle = transform.Find("SelectionCircle");
         healthBar = transform.Find("Canvas").Find("Vie").GetComponent<Image>();
 
         if (troupType == TroupType.Ally)
         {
-            flecheUI = transform.Find("Canvas").Find("Fleche").GetComponent<Image>();
             QueueUI = transform.Find("Canvas").Find("Queue").gameObject;
         }
 
@@ -112,7 +106,6 @@ public abstract class Troup : MonoBehaviour
         selectionManager = GameManager.Instance.selectionManager;
         SelectionArrow = GameManager.Instance.selectionArrow;
         tombe = GameManager.Instance.tombe;
-        TroupSelectionPopUp = GameManager.Instance.TroupSelectionPopUp;
         PlaceSelectionPopUp = GameManager.Instance.PlaceSelectionPopUp;
         PatrolSelectionPopUp1 = GameManager.Instance.PatrolSelectionPopUp1;
         PatrolSelectionPopUp2 = GameManager.Instance.PatrolSelectionPopUp2;
@@ -142,9 +135,16 @@ public abstract class Troup : MonoBehaviour
     // Update
     protected virtual void Update()
     {
+        if (isFollowingOrders)
+        {
+            isFollowingEnnemy = false;
+            isAttackingEnnemy = false;
+        }
+        
         SelectedBehaviour();
 
         HealthBarControl();
+
     }
 
     // SelectedBehaviour
@@ -183,9 +183,6 @@ public abstract class Troup : MonoBehaviour
             {
                 if (isPatroling)
                 {
-                    // FirstPatrolPos.transform.position = FirstPatrolPosCo;
-                    // SecondPatrolPos.transform.position = SecondPatrolPosCo;
-
                     FirstPatrolPoint.GetComponent<Renderer>().enabled = true;
                     SecondPatrolPoint.GetComponent<Renderer>().enabled = true;
                 }
@@ -282,24 +279,18 @@ public abstract class Troup : MonoBehaviour
             SelectionArrow.GetComponent<MeshRenderer>().enabled = true;
             // selectionArrow.transform.LookAt(camera1.transform.position);
 
-            // flecheUI.enabled = true;
-            
-            // Debug.Log("Est enabled : " + PlaceSelectionPopUp.enabled);
-
             Ray ray = camera1.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
                 SelectionArrow.transform.position = new Vector3(hit.point.x, hit.point.y + 1, hit.point.z);
-                flecheUI.transform.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y + 15);
 
                 if (Input.GetMouseButton(0))
                 {
                     Debug.Log("Target position clicked : " + hit.point);
                     AddAction(new MoveToPosition(agent, hit.point));
                     hasSelected = true;
-                    flecheUI.enabled = false;
                     SelectionArrow.GetComponent<MeshRenderer>().enabled = false;
                     PlaceSelectionPopUp.enabled = false;
                 }
@@ -406,7 +397,6 @@ public abstract class Troup : MonoBehaviour
                 Debug.Log("Target position clicked : " + hit.point);
                 firstPos = hit.point;
                 Debug.Log("firstPos : " + firstPos);
-                FirstPatrolPosCo = new Vector3(firstPos.x, firstPos.y + 0.1f, firstPos.z);
                 FirstPatrolPoint.transform.position= new Vector3(firstPos.x, firstPos.y + 0.1f, firstPos.z);
             }
 
@@ -436,7 +426,6 @@ public abstract class Troup : MonoBehaviour
             {
                 Debug.Log("Target position clicked : " + hit.point);
                 secondPos = hit.point;
-                SecondPatrolPosCo = new Vector3(secondPos.x, secondPos.y + 0.1f, secondPos.z);
                 SecondPatrolPoint.transform.position = new Vector3(secondPos.x, secondPos.y + 0.1f, secondPos.z);
             }
 
@@ -555,7 +544,7 @@ public abstract class Troup : MonoBehaviour
 
         // Follow closestEnnemy until it's in range
 
-        if (closestEnnemy != null && !isFollowingEnnemy)
+        if (closestEnnemy != null && !isFollowingEnnemy && !isFollowingOrders)
         {
             isFollowingEnnemy = true;
             currentFollowedTroup = closestEnnemy;
@@ -618,7 +607,7 @@ public abstract class Troup : MonoBehaviour
             }
         }
 
-        if (currentAttackedTroup == null)
+        if (currentAttackedTroup == null && !isFollowingOrders)
         {
             isAttackingEnnemy = false;
             if (attackCoroutine != null)
@@ -681,7 +670,7 @@ public abstract class Troup : MonoBehaviour
     {
         float beforeHealth = health;
 
-        health -= damage;
+        health -= damage - armor;
 
         float newHealth = health;
 
@@ -945,6 +934,8 @@ public abstract class Troup : MonoBehaviour
         {
             IAction currentAction = actionQueue.Dequeue();
 
+            isFollowingOrders = false;
+
             // Affichage des actions de la queue
             if (troupType == TroupType.Ally)
             {
@@ -968,6 +959,7 @@ public abstract class Troup : MonoBehaviour
 
             if (currentAction is MoveToPosition moveToPosition)
             {
+                isFollowingOrders = true;
                 StartCoroutine(moveToPosition.GoToPosition());
             }
             if (currentAction is Patrol patrol)
@@ -982,6 +974,7 @@ public abstract class Troup : MonoBehaviour
             }
             if (currentAction is FollowUnit followUnit)
             {
+                isFollowingOrders = true;
                 StartCoroutine(followUnit.StartFollowing());
             }
             if (currentAction is MoveToEnnemy moveToEnnemy)

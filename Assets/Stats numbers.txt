@@ -1,0 +1,40 @@
+Vitesse de déplacement :
+Faible : 4
+Moyen : 7
+Rapide : 10
+
+Points de vie:
+Faible : 75
+Moyen : 150
+Elevé : 200
+
+Armure :
+Faible : 5
+Moyen : 10
+Elevé : 15
+
+Detection Range : 15
+
+Attaque range :
+CaC : 1
+Distance : 10
+
+Dégats attaque :
+Faible : 10
+Moyen : 20
+Elevé : 30
+
+Vitesse d'attaque :
+Faible : 1,5s
+Moyen : 1s
+Elevé : 0,75s
+
+Recharge capacité :
+Lent : 30s
+Moyen : 
+
+
+
+
+
+
