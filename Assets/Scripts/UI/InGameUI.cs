@@ -32,17 +32,18 @@ public class InGameUI : MonoBehaviour
     [SerializeField] private float pading = 20;
     [SerializeField] private GameObject unitIconsSection;
     [SerializeField] private GameObject unitIconPrefab;
-    [SerializeField] private Sprite combattantSprite ;
-    [SerializeField] private Sprite archerSprite;
-    [SerializeField] private Sprite cavalierSprite;
-    [SerializeField] private Sprite guerisseurSprite;
-    [SerializeField] private Sprite catapulteSprite;
-    [SerializeField] private Sprite porte_bouclierSprite;
-    [SerializeField] private Sprite porte_etendardSprite;
-    [SerializeField] private Sprite batisseurSprite;
-    [SerializeField] private Sprite belierSprite;
 
-    private List<Sprite> unitSpriteList;
+    [SerializeField] private Color combatantColor;
+    [SerializeField] private Color archerColor;
+    [SerializeField] private Color cavalierColor;
+    [SerializeField] private Color guerisseurColor;
+    [SerializeField] private Color catapulteColor;
+    [SerializeField] private Color porte_bouclierColor;
+    [SerializeField] private Color porte_etendardColor;
+    [SerializeField] private Color batisseurColor;
+    [SerializeField] private Color belierColor;
+
+    private List<Color> unitColorList;
 
     // Start is called before the first frame update
     void Start()
@@ -57,13 +58,10 @@ public class InGameUI : MonoBehaviour
         GameManager.Instance.updateTroupCounter.AddListener(updateCounter);
         selectionManager.newSelection.AddListener(updateSelectedTroups);
 
-        unitSpriteList = new List<Sprite> { combattantSprite, archerSprite, cavalierSprite,
-                                            guerisseurSprite, catapulteSprite, porte_bouclierSprite,
-                                            porte_etendardSprite, batisseurSprite, belierSprite};
+        unitColorList = new List<Color> { combatantColor, archerColor, cavalierColor,
+                                            guerisseurColor, catapulteColor, porte_bouclierColor,
+                                            porte_etendardColor, batisseurColor, belierColor};
     }
-
-
-
 
     public void updateSelectedTroups()
     {
@@ -71,7 +69,7 @@ public class InGameUI : MonoBehaviour
 
         List<GameObject> currentSelections = selectionManager.getCurrentSelection();
         List<int> selectionCount = new List<int>();
-        for (int i = 0; i < unitSpriteList.Count; i++)
+        for (int i = 0; i < unitColorList.Count; i++)
             selectionCount.Add(0);
 
         foreach (GameObject selectedGameObject in currentSelections)
@@ -95,7 +93,7 @@ public class InGameUI : MonoBehaviour
                 unitIcon.transform.localPosition = iconPosition + new Vector3(0, -pading*j, 0);
                 j++;
 
-                unitIcon.transform.GetChild(0).GetComponent<Image>().sprite = unitSpriteList[i];
+                unitIcon.transform.GetChild(0).GetComponent<Image>().color = unitColorList[i];
                 unitIcon.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = selectionCount[i].ToString();
             }
         }

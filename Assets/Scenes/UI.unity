@@ -433,9 +433,109 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: archerColor.b
+      value: 0.2784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: archerColor.g
+      value: 0.9215687
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: archerColor.r
+      value: 0.22352943
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: belierColor.b
+      value: 0.20392159
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: belierColor.g
+      value: 0.18823531
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: belierColor.r
+      value: 0.19215688
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: cavalierColor.b
+      value: 0.5372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: cavalierColor.g
+      value: 0.5411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: cavalierColor.r
+      value: 0.8588236
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: batisseurColor.b
+      value: 0.03137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: batisseurColor.g
+      value: 0.3019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: batisseurColor.r
+      value: 0.5686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: catapulteColor.b
+      value: 0.40000004
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: catapulteColor.g
+      value: 0.75294125
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: catapulteColor.r
+      value: 0.98823535
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: combatantColor.b
+      value: 0.7294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: combatantColor.g
+      value: 0.40000004
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: combatantColor.r
+      value: 0.20392159
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
       propertyPath: selectionManager
       value: 
       objectReference: {fileID: 2107619706}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: guerisseurColor.b
+      value: 0.16078432
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: guerisseurColor.g
+      value: 0.8745099
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: guerisseurColor.r
+      value: 0.98823535
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: porte_bouclierColor.b
+      value: 0.46274513
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: porte_bouclierColor.g
+      value: 0.4431373
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: porte_bouclierColor.r
+      value: 0.43921572
+      objectReference: {fileID: 0}
+    - target: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: porte_etendardColor.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3690236763469114061, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
@@ -602,6 +702,7 @@ MonoBehaviour:
   Belier: {fileID: 0}
   FirstPatrolPointPrefab: {fileID: 1957205012629558366, guid: 2b8610a4404d6634fb0bc9c1d8d1ccd3, type: 3}
   SecondPatrolPointPrefab: {fileID: 4101480151872354233, guid: 1322ffed0cb3c7e438d16e3f0a1076a4, type: 3}
+  SelectionParticleCirclePrefab: {fileID: 0}
   TroupSelectionPopUp: {fileID: 557443961}
   PlaceSelectionPopUp: {fileID: 1034241598}
   PatrolSelectionPopUp1: {fileID: 1109991914}
@@ -615,6 +716,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   PatrolingCircles: {fileID: 1839055716}
+  SelectionParticleCircles: {fileID: 7830544220555725457, guid: df1c145a994ae044ba363795b8c7d3f8, type: 3}
   troupMask:
     serializedVersion: 2
     m_Bits: 0
