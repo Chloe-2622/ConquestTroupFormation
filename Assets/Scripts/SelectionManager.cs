@@ -7,6 +7,8 @@ using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using UnityEngine.UI;
+using UnityEngine.Events;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -34,9 +36,17 @@ public class SelectionManager : MonoBehaviour
     private Vector2 position_1;
     private Vector2 position_2;
 
+    public UnityEvent newSelection;
 
-    // On s'abonne aux évènements du Event System
-    private void OnEnable()
+
+    private void Awake()
+    {
+        if (newSelection == null)
+            newSelection = new UnityEvent();
+    }
+
+        // On s'abonne aux évènements du Event System
+        private void OnEnable()
     {
         selectionAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
         selectionAction.action.started += OnInputStarted; // S'active à la pression initiale des touches
@@ -55,18 +65,21 @@ public class SelectionManager : MonoBehaviour
 
     public void OnInputStarted(InputAction.CallbackContext context)
     {
+        if (GameManager.Instance.isInPause()) { return; }
         position_1 = context.action.ReadValue<Vector2>();
-        isHolding = true;
+        isHolding = true;      
     }
 
     private void OnInputPerformed(InputAction.CallbackContext context)
     {
+        if (GameManager.Instance.isInPause()) { return; }
         lastPosition = context.action.ReadValue<Vector2>();
     }
 
 
     public void OnInputCanceled(InputAction.CallbackContext context)
     {
+        if (GameManager.Instance.isInPause()) { return; }
         position_2 = lastPosition;
 
         //Debug.Log("position 1 " + position_1.ToString());
@@ -133,7 +146,7 @@ public class SelectionManager : MonoBehaviour
                 nearestObject = selectionableObject;
             }
         }
-        if ((System.Object)nearestObject != null) { select(new List<GameObject> { nearestObject }); }
+        select(new List<GameObject> { nearestObject });
         
     }
 
@@ -205,6 +218,7 @@ public class SelectionManager : MonoBehaviour
                 }
             }
         }
+        newSelection.Invoke();
     }
 
     // Dessine la zone de sélection lorsque le click est maintenue
@@ -258,15 +272,15 @@ public class SelectionManager : MonoBehaviour
         currentSelections = new List<GameObject>();
     }
 
-
-
-
-
     public Dictionary<GameObject, bool> getDictionnary()
     {
         return selectionableObjects;
     }
 
+    public List<GameObject> getCurrentSelection()
+    {
+        return currentSelections;
+    }
 
     public void completeDictionnary(GameObject selection)
     {

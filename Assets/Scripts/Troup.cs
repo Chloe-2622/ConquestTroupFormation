@@ -10,7 +10,7 @@ public abstract class Troup : MonoBehaviour
 
     [Header("General stats")]
     [SerializeField] protected TroupType troupType;
-    [SerializeField] protected UnitType unitType;
+    [SerializeField] public UnitType unitType;
     [SerializeField] protected bool isSelected;
     [SerializeField] protected bool hasCrown = false;
     [SerializeField] protected float movingSpeed;
@@ -47,10 +47,6 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected TextMeshProUGUI PatrolSelectionPopUp1;
     [SerializeField] protected TextMeshProUGUI PatrolSelectionPopUp2;
     [SerializeField] protected TextMeshProUGUI FollowSelectionPopUp;
-
-    // Allies and Ennemis dictionnary -----------------------------------------------------------------------------
-    public static HashSet<Troup> Allies = new HashSet<Troup>();
-    public static HashSet<Troup> Ennemies = new HashSet<Troup>();
 
     // Troup types ------------------------------------------------------------------------------------------------
     public enum TroupType { Ally, Ennemy }
@@ -116,12 +112,12 @@ public abstract class Troup : MonoBehaviour
         // Ally or Ennemy
         if (troupType == TroupType.Ally)
         {
-            Allies.Add(this);
+            GameManager.Instance.addAlly(this);
             selectionManager.completeDictionnary(transform.gameObject);
         }
         if (troupType == TroupType.Ennemy)
         {
-            Ennemies.Add(this);
+            GameManager.Instance.addEnemy(this);
         }
 
         // Start Action Queue
@@ -581,7 +577,8 @@ public abstract class Troup : MonoBehaviour
 
         if (troupType == TroupType.Ally)
         {
-            foreach (var ennemy in Ennemies)
+            HashSet<Troup> enemies = GameManager.Instance.getEnemies();
+            foreach (var ennemy in enemies)
             {
                 var d = Vector3.Distance(pos, ennemy.transform.position); // (pos - ennemy.transform.position).sqrMagnitude;
                 if (d < dist)
@@ -593,7 +590,8 @@ public abstract class Troup : MonoBehaviour
         }
         if (troupType == TroupType.Ennemy)
         {
-            foreach (var ally in Allies)
+            HashSet<Troup>  allies = GameManager.Instance.getAllies();
+            foreach (var ally in allies)
             {
                 var d = Vector3.Distance(pos, ally.transform.position); //  (pos - ally.transform.position).sqrMagnitude;
                 if (d < dist)
@@ -647,8 +645,8 @@ public abstract class Troup : MonoBehaviour
 
         if (beforeHealth * newHealth <= 0 && !hasSpawnedTombe)
         {
-            if (troupType == TroupType.Ally) { Allies.Remove(this); }
-            if (troupType == TroupType.Ennemy) { Ennemies.Remove(this); }
+            if (troupType == TroupType.Ally) { GameManager.Instance.removeAlly(this); }
+            if (troupType == TroupType.Ennemy) { GameManager.Instance.removeEnemy(this);  }
             GameObject tombeMort = Instantiate(tombe, transform.position, transform.rotation, null);
             hasSpawnedTombe = true;
             // if (troupType == TroupType.Ennemy) { tombeMort.transform.position += Vector3.up * 3; }
