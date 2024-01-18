@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1521062601527964750
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3879268326813356259}
+  - component: {fileID: 4233542398472279475}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3879268326813356259
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521062601527964750}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 11.892658, y: 4.6450043, z: 21.764372}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4233542398472279475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521062601527964750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29a3c94a0fe9b4f4b8d7eb64388d12a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Combattant: {fileID: 3630770809780813079, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
+  Archer: {fileID: 3630770809780813079, guid: 971d9cda443708c42b9eac777dffd92b, type: 3}
+  Cavalier: {fileID: 3630770809780813079, guid: c5ecd2c48a4bca24c9e64687225e3c13, type: 3}
+  Guerisseur: {fileID: 5728111852519809403, guid: fc5cfd98596d6914dbb65a75865470c8, type: 3}
+  Catapulte: {fileID: 0}
+  Porte_bouclier: {fileID: 0}
+  Porte_etendard: {fileID: 0}
+  Batisseur: {fileID: 0}
+  Belier: {fileID: 0}
+  FirstPatrolPointPrefab: {fileID: 1957205012629558366, guid: 2b8610a4404d6634fb0bc9c1d8d1ccd3, type: 3}
+  SecondPatrolPointPrefab: {fileID: 4101480151872354233, guid: 1322ffed0cb3c7e438d16e3f0a1076a4, type: 3}
+  SelectionParticleCirclePrefab: {fileID: 7830544220555725457, guid: df1c145a994ae044ba363795b8c7d3f8, type: 3}
+  TroupSelectionPopUp: {fileID: 0}
+  PlaceSelectionPopUp: {fileID: 0}
+  PatrolSelectionPopUp1: {fileID: 0}
+  PatrolSelectionPopUp2: {fileID: 0}
+  FollowSelectionPopUp: {fileID: 0}
+  selectionManager: {fileID: 0}
+  selectionArrow: {fileID: 0}
+  tombe: {fileID: 8754737974659679140, guid: cf5713f7f4e857340ac275da5ea97ef3, type: 3}
+  mainCamera: {fileID: 0}
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 64
+  PatrolingCircles: {fileID: 0}
+  SelectionParticleCircles: {fileID: 0}
+  troupMask:
+    serializedVersion: 2
+    m_Bits: 256
+  updateTroupCounter:
+    m_PersistentCalls:
+      m_Calls: []

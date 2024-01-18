@@ -5,6 +5,9 @@ using UnityEngine.AI;
 
 public class Archer : Troup
 {
+    [Header("Archer properties")]
+    [SerializeField] private float invisibleTime;
+    [SerializeField] private Material invisibleMaterial;
 
     protected override void Awake()
     {
@@ -31,6 +34,25 @@ public class Archer : Troup
     protected override IEnumerator SpecialAbility()
     {
         Debug.Log("Archer special ability activated");
-        yield return null;
+
+        isVisible = false;
+        Material defaultMaterial = transform.Find("Capsule").gameObject.GetComponent<Renderer>().material;
+        transform.Find("Capsule").gameObject.GetComponent<Renderer>().material = invisibleMaterial;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < invisibleTime)
+        {
+            abilityBar.fillAmount = 1 - elapsedTime / invisibleTime;
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+        abilityBar.fillAmount = 0;
+
+        isVisible = true;
+        transform.Find("Capsule").gameObject.GetComponent<Renderer>().material = defaultMaterial;
+
+        specialAbilityDelay = specialAbilityRechargeTime;
+        StartCoroutine(SpecialAbilityCountdown());
     }
 }

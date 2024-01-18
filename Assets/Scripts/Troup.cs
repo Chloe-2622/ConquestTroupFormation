@@ -24,35 +24,6 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected float attackRange;
     [SerializeField] protected float specialAbilityRechargeTime;
 
-    protected Camera camera1;
-    protected SelectionManager selectionManager;
-    protected GameObject selectionArrow;
-    protected GameObject tombe;
-    protected Transform SelectionCircle;
-    protected Transform SelectionArrow;
-    protected GameObject FirstPatrolPoint;
-    protected GameObject SecondPatrolPoint;
-    protected GameObject SelectionParticleCircle;
-    protected GameObject QueueUI;
-    protected NavMeshAgent agent;
-    protected LayerMask troupMask;
-
-    protected TextMeshProUGUI PlaceSelectionPopUp;
-    protected TextMeshProUGUI PatrolSelectionPopUp1;
-    protected TextMeshProUGUI PatrolSelectionPopUp2;
-    protected TextMeshProUGUI FollowSelectionPopUp;
-    protected Image healthBar;
-
-    // Troup types ------------------------------------------------------------------------------------------------
-    public enum TroupType { Ally, Enemy }
-    public enum UnitType
-    {
-        Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
-    }
-
-    // Action Queue -----------------------------------------------------------------------------------------------
-    private Queue<IAction> actionQueue = new Queue<IAction>();
-
     // Private variables ------------------------------------------------------------------------------------------
     [Header("Debug Variables")]
     [SerializeField] private bool isChosingPatrol;
@@ -66,22 +37,52 @@ public abstract class Troup : MonoBehaviour
     private bool isChosingPlacement;
     private bool isChosingFollow;
     private bool isFollowingOrders;
+    protected bool isVisible = true;
     private bool hasSpawnedTombe;
     private float maxHealth;
     private IEnumerator currentActionCoroutine;
     private IEnumerator attackCoroutine;
 
-    // TODO : Capa sp�cial Combattant
+    // Scene objects
+    protected Camera camera1;
+    protected SelectionManager selectionManager;
+    protected GameObject selectionArrow;
+    protected GameObject tombe;
+    protected Transform SelectionCircle;
+    protected Transform SelectionArrow;
+    protected GameObject FirstPatrolPoint;
+    protected GameObject SecondPatrolPoint;
+    protected GameObject SelectionParticleCircle;
+    protected GameObject QueueUI;
+    protected NavMeshAgent agent;
+    protected LayerMask troupMask;
 
+    // UI elements
+    protected TextMeshProUGUI PlaceSelectionPopUp;
+    protected TextMeshProUGUI PatrolSelectionPopUp1;
+    protected TextMeshProUGUI PatrolSelectionPopUp2;
+    protected TextMeshProUGUI FollowSelectionPopUp;
+    protected Image healthBar;
+    protected Image abilityBar;
 
-    // Awake
+    // Troup types ------------------------------------------------------------------------------------------------
+    public enum TroupType { Ally, Enemy }
+    public enum UnitType
+    {
+        Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
+    }
+
+    // Action Queue -----------------------------------------------------------------------------------------------
+    private Queue<IAction> actionQueue = new Queue<IAction>();
+
+    // Main Functions ---------------------------------------------------------------------------------------------
+
     protected virtual void Awake() 
     {
         // Children variable setup
         healthBar = transform.Find("Canvas").Find("Vie").GetComponent<Image>();
-
+        abilityBar = transform.Find("Canvas").Find("Ability").GetComponent<Image>();
         SelectionCircle = transform.Find("SelectionCircle");
-        healthBar = transform.Find("Canvas").Find("Vie").GetComponent<Image>();
 
         if (troupType == TroupType.Ally)
         {
@@ -128,7 +129,6 @@ public abstract class Troup : MonoBehaviour
         StartCoroutine(currentActionCoroutine);
     }
 
-    // Update
     protected virtual void Update()
     {
         if (isFollowingOrders)
@@ -140,10 +140,10 @@ public abstract class Troup : MonoBehaviour
         SelectedBehaviour();
 
         HealthBarControl();
+        AbilityBarControl();
 
     }
 
-    // SelectedBehaviour
     protected virtual void SelectedBehaviour()
     {
         isSelected = selectionManager.isSelected(this.gameObject);
@@ -231,17 +231,7 @@ public abstract class Troup : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.F))
             {
-                if (specialAbilityDelay == 0f)
-                {
-                    StartCoroutine(SpecialAbility());
-                    specialAbilityDelay = specialAbilityRechargeTime;
-                    StartCoroutine(SpecialAbilityCountdown());
-                }
-                if (specialAbilityDelay == -1f)
-                {
-                    StartCoroutine(SpecialAbility());
-                    specialAbilityDelay = Mathf.Infinity;
-                }
+                StartCoroutine(SpecialAbility());
             }
 
         }
@@ -485,6 +475,33 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
+    protected void AbilityBarControl()
+    {
+        // Ability Bar control
+        // float normalizedHealth = health / maxHealth;
+        abilityBar.enabled = !GameManager.Instance.isInPause();
+
+        Vector3 abilityBarPosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + agent.height, transform.position.z));
+        abilityBar.transform.position = new Vector3(abilityBarPosition.x, abilityBarPosition.y - 5.5f, abilityBarPosition.z);
+
+        /* if (normalizedHealth >= .75)
+        {
+            healthBar.color = Color.green;
+        }
+        if (normalizedHealth >= .5 && normalizedHealth <= .75)
+        {
+            healthBar.color = Color.yellow;
+        }
+        if (normalizedHealth >= .25 && normalizedHealth <= .5)
+        {
+            healthBar.color = new Color(1.0f, 0.5f, 0.0f);
+        }
+        if (normalizedHealth <= .25)
+        {
+            healthBar.color = Color.red;
+        } */
+    }
+
     private void OnDrawGizmos()
     {
         if (selectionManager != null && selectionManager.isSelected(this.gameObject))
@@ -507,7 +524,7 @@ public abstract class Troup : MonoBehaviour
             HashSet<Troup> enemies = GameManager.Instance.getEnemies();
             foreach (Troup enemie in enemies)
             {
-                if (Vector3.Distance(transform.position, enemie.transform.position) <= detectionRange)
+                if (enemie.isVisible && Vector3.Distance(transform.position, enemie.transform.position) <= detectionRange)
                 {
                     detectedEnemies.Add(enemie.gameObject);
                 }
@@ -517,7 +534,7 @@ public abstract class Troup : MonoBehaviour
             HashSet<Troup> allies = GameManager.Instance.getAllies();
             foreach (Troup ally in allies)
             {
-                if (Vector3.Distance(transform.position, ally.transform.position) <= detectionRange)
+                if (ally.isVisible && Vector3.Distance(transform.position, ally.transform.position) <= detectionRange)
                 {
                     detectedEnemies.Add(ally.gameObject);
                 }
@@ -575,7 +592,7 @@ public abstract class Troup : MonoBehaviour
             HashSet<Troup> enemies = GameManager.Instance.getEnemies();
             foreach (var enemy in enemies)
             {
-                if (Vector3.Distance(transform.position, enemy.transform.position) <= attackRange)
+                if (enemy.isVisible && Vector3.Distance(transform.position, enemy.transform.position) <= attackRange)
                 {
                     inRangeEnemies.Add(enemy.gameObject);
                 }
@@ -586,7 +603,7 @@ public abstract class Troup : MonoBehaviour
             HashSet<Troup>  allies = GameManager.Instance.getAllies();
             foreach (var ally in allies)
             {
-                if (Vector3.Distance(transform.position, ally.transform.position) <= attackRange)
+                if (ally.isVisible && Vector3.Distance(transform.position, ally.transform.position) <= attackRange)
                 {
                     inRangeEnemies.Add(ally.gameObject);
                 }
@@ -659,18 +676,25 @@ public abstract class Troup : MonoBehaviour
 
     protected IEnumerator SpecialAbilityCountdown()
     {
-        while (specialAbilityDelay > 0)
+        float currentDelay = specialAbilityDelay;
+
+        while (currentDelay > 0)
         {
-            specialAbilityDelay--;
-            yield return new WaitForSeconds(1f);
+            currentDelay -= Time.deltaTime;
+            specialAbilityDelay -= Time.deltaTime;
+            abilityBar.fillAmount = 1 - currentDelay / specialAbilityRechargeTime;
+
+            yield return null;
         }
+
+        abilityBar.fillAmount = 1;
     }
 
     public virtual void TakeDamage(float damage)
     {
         float beforeHealth = health;
 
-        health -= damage - armor;
+        health -= Mathf.Max(damage - armor, 0);
 
         float newHealth = health;
 

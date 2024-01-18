@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Guerisseur : Troup
 {
-
-    [SerializeField] private float radius;
+    [Header("Guerisseur properties")]
+    [SerializeField] private float resurrectionRadius;
     [SerializeField] private LayerMask tombeMask;
 
     protected override void Awake()
@@ -32,7 +32,7 @@ public class Guerisseur : Troup
     {
         Debug.Log("Guerisseur ability activated");
 
-        Collider[] colliders = Physics.OverlapSphere(transform.position, radius, tombeMask);
+        Collider[] colliders = Physics.OverlapSphere(transform.position, resurrectionRadius, tombeMask);
         
 
         foreach(Collider collider in colliders)
@@ -45,11 +45,17 @@ public class Guerisseur : Troup
             }
         }
 
+        if (colliders.Length != 0)
+        {
+            abilityBar.fillAmount = 0f;
+            specialAbilityDelay = Mathf.Infinity;
+        }
+
         yield return null;
     }
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.DrawWireSphere(transform.position, radius);
+        Gizmos.DrawWireSphere(transform.position, resurrectionRadius);
     }
 }

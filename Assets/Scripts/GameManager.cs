@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
     public GameObject PatrolingCircles;
     public GameObject SelectionParticleCircles;
     public LayerMask troupMask;
+    public float defaultHeight;
 
     private bool pause;
 

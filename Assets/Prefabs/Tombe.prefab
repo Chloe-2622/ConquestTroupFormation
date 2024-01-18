@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6583197974709990487}
   - component: {fileID: 8122613372080909871}
   m_Layer: 0
-  m_Name: Image
+  m_Name: LifeCircle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -312,8 +312,9 @@ MonoBehaviour:
   tombeUnitType: 0
   tombeTroupType: 0
   lifeTime: 30
-  lifeCircle: {fileID: 8122613372080909871}
-  camera1: {fileID: 4313879581609688195, guid: 7a0ad85c673440d4fab4704a68687b71, type: 3}
+  reviveTime: 1
+  lifeCircle: {fileID: 0}
+  mainCamera: {fileID: 0}
 --- !u!65 &1621258281031625007
 BoxCollider:
   m_ObjectHideFlags: 0
