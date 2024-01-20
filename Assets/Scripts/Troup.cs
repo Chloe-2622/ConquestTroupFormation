@@ -9,7 +9,7 @@ public abstract class Troup : MonoBehaviour
 {
 
     [Header("General stats")]
-    [SerializeField] protected TroupType troupType;
+    [SerializeField] public TroupType troupType;
     [SerializeField] public UnitType unitType;
     [SerializeField] protected bool isSelected;
     [SerializeField] protected bool hasCrown = false;
@@ -34,12 +34,13 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected GameObject currentAttackedTroup;
     [SerializeField] private GameObject currentFollowedTroup;
     [SerializeField] protected float specialAbilityDelay = 0f;
+    [SerializeField] protected bool isVisible = true;
     private bool isPlayingCircleAnim;
     private bool isChosingPlacement;
     private bool isChosingFollow;
     protected bool isFollowingOrders;
-    protected bool isVisible = true;
     private bool hasSpawnedTombe;
+    private bool isMovingToKing;
     private float maxHealth;
     protected IEnumerator currentActionCoroutine;
     private IEnumerator attackCoroutine;
@@ -137,6 +138,18 @@ public abstract class Troup : MonoBehaviour
             isFollowingEnemy = false;
             isAttackingEnemy = false;
         }
+
+        if (troupType == TroupType.Ally)
+        {
+            if (transform.Find("Crown").gameObject.activeSelf == true)
+            {
+                hasCrown = true;
+                GameManager.Instance.isCrownCollected = true;
+                GameManager.Instance.king = gameObject;
+            }
+        }
+
+        
         
         SelectedBehaviour();
 
@@ -452,17 +465,17 @@ public abstract class Troup : MonoBehaviour
     /* 
      TODO : 
 
-        Carte avec terrain mieux, plus belle
-        Couronne (modèle + récupérable + qui flotte)
-        Roi (comportement des unités si Roi)
-        Modèle des unités
-        Animation basique des unités
-        Ecran menu principal (blender avec mise en scène non contractuelle des modèles)
-        Finir les unités : 
-	        - Catapulte
-	        - Porte-étendard
-	        - Porte-bouclier( si on a le temps)
-        SFX basiques
+                Carte avec terrain mieux, plus belle
+        -DONE-  Couronne (modèle + récupérable + qui flotte)
+                Roi (comportement des unités si Roi)
+                Modèle des unités
+                Animation basique des unités
+                Ecran menu principal (blender avec mise en scène non contractuelle des modèles)
+                Finir les unités : 
+	                - Catapulte
+	                - Porte-étendard
+	                - Porte-bouclier( si on a le temps)
+                SFX basiques
 
     */
 
@@ -520,7 +533,7 @@ public abstract class Troup : MonoBehaviour
         } */
 }
 
-public bool IsInjured()
+    public bool IsInjured()
     {
         // Debug.Log("max health = " + maxHealth + "et health = " + health);
         return health < maxHealth;
@@ -540,6 +553,25 @@ public bool IsInjured()
     // Attack and ability -----------------------------------------------------------------------------------------
     protected void AttackBehaviour()
     {
+        if (troupType == TroupType.Enemy && GameManager.Instance.isCrownCollected)
+        {
+            GameObject king = GameManager.Instance.king;
+            
+            if (king != null && king.GetComponent<Troup>().isVisible && !isMovingToKing)
+            {
+                isMovingToKing = true;
+
+                actionQueue.Clear();
+                agent.isStopped = true;
+                agent.ResetPath();
+
+                // Debug.Log("Getting closer to enemy : " + king);
+                StopCoroutine(currentActionCoroutine);
+                actionQueue.Enqueue(new MoveToUnit(agent, king, attackRange));
+                StartCoroutine(currentActionCoroutine);
+            }
+        }
+
         
         // Find all enemies in detection range
         HashSet<GameObject> detectedEnemies = new HashSet<GameObject>();
@@ -605,6 +637,19 @@ public bool IsInjured()
         if (currentFollowedTroup == null)
         {
             isFollowingEnemy = false;
+        }
+        if ((currentFollowedTroup != null && !currentFollowedTroup.GetComponent<Troup>().isVisible) || (currentAttackedTroup != null && currentAttackedTroup.GetComponent<Troup>().isVisible))
+        {
+            isFollowingEnemy = false;
+            isAttackingEnemy = false;
+            currentAttackedTroup = null;
+            currentFollowedTroup = null;
+            actionQueue.Clear();
+            agent.isStopped = true;
+            agent.ResetPath();
+            StopCoroutine(currentActionCoroutine);
+            actionQueue.Enqueue(new Standby());
+            StartCoroutine(currentActionCoroutine);
         }
 
         
@@ -964,7 +1009,7 @@ public bool IsInjured()
 
             // navMeshAgent.SetDestination(targetPosition);
 
-            while (unitToFollow != null && Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= range)
+            while (unitToFollow != null && navMeshAgent != null && Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= range && unitToFollow.GetComponent<Troup>().isVisible)
             {
                 // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
                 navMeshAgent.isStopped = false;

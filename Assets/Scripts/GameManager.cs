@@ -43,6 +43,8 @@ public class GameManager : MonoBehaviour
     public float defaultHeight;
     public float outlineWidth;
     private bool pause;
+    public bool isCrownCollected;
+    public GameObject king;
 
     // Allies and Enemis dictionnary -----------------------------------------------------------------------------
     private static HashSet<Troup> Allies = new HashSet<Troup>();

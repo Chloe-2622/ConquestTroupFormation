@@ -43,8 +43,8 @@ public class Archer : Troup
         Debug.Log("Archer special ability activated");
 
         isVisible = false;
-        Material defaultMaterial = transform.Find("Capsule").gameObject.GetComponent<Renderer>().material;
-        transform.Find("Capsule").gameObject.GetComponent<Renderer>().material = invisibleMaterial;
+        Material defaultMaterial = transform.Find("Model").gameObject.GetComponent<Renderer>().material;
+        transform.Find("Model").gameObject.GetComponent<Renderer>().material = invisibleMaterial;
 
         float elapsedTime = 0f;
         while (elapsedTime < invisibleTime)
@@ -57,7 +57,7 @@ public class Archer : Troup
         abilityBar.fillAmount = 0;
 
         isVisible = true;
-        transform.Find("Capsule").gameObject.GetComponent<Renderer>().material = defaultMaterial;
+        transform.Find("Model").gameObject.GetComponent<Renderer>().material = defaultMaterial;
 
         specialAbilityDelay = specialAbilityRechargeTime;
         StartCoroutine(SpecialAbilityCountdown());
