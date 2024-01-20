@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     public GameObject FirstPatrolPointPrefab;
     public GameObject SecondPatrolPointPrefab;
     public GameObject SelectionParticleCirclePrefab;
+    public GameObject CatapulteCroixPrefab;
+    public GameObject BoulderPrefab;
 
     [Header("Text PopUps")]
     public TextMeshProUGUI TroupSelectionPopUp;
@@ -39,6 +41,7 @@ public class GameManager : MonoBehaviour
     public LayerMask floorMask;
     public GameObject PatrolingCircles;
     public GameObject SelectionParticleCircles;
+    public GameObject CatapulteCroix;
     public LayerMask troupMask;
     public float defaultHeight;
     public float outlineWidth;

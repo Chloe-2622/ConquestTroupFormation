@@ -467,7 +467,7 @@ public abstract class Troup : MonoBehaviour
 
                 Carte avec terrain mieux, plus belle
         -DONE-  Couronne (modèle + récupérable + qui flotte)
-                Roi (comportement des unités si Roi)
+        -DONE-  Roi (comportement des unités si Roi)
                 Modèle des unités
                 Animation basique des unités
                 Ecran menu principal (blender avec mise en scène non contractuelle des modèles)
@@ -475,6 +475,7 @@ public abstract class Troup : MonoBehaviour
 	                - Catapulte
 	                - Porte-étendard
 	                - Porte-bouclier( si on a le temps)
+                Capa spécial bélier
                 SFX basiques
 
     */
@@ -638,7 +639,7 @@ public abstract class Troup : MonoBehaviour
         {
             isFollowingEnemy = false;
         }
-        if ((currentFollowedTroup != null && !currentFollowedTroup.GetComponent<Troup>().isVisible) || (currentAttackedTroup != null && currentAttackedTroup.GetComponent<Troup>().isVisible))
+        if ((currentFollowedTroup != null && !currentFollowedTroup.GetComponent<Troup>().isVisible) || (currentAttackedTroup != null && !currentAttackedTroup.GetComponent<Troup>().isVisible))
         {
             isFollowingEnemy = false;
             isAttackingEnemy = false;
@@ -708,7 +709,7 @@ public abstract class Troup : MonoBehaviour
                 actionQueue.Clear();
                 agent.isStopped = true;
                 agent.ResetPath();
-                Debug.Log("Stopping path");
+                Debug.Log("Je lance une nouvelle attaque contre + " + currentAttackedTroup);
 
                 StopCoroutine(currentActionCoroutine);
                 actionQueue.Enqueue(new Standby());
@@ -771,7 +772,7 @@ public abstract class Troup : MonoBehaviour
         health -= Mathf.Max(damage - armor, 0);
 
         float newHealth = health;
-
+        Debug.Log("J'ai pris dégat : " + damage);
         Debug.Log("J'ai " + health + " vie");
 
         if (beforeHealth * newHealth <= 0 && !hasSpawnedTombe)
