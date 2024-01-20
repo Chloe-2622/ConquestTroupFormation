@@ -68,54 +68,54 @@ public class Tombe : MonoBehaviour
 
     public void Revive()
     {
-        GameObject capsule;
+        GameObject model;
 
-        Vector3 positionCapsule = new Vector3(transform.position.x, transform.position.y - 1, transform.position.z);
+        Vector3 positionModel = new Vector3(transform.position.x, transform.position.y - 1, transform.position.z);
 
         if (tombeUnitType == TombeUnitType.Combattant)
         {
-            capsule = Instantiate(GameManager.Instance.Combattant.transform.Find("Capsule").gameObject, positionCapsule, Quaternion.identity);
-            StartCoroutine(ReviveAnimation(capsule));
+            model = Instantiate(GameManager.Instance.Combattant.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Archer)
         {
-            capsule = Instantiate(GameManager.Instance.Archer.transform.Find("Capsule").gameObject, positionCapsule, Quaternion.identity);
-            StartCoroutine(ReviveAnimation(capsule));
+            model = Instantiate(GameManager.Instance.Archer.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Cavalier)
         {
-            capsule = Instantiate(GameManager.Instance.Cavalier.transform.Find("Capsule").gameObject, positionCapsule, Quaternion.identity);
-            StartCoroutine(ReviveAnimation(capsule));
+            model = Instantiate(GameManager.Instance.Cavalier.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Guerisseur)
         {
-            capsule = Instantiate(GameManager.Instance.Guerisseur.transform.Find("Capsule").gameObject, positionCapsule, Quaternion.identity);
-            StartCoroutine(ReviveAnimation(capsule));
+            model = Instantiate(GameManager.Instance.Guerisseur.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Catapulte)
         {
-            capsule = Instantiate(GameManager.Instance.Catapulte.transform.Find("Capsule").gameObject, positionCapsule, Quaternion.identity);
-            StartCoroutine(ReviveAnimation(capsule));
+            model = Instantiate(GameManager.Instance.Catapulte.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Porte_bouclier)
         {
-            capsule = Instantiate(GameManager.Instance.Porte_bouclier.transform.Find("Capsule").gameObject, positionCapsule, Quaternion.identity);
-            StartCoroutine(ReviveAnimation(capsule));
+            model = Instantiate(GameManager.Instance.Porte_bouclier.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Porte_etendard)
         {
-            capsule = Instantiate(GameManager.Instance.Porte_etendard.transform.Find("Capsule").gameObject, positionCapsule, Quaternion.identity);
-            StartCoroutine(ReviveAnimation(capsule));
+            model = Instantiate(GameManager.Instance.Porte_etendard.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Batisseur)
         {
-            capsule = Instantiate(GameManager.Instance.Batisseur.transform.Find("Capsule").gameObject, positionCapsule, Quaternion.identity);
-            StartCoroutine(ReviveAnimation(capsule));
+            model = Instantiate(GameManager.Instance.Batisseur.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Belier)
         {
-            capsule = Instantiate(GameManager.Instance.Belier.transform.Find("Capsule").gameObject, positionCapsule, Quaternion.identity);
-            StartCoroutine(ReviveAnimation(capsule));
+            model = Instantiate(GameManager.Instance.Belier.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
 
         
@@ -134,25 +134,25 @@ public class Tombe : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private IEnumerator ReviveAnimation(GameObject capsule)
+    private IEnumerator ReviveAnimation(GameObject model)
     {
-        Vector3 firstPosition = capsule.transform.position - .8f * transform.right;
+        Vector3 firstPosition = model.transform.position - .8f * transform.right;
         Vector3 finalPosition = transform.position + new Vector3(0, GameManager.Instance.defaultHeight / 2, 0) - .8f * transform.right;
 
-        capsule.transform.position = firstPosition;
+        model.transform.position = firstPosition;
 
         float elapsedTime = 0f;
         while (elapsedTime < reviveTime)
         {
-            capsule.transform.position = firstPosition + (elapsedTime / reviveTime) * (finalPosition - firstPosition);
+            model.transform.position = firstPosition + (elapsedTime / reviveTime) * (finalPosition - firstPosition);
             
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        capsule.transform.position = finalPosition;
+        model.transform.position = finalPosition;
 
-        Destroy(capsule);
+        Destroy(model);
 
         if (tombeUnitType == TombeUnitType.Combattant)
         {

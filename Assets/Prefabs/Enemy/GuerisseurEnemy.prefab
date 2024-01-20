@@ -1,36 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &98119589824181803
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 733141760822403200}
-  m_Layer: 0
-  m_Name: HealEffectSpawnPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &733141760822403200
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 98119589824181803}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.36, y: 1.98, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7738217919041393844}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &476938897048465815
 GameObject:
   m_ObjectHideFlags: 0
@@ -441,7 +410,7 @@ GameObject:
   - component: {fileID: 3232482504679713669}
   - component: {fileID: 763401979748312093}
   m_Layer: 8
-  m_Name: Guerisseur
+  m_Name: GuerisseurEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -466,7 +435,6 @@ Transform:
   - {fileID: 1316802530949835720}
   - {fileID: 2608874097365049319}
   - {fileID: 8320632662903181349}
-  - {fileID: 733141760822403200}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8098977275403220175
@@ -481,7 +449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6284b178a1dc2464587af4b023ae73a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  troupType: 0
+  troupType: 1
   unitType: 3
   isSelected: 0
   hasCrown: 0
@@ -501,19 +469,10 @@ MonoBehaviour:
   currentAttackedTroup: {fileID: 0}
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
-  healAmount: 10
-  healRange: 10
-  healRechargeTime: 1
   resurrectionRadius: 10
   tombeMask:
     serializedVersion: 2
     m_Bits: 128
-  closestInjuredAlly: {fileID: 0}
-  healEffect: {fileID: 866451567971719953, guid: ad990d9b14317854a9e81dc21dbe059c, type: 3}
-  healEffectSpawnPoint: {fileID: 98119589824181803}
-  healEffectSpeed: 0.5
-  currentHealedAlly: {fileID: 0}
-  isHealing: 0
 --- !u!195 &8753042273054374063
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -572,8 +531,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   outlineMode: 0
-  outlineColor: {r: 0, g: 0.9054296, b: 1, a: 1}
-  outlineWidth: 4
+  outlineColor: {r: 1, g: 0, b: 0.009674549, a: 1}
+  outlineWidth: 2
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []

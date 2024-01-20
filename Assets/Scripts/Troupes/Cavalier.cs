@@ -22,11 +22,18 @@ public class Cavalier : Troup
         AttackBehaviour();
     }
 
-    protected override IEnumerator Attack(Troup ennemy)
+    protected override IEnumerator Attack(Troup enemy)
     {
-        while (ennemy != null)
+        while (enemy != null)
         {
-            ennemy.TakeDamage(attackDamage);
+            if (enemy.unitType == UnitType.Combattant)
+            {
+                enemy.TakeDamage(2 * attackDamage);
+            } else
+            {
+                enemy.TakeDamage(attackDamage);
+            }
+            
             yield return new WaitForSeconds(attackRechargeTime);
         }
     }

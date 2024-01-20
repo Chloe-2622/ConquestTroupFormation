@@ -27,7 +27,14 @@ public class Combattant : Troup
     {
         while (enemy != null)
         {
-            enemy.TakeDamage(attackDamage);
+            if (enemy.unitType == UnitType.Archer)
+            {
+                enemy.TakeDamage(2 * attackDamage);
+            }
+            else
+            {
+                enemy.TakeDamage(attackDamage);
+            }
             yield return new WaitForSeconds(attackRechargeTime);
         }
     }

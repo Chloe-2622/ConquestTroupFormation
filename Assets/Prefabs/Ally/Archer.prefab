@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 5274872353549995522}
   - component: {fileID: 8753042273054374063}
   - component: {fileID: 3232482504679713669}
+  - component: {fileID: 3073714475462169823}
   m_Layer: 8
   m_Name: Archer
   m_TagString: Untagged
@@ -143,6 +144,7 @@ MonoBehaviour:
   health: 75
   armor: 0
   detectionRange: 15
+  positionThreshold: 1
   attackDamage: 10
   attackRechargeTime: 1
   attackRange: 10
@@ -201,6 +203,24 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &3073714475462169823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3630770809780813079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 0, g: 0.9054296, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &4880568243206761272
 GameObject:
   m_ObjectHideFlags: 0
@@ -527,7 +547,7 @@ GameObject:
   - component: {fileID: 1079720429615736230}
   - component: {fileID: 551474749657130285}
   m_Layer: 0
-  m_Name: Capsule
+  m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

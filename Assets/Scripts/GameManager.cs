@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     public GameObject SelectionParticleCircles;
     public LayerMask troupMask;
     public float defaultHeight;
-
+    public float outlineWidth;
     private bool pause;
 
     // Allies and Enemis dictionnary -----------------------------------------------------------------------------
