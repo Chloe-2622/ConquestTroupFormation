@@ -12,12 +12,12 @@ GameObject:
   - component: {fileID: 3677579403893262806}
   - component: {fileID: 4126334563746985448}
   m_Layer: 0
-  m_Name: BoostEffect
+  m_Name: ArmorBoostEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7214170188769753405
 Transform:
   m_ObjectHideFlags: 0
@@ -4795,7 +4795,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 95a732047a2b7cd4cb67319aba116ab0, type: 2}
+  - {fileID: 2100000, guid: 0dfe32bed3e58ef4a9359fbd71c20761, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

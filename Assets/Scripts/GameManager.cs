@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public GameObject SecondPatrolPointPrefab;
     public GameObject SelectionParticleCirclePrefab;
     public GameObject BoostParticleEffectPrefab;
+    public GameObject ArmorBoostParticleEffectPrefab;
     public GameObject CatapulteCroixPrefab;
     public GameObject BoulderPrefab;
     public GameObject BigBoulderPrefab;

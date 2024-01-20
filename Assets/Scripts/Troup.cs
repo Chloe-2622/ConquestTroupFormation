@@ -8,6 +8,26 @@ using UnityEngine.AI;
 public abstract class Troup : MonoBehaviour
 {
 
+    /* 
+     TODO : 
+
+                Carte avec terrain mieux, plus belle
+        -DONE-  Couronne (modèle + récupérable + qui flotte)
+        -DONE-  Roi (comportement des unités si Roi)
+                Modèle des unités
+                Animation basique des unités
+                Ecran menu principal (blender avec mise en scène non contractuelle des modèles)
+                Finir les unités : 
+	    -DONE-      - Catapulte
+	    -DONE-      - Porte-étendard
+	    -DONE-      - Porte-bouclier
+                Capa spécial bélier
+                Catapulte avec queue (si le temps)   
+                SFX basiques
+
+    */
+
+
     [Header("General stats")]
     [SerializeField] public TroupType troupType;
     [SerializeField] public UnitType unitType;
@@ -56,6 +76,7 @@ public abstract class Troup : MonoBehaviour
     protected GameObject SecondPatrolPoint;
     protected GameObject SelectionParticleCircle;
     protected GameObject BoostParticle;
+    protected GameObject ArmorBoostParticle;
     protected GameObject QueueUI;
     protected NavMeshAgent agent;
     protected LayerMask troupMask;
@@ -114,6 +135,7 @@ public abstract class Troup : MonoBehaviour
         SecondPatrolPoint = Instantiate(GameManager.Instance.SecondPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
         SelectionParticleCircle = Instantiate(GameManager.Instance.SelectionParticleCirclePrefab, GameManager.Instance.SelectionParticleCircles.transform);
         BoostParticle = Instantiate(GameManager.Instance.BoostParticleEffectPrefab, GameManager.Instance.BoostParticles.transform);
+        ArmorBoostParticle = Instantiate(GameManager.Instance.ArmorBoostParticleEffectPrefab, GameManager.Instance.BoostParticles.transform);
         troupMask = GameManager.Instance.troupMask;
 
         // Ally or Enemy
@@ -154,6 +176,10 @@ public abstract class Troup : MonoBehaviour
         if (BoostParticle.activeSelf)
         {
             BoostParticle.transform.position = transform.position;
+        }
+        if (ArmorBoostParticle.activeSelf)
+        {
+            ArmorBoostParticle.transform.position = transform.position;
         }
 
 
@@ -474,25 +500,6 @@ public abstract class Troup : MonoBehaviour
         healthBar.fillAmount = targetFillAmount;
     }
 
-    /* 
-     TODO : 
-
-                Carte avec terrain mieux, plus belle
-        -DONE-  Couronne (modèle + récupérable + qui flotte)
-        -DONE-  Roi (comportement des unités si Roi)
-                Modèle des unités
-                Animation basique des unités
-                Ecran menu principal (blender avec mise en scène non contractuelle des modèles)
-                Finir les unités : 
-	    -DONE-      - Catapulte
-	                - Porte-étendard
-	                - Porte-bouclier( si on a le temps)
-                Capa spécial bélier
-                Catapulte avec queue (si le temps)   
-                SFX basiques
-
-    */
-
     protected void HealthBarControl()
     {
         // Health Bar control
@@ -555,6 +562,11 @@ public abstract class Troup : MonoBehaviour
     public void ActivateBoostParticle(bool activate)
     {
         BoostParticle.SetActive(activate);
+    }
+
+    public void ActivateArmorBoostParticle(bool activate)
+    {
+        ArmorBoostParticle.SetActive(activate);
     }
 
     private void OnDrawGizmos()
@@ -779,6 +791,8 @@ public abstract class Troup : MonoBehaviour
             yield return null;
         }
 
+        specialAbilityDelay = 0f;
+
         abilityBar.fillAmount = 1;
     }
 
@@ -802,6 +816,8 @@ public abstract class Troup : MonoBehaviour
             tombeMort.GetComponent<Tombe>().SetUnitType((Tombe.TombeUnitType)unitType);
             tombeMort.GetComponent<Tombe>().SetTroupType((Tombe.TombeTroupType)troupType);
             Destroy(SelectionParticleCircle);
+            Destroy(BoostParticle);
+            Destroy(ArmorBoostParticle);
             Destroy(FirstPatrolPoint);
             Destroy(SecondPatrolPoint);
             selectionManager.removeObject(gameObject);
@@ -815,6 +831,11 @@ public abstract class Troup : MonoBehaviour
     public virtual void AddDamage(float damage)
     {
         attackDamage += damage;
+    }
+
+    public virtual void AddArmor(float armorCount)
+    {
+        armor += armorCount;
     }
 
     public virtual void ChangeAttackSpeed(float multiplier)
