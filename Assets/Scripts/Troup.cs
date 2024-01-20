@@ -55,6 +55,7 @@ public abstract class Troup : MonoBehaviour
     protected GameObject FirstPatrolPoint;
     protected GameObject SecondPatrolPoint;
     protected GameObject SelectionParticleCircle;
+    protected GameObject BoostParticle;
     protected GameObject QueueUI;
     protected NavMeshAgent agent;
     protected LayerMask troupMask;
@@ -112,6 +113,7 @@ public abstract class Troup : MonoBehaviour
         FirstPatrolPoint = Instantiate(GameManager.Instance.FirstPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
         SecondPatrolPoint = Instantiate(GameManager.Instance.SecondPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
         SelectionParticleCircle = Instantiate(GameManager.Instance.SelectionParticleCirclePrefab, GameManager.Instance.SelectionParticleCircles.transform);
+        BoostParticle = Instantiate(GameManager.Instance.BoostParticleEffectPrefab, GameManager.Instance.BoostParticles.transform);
         troupMask = GameManager.Instance.troupMask;
 
         // Ally or Enemy
@@ -149,12 +151,20 @@ public abstract class Troup : MonoBehaviour
             }
         }
 
-        
-        
+        if (BoostParticle.activeSelf)
+        {
+            BoostParticle.transform.position = transform.position;
+        }
+
+
+
+
         SelectedBehaviour();
 
         HealthBarControl();
         AbilityBarControl();
+
+        transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
 
     }
 
@@ -246,6 +256,7 @@ public abstract class Troup : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.F) && specialAbilityDelay == 0)
             {
                 StartCoroutine(SpecialAbility());
+                specialAbilityDelay = -1f;
             }
 
         }
@@ -451,11 +462,12 @@ public abstract class Troup : MonoBehaviour
     {
         float targetFillAmount = health / maxHealth;
         float t = 0f;
+        Debug.Log("Je heal de " + healthBar.fillAmount + " à " + targetFillAmount);
         while (t < 1f && healthBar.fillAmount != targetFillAmount)
         {
             t += Time.deltaTime / 0.5f; // 0.5f est la dur�e de la transition en secondes, ajustez selon vos besoins
             healthBar.fillAmount = Mathf.Lerp(healthBar.fillAmount, targetFillAmount, t);
-            Debug.Log("Je passe le fillAmount � : " + healthBar.fillAmount);
+            Debug.Log("Je passe le fillAmount à : " + healthBar.fillAmount);
             yield return null;
         }
 
@@ -472,10 +484,11 @@ public abstract class Troup : MonoBehaviour
                 Animation basique des unités
                 Ecran menu principal (blender avec mise en scène non contractuelle des modèles)
                 Finir les unités : 
-	                - Catapulte
+	    -DONE-      - Catapulte
 	                - Porte-étendard
 	                - Porte-bouclier( si on a le temps)
                 Capa spécial bélier
+                Catapulte avec queue (si le temps)   
                 SFX basiques
 
     */
@@ -538,6 +551,10 @@ public abstract class Troup : MonoBehaviour
     {
         // Debug.Log("max health = " + maxHealth + "et health = " + health);
         return health < maxHealth;
+    }
+    public void ActivateBoostParticle(bool activate)
+    {
+        BoostParticle.SetActive(activate);
     }
 
     private void OnDrawGizmos()
@@ -795,9 +812,20 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
+    public virtual void AddDamage(float damage)
+    {
+        attackDamage += damage;
+    }
+
+    public virtual void ChangeAttackSpeed(float multiplier)
+    {
+        attackRechargeTime *= multiplier;
+    }
+
     public virtual void Heal(float healAmount)
     {
         health = Mathf.Min(maxHealth, health + healAmount);
+        StartCoroutine(UpdateHealthBar());
     }
 
     // IAction Interface ------------------------------------------------------------------------------------------

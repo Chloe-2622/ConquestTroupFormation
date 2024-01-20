@@ -669,12 +669,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4887318421293955472}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.512, z: -1.185}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.0014070885, y: -0, z: -0, w: 0.99999905}
+  m_LocalPosition: {x: -0.021737363, y: 2.4668064, z: -7.124962}
+  m_LocalScale: {x: 2.8720915, y: 19.163445, z: 2.8721106}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7935898198155487177}
+  m_Father: {fileID: 1171690888070557798}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5520103222608124123
 GameObject:
@@ -872,7 +872,8 @@ Transform:
   m_LocalPosition: {x: 0.0075683594, y: -0.15573692, z: 1.2961121}
   m_LocalScale: {x: 0.3481783, y: 0.05218034, z: 0.34817833}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 655269618097624654}
   m_Father: {fileID: 5503955627628882955}
   m_LocalEulerAnglesHint: {x: 23.408325, y: 0, z: 0}
 --- !u!33 &1248527947244962952
@@ -1025,7 +1026,6 @@ Transform:
   - {fileID: 2569605211998900069}
   - {fileID: 82651292106701904}
   - {fileID: 1981799494338082461}
-  - {fileID: 655269618097624654}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2081391671169810418
@@ -1048,11 +1048,11 @@ MonoBehaviour:
   health: 200
   armor: 0
   detectionRange: 15
-  positionThreshold: 0
+  positionThreshold: 1
   attackDamage: 0
   attackRechargeTime: 4
   attackRange: 10
-  specialAbilityRechargeTime: 0
+  specialAbilityRechargeTime: 30
   isChosingPatrol: 0
   isFollowingEnemy: 0
   isAttackingEnemy: 0
@@ -1062,10 +1062,16 @@ MonoBehaviour:
   specialAbilityDelay: 0
   isVisible: 1
   wheelRotationSpeed: 20
-  croix: {fileID: 2191019799520281285}
+  croix: {fileID: 0}
   shootPoint: {x: 0, y: 0, z: 0}
+  maxShootingRange: 50
+  oneShotTime: 12
   isSelectingPlacement: 0
   isShooting: 0
+  heightAttenuation: 3
+  timeAttenuation: 10
+  isLauchingBoulder: 0
+  newBoulder: {fileID: 0}
 --- !u!195 &8085429279557207350
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1473,11 +1479,6 @@ PrefabInstance:
 --- !u!4 &1981799494338082461 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5805779220220322682, guid: 25f44e0cd051a7c4081de3daf3a8dc23, type: 3}
-  m_PrefabInstance: {fileID: 5409528296402736615}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &2191019799520281285 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6159395647826122530, guid: 25f44e0cd051a7c4081de3daf3a8dc23, type: 3}
   m_PrefabInstance: {fileID: 5409528296402736615}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8098987125305080799

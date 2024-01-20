@@ -124,7 +124,7 @@ public class Guerisseur : Troup
             HashSet<Troup> allies = GameManager.Instance.getAllies();
             foreach (var ally in allies)
             {
-                if (ally != this && Vector3.Distance(transform.position, ally.transform.position) <= healRange)
+                if (ally != this && Vector3.Distance(transform.position, ally.transform.position) <= healRange && ally.IsInjured())
                 {
                     inRangeAllies.Add(ally.gameObject);
                 }
@@ -135,7 +135,7 @@ public class Guerisseur : Troup
             HashSet<Troup> enemies = GameManager.Instance.getEnemies();
             foreach (var enemy in enemies)
             {
-                if (enemy != this && Vector3.Distance(transform.position, enemy.transform.position) <= healRange)
+                if (enemy != this && Vector3.Distance(transform.position, enemy.transform.position) <= healRange && enemy.IsInjured())
                 {
                     inRangeAllies.Add(enemy.gameObject);
                 }
@@ -178,7 +178,7 @@ public class Guerisseur : Troup
                 StopCoroutine(currentActionCoroutine);
                 actionQueue.Enqueue(new Standby());
                 StartCoroutine(currentActionCoroutine);
-
+                
                 healCoroutine = Heal(currentHealedAlly.GetComponent<Troup>());
                 StartCoroutine(healCoroutine);
                 isHealing = true;
@@ -208,11 +208,12 @@ public class Guerisseur : Troup
     private IEnumerator Heal(Troup troup)
     {
         
-        while (troup.gameObject == null || troup.IsInjured())
+        while (troup.gameObject != null || troup.IsInjured())
         {
+            
             GameObject currentHealEffect = Instantiate(healEffect, healEffectSpawnPoint.transform);
             StartCoroutine(HealEffectAnimation(troup, currentHealEffect, healEffectSpawnPoint.transform.position, troup.gameObject.transform.position + new Vector3(0, 1f, 0), healEffectSpeed));
-
+            
             yield return new WaitForSeconds(healRechargeTime);
         }
         yield return null;
@@ -231,7 +232,11 @@ public class Guerisseur : Troup
         }
 
         effect.transform.position = endpoint;
-        target.Heal(healAmount);
+        if (target != null)
+        {
+            target.Heal(healAmount);
+        }
+        
         Destroy(effect);
 
     }
