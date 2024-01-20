@@ -11,11 +11,10 @@ using System.ComponentModel;
 
 public class InGameUI : MonoBehaviour
 {
-    [SerializeField] private GameObject startGameButton;
-    [SerializeField] private SelectionManager selectionManager;
+    private SelectionManager selectionManager;
 
     [Header("Timer")]
-    [SerializeField] private GameObject timer;
+    [SerializeField] public GameObject timer;
     [SerializeField] private TextMeshProUGUI timer_text;
 
     [Header("Player Counter")]
@@ -48,7 +47,8 @@ public class InGameUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        timer.SetActive(false);
+        selectionManager = GameManager.Instance.selectionManager;
+
         AIName_UI.text = AIName;
         playerName_UI.text = OptionsManager.Instance.getPlayerName();
 
@@ -108,21 +108,14 @@ public class InGameUI : MonoBehaviour
             }
     }
 
-
-
-
-    
-
     private void updateCounter()
     {
         AIUnitCounter.text = GameManager.Instance.enemiesCount().ToString();
         playerUnitCounter.text = GameManager.Instance.alliesCount().ToString();
-    }
+    }    
 
-    public void startGame()
+    public void startTimer()
     {
-        startGameButton.SetActive(false);
-        timer.SetActive(true);
         StartCoroutine(Timer());
     }
 

@@ -41,11 +41,16 @@ public class GameManager : MonoBehaviour
     public GameObject SelectionParticleCircles;
     public LayerMask troupMask;
 
+    [Header("Purchase")]
+    public TroupPurchase troupPurchase;
+
     private bool pause;
 
     // Allies and Enemis dictionnary -----------------------------------------------------------------------------
     private static HashSet<Troup> Allies = new HashSet<Troup>();
     private static HashSet<Troup> Enemies = new HashSet<Troup>();
+
+    private List<GameObject> UnitPrefabs = new List<GameObject>();
     public UnityEvent updateTroupCounter;
 
     private void Awake()
@@ -63,9 +68,11 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject); // Détruisez les doublons
         }
+
+        chargeUnitPrefab();
     }
 
-    // Pause
+        // Pause
     public bool isInPause() { return pause; }
 
     public void PauseGame()
@@ -90,4 +97,26 @@ public class GameManager : MonoBehaviour
     public void removeEnemy(Troup troup) { Enemies.Remove(troup); updateTroupCounter.Invoke(); }
     public HashSet<Troup> getEnemies() { return Enemies; }
     public int enemiesCount() { return Enemies.Count; }
+
+    // List of unit prefabs
+
+    public List<GameObject> getUnitPrefabs() { return UnitPrefabs; }
+    public int getUnitPrebasLenght() { return UnitPrefabs.Count; }
+
+
+    // Complete list of Unit Prefabs
+    public void chargeUnitPrefab()
+    {
+        UnitPrefabs.Add(Combattant);
+        UnitPrefabs.Add(Archer);
+        UnitPrefabs.Add(Cavalier);
+        UnitPrefabs.Add(Guerisseur);
+        UnitPrefabs.Add(Catapulte);
+        UnitPrefabs.Add(Porte_bouclier);
+        UnitPrefabs.Add(Porte_etendard);
+        UnitPrefabs.Add(Batisseur);
+        UnitPrefabs.Add(Belier);
+
+        Debug.Log(UnitPrefabs.Count);
+    }
 }

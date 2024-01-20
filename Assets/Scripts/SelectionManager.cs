@@ -38,7 +38,6 @@ public class SelectionManager : MonoBehaviour
 
     public UnityEvent newSelection;
 
-
     private void Awake()
     {
         if (newSelection == null)
@@ -46,7 +45,7 @@ public class SelectionManager : MonoBehaviour
     }
 
         // On s'abonne aux évènements du Event System
-        private void OnEnable()
+    private void OnEnable()
     {
         selectionAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
         selectionAction.action.started += OnInputStarted; // S'active à la pression initiale des touches

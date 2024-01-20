@@ -11,12 +11,9 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private InputActionReference pauseAction;
 
-    [SerializeField] private TextMeshProUGUI areneText;
-
     // Start is called before the first frame update
     void Start()
     {
-        areneText.text = SceneManager.GetActiveScene().name;
         resumeGame();
 
         if (OptionsManager.Instance.getPreviousScene() == SceneManager.GetActiveScene().name)

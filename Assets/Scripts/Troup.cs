@@ -47,7 +47,7 @@ public abstract class Troup : MonoBehaviour
     public enum TroupType { Ally, Enemy }
     public enum UnitType
     {
-        Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
+        Null, Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
     }
 
     // Action Queue -----------------------------------------------------------------------------------------------
@@ -126,6 +126,15 @@ public abstract class Troup : MonoBehaviour
         currentActionCoroutine = ExecuteActionQueue();
         AddAction(new Standby());
         StartCoroutine(currentActionCoroutine);
+    }
+
+    public void OnEnable()
+    {
+        healthBar.enabled = true;
+    }
+    public void OnDisable()
+    {
+        healthBar.enabled = false;
     }
 
     // Update

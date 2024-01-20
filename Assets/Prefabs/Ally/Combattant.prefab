@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troupType: 0
-  unitType: 0
+  unitType: 1
   isSelected: 0
   hasCrown: 0
   movingSpeed: 7
@@ -148,8 +148,8 @@ MonoBehaviour:
   attackRange: 2
   specialAbilityRechargeTime: 20
   isChosingPatrol: 0
-  isFollowingEnnemy: 0
-  isAttackingEnnemy: 0
+  isFollowingEnemy: 0
+  isAttackingEnemy: 0
   isPatroling: 0
   currentAttackedTroup: {fileID: 0}
   currentFollowedTroup: {fileID: 0}
