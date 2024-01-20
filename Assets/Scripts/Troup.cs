@@ -9,7 +9,7 @@ public abstract class Troup : MonoBehaviour
 {
 
     [Header("General stats")]
-    [SerializeField] protected TroupType troupType;
+    [SerializeField] public TroupType troupType;
     [SerializeField] public UnitType unitType;
     [SerializeField] protected bool isSelected;
     [SerializeField] protected bool hasCrown = false;
@@ -17,6 +17,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected float health;
     [SerializeField] protected float armor;
     [SerializeField] protected float detectionRange;
+    [SerializeField] protected float positionThreshold;
 
     [Header("Attack stats")]
     [SerializeField] protected float attackDamage;
@@ -24,6 +25,27 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected float attackRange;
     [SerializeField] protected float specialAbilityRechargeTime;
 
+    // Private variables ------------------------------------------------------------------------------------------
+    [Header("Debug Variables")]
+    [SerializeField] private bool isChosingPatrol;
+    [SerializeField] private bool isFollowingEnemy;
+    [SerializeField] private bool isAttackingEnemy;
+    [SerializeField] private bool isPatroling;
+    [SerializeField] protected GameObject currentAttackedTroup;
+    [SerializeField] private GameObject currentFollowedTroup;
+    [SerializeField] protected float specialAbilityDelay = 0f;
+    [SerializeField] protected bool isVisible = true;
+    private bool isPlayingCircleAnim;
+    private bool isChosingPlacement;
+    private bool isChosingFollow;
+    protected bool isFollowingOrders;
+    private bool hasSpawnedTombe;
+    private bool isMovingToKing;
+    private float maxHealth;
+    protected IEnumerator currentActionCoroutine;
+    private IEnumerator attackCoroutine;
+
+    // Scene objects
     protected Camera camera1;
     protected SelectionManager selectionManager;
     protected GameObject selectionArrow;
@@ -37,11 +59,13 @@ public abstract class Troup : MonoBehaviour
     protected NavMeshAgent agent;
     protected LayerMask troupMask;
 
+    // UI elements
     protected TextMeshProUGUI PlaceSelectionPopUp;
     protected TextMeshProUGUI PatrolSelectionPopUp1;
     protected TextMeshProUGUI PatrolSelectionPopUp2;
     protected TextMeshProUGUI FollowSelectionPopUp;
     protected Image healthBar;
+    protected Image abilityBar;
 
     // Troup types ------------------------------------------------------------------------------------------------
     public enum TroupType { Ally, Enemy }
@@ -51,37 +75,16 @@ public abstract class Troup : MonoBehaviour
     }
 
     // Action Queue -----------------------------------------------------------------------------------------------
-    private Queue<IAction> actionQueue = new Queue<IAction>();
+    protected Queue<IAction> actionQueue = new Queue<IAction>();
 
-    // Private variables ------------------------------------------------------------------------------------------
-    [Header("Debug Variables")]
-    [SerializeField] private bool isChosingPatrol;
-    [SerializeField] private bool isFollowingEnemy;
-    [SerializeField] private bool isAttackingEnemy;
-    [SerializeField] private bool isPatroling;
-    [SerializeField] private GameObject currentAttackedTroup;
-    [SerializeField] private GameObject currentFollowedTroup;
-    [SerializeField] protected float specialAbilityDelay = 0f;
-    private bool isPlayingCircleAnim;
-    private bool isChosingPlacement;
-    private bool isChosingFollow;
-    private bool isFollowingOrders;
-    private bool hasSpawnedTombe;
-    private float maxHealth;
-    private IEnumerator currentActionCoroutine;
-    private IEnumerator attackCoroutine;
+    // Main Functions ---------------------------------------------------------------------------------------------
 
-    // TODO : Capa sp�cial Combattant
-
-
-    // Awake
     protected virtual void Awake() 
     {
         // Children variable setup
         healthBar = transform.Find("Canvas").Find("Vie").GetComponent<Image>();
-
+        abilityBar = transform.Find("Canvas").Find("Ability").GetComponent<Image>();
         SelectionCircle = transform.Find("SelectionCircle");
-        healthBar = transform.Find("Canvas").Find("Vie").GetComponent<Image>();
 
         if (troupType == TroupType.Ally)
         {
@@ -111,7 +114,20 @@ public abstract class Troup : MonoBehaviour
         SelectionParticleCircle = Instantiate(GameManager.Instance.SelectionParticleCirclePrefab, GameManager.Instance.SelectionParticleCircles.transform);
         troupMask = GameManager.Instance.troupMask;
 
-        // Ally or Enemy
+        // Start Action Queue
+        currentActionCoroutine = ExecuteActionQueue();
+        AddAction(new Standby());
+        StartCoroutine(currentActionCoroutine);
+
+        if (troupType == TroupType.Enemy)
+        {
+            GameManager.Instance.addEnemy(this);
+        }
+    }
+
+    // Ally or Enemy
+    public void addToGroup()
+    {
         if (troupType == TroupType.Ally)
         {
             GameManager.Instance.addAlly(this);
@@ -121,11 +137,6 @@ public abstract class Troup : MonoBehaviour
         {
             GameManager.Instance.addEnemy(this);
         }
-
-        // Start Action Queue
-        currentActionCoroutine = ExecuteActionQueue();
-        AddAction(new Standby());
-        StartCoroutine(currentActionCoroutine);
     }
 
     public void OnEnable()
@@ -145,14 +156,24 @@ public abstract class Troup : MonoBehaviour
             isFollowingEnemy = false;
             isAttackingEnemy = false;
         }
-        
+
+        if (troupType == TroupType.Ally)
+        {
+            if (transform.Find("Crown").gameObject.activeSelf == true)
+            {
+                hasCrown = true;
+                GameManager.Instance.isCrownCollected = true;
+                GameManager.Instance.king = gameObject;
+            }
+        }
+
         SelectedBehaviour();
 
         HealthBarControl();
+        AbilityBarControl();
 
     }
 
-    // SelectedBehaviour
     protected virtual void SelectedBehaviour()
     {
         isSelected = selectionManager.isSelected(this.gameObject);
@@ -238,19 +259,9 @@ public abstract class Troup : MonoBehaviour
                 AddAction(new Standby());
             }
 
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.F) && specialAbilityDelay == 0)
             {
-                if (specialAbilityDelay == 0f)
-                {
-                    StartCoroutine(SpecialAbility());
-                    specialAbilityDelay = specialAbilityRechargeTime;
-                    StartCoroutine(SpecialAbilityCountdown());
-                }
-                if (specialAbilityDelay == -1f)
-                {
-                    StartCoroutine(SpecialAbility());
-                    specialAbilityDelay = Mathf.Infinity;
-                }
+                StartCoroutine(SpecialAbility());
             }
 
         }
@@ -294,7 +305,7 @@ public abstract class Troup : MonoBehaviour
                 if (Input.GetMouseButton(0))
                 {
                     Debug.Log("Target position clicked : " + hit.point);
-                    AddAction(new MoveToPosition(agent, hit.point));
+                    AddAction(new MoveToPosition(agent, hit.point, positionThreshold));
                     hasSelected = true;
                     SelectionArrow.GetComponent<MeshRenderer>().enabled = false;
                     PlaceSelectionPopUp.enabled = false;
@@ -467,6 +478,23 @@ public abstract class Troup : MonoBehaviour
         healthBar.fillAmount = targetFillAmount;
     }
 
+    /* 
+     TODO : 
+
+                Carte avec terrain mieux, plus belle
+        -DONE-  Couronne (modèle + récupérable + qui flotte)
+                Roi (comportement des unités si Roi)
+                Modèle des unités
+                Animation basique des unités
+                Ecran menu principal (blender avec mise en scène non contractuelle des modèles)
+                Finir les unités : 
+	                - Catapulte
+	                - Porte-étendard
+	                - Porte-bouclier( si on a le temps)
+                SFX basiques
+
+    */
+
     protected void HealthBarControl()
     {
         // Health Bar control
@@ -494,6 +522,39 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
+    protected void AbilityBarControl()
+    {
+        // Ability Bar control
+        // float normalizedHealth = health / maxHealth;
+        abilityBar.enabled = !GameManager.Instance.isInPause();
+
+        Vector3 abilityBarPosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + agent.height, transform.position.z));
+        abilityBar.transform.position = new Vector3(abilityBarPosition.x, abilityBarPosition.y - 5.5f, abilityBarPosition.z);
+
+        /* if (normalizedHealth >= .75)
+        {
+            healthBar.color = Color.green;
+        }
+        if (normalizedHealth >= .5 && normalizedHealth <= .75)
+        {
+            healthBar.color = Color.yellow;
+        }
+        if (normalizedHealth >= .25 && normalizedHealth <= .5)
+        {
+            healthBar.color = new Color(1.0f, 0.5f, 0.0f);
+        }
+        if (normalizedHealth <= .25)
+        {
+            healthBar.color = Color.red;
+        } */
+}
+
+    public bool IsInjured()
+    {
+        // Debug.Log("max health = " + maxHealth + "et health = " + health);
+        return health < maxHealth;
+    }
+
     private void OnDrawGizmos()
     {
         if (selectionManager != null && selectionManager.isSelected(this.gameObject))
@@ -508,6 +569,25 @@ public abstract class Troup : MonoBehaviour
     // Attack and ability -----------------------------------------------------------------------------------------
     protected void AttackBehaviour()
     {
+        if (troupType == TroupType.Enemy && GameManager.Instance.isCrownCollected)
+        {
+            GameObject king = GameManager.Instance.king;
+            
+            if (king != null && king.GetComponent<Troup>().isVisible && !isMovingToKing)
+            {
+                isMovingToKing = true;
+
+                actionQueue.Clear();
+                agent.isStopped = true;
+                agent.ResetPath();
+
+                // Debug.Log("Getting closer to enemy : " + king);
+                StopCoroutine(currentActionCoroutine);
+                actionQueue.Enqueue(new MoveToUnit(agent, king, attackRange));
+                StartCoroutine(currentActionCoroutine);
+            }
+        }
+
         
         // Find all enemies in detection range
         HashSet<GameObject> detectedEnemies = new HashSet<GameObject>();
@@ -516,7 +596,7 @@ public abstract class Troup : MonoBehaviour
             HashSet<Troup> enemies = GameManager.Instance.getEnemies();
             foreach (Troup enemie in enemies)
             {
-                if (Vector3.Distance(transform.position, enemie.transform.position) <= detectionRange)
+                if (enemie.isVisible && Vector3.Distance(transform.position, enemie.transform.position) <= detectionRange)
                 {
                     detectedEnemies.Add(enemie.gameObject);
                 }
@@ -526,7 +606,7 @@ public abstract class Troup : MonoBehaviour
             HashSet<Troup> allies = GameManager.Instance.getAllies();
             foreach (Troup ally in allies)
             {
-                if (Vector3.Distance(transform.position, ally.transform.position) <= detectionRange)
+                if (ally.isVisible && Vector3.Distance(transform.position, ally.transform.position) <= detectionRange)
                 {
                     detectedEnemies.Add(ally.gameObject);
                 }
@@ -561,7 +641,7 @@ public abstract class Troup : MonoBehaviour
 
             Debug.Log("Getting closer to enemy : " + closestEnemy);
             StopCoroutine(currentActionCoroutine);
-            actionQueue.Enqueue(new MoveToEnemy(agent, closestEnemy, attackRange));
+            actionQueue.Enqueue(new MoveToUnit(agent, closestEnemy, attackRange));
             StartCoroutine(currentActionCoroutine);
 
             
@@ -574,6 +654,19 @@ public abstract class Troup : MonoBehaviour
         {
             isFollowingEnemy = false;
         }
+        if ((currentFollowedTroup != null && !currentFollowedTroup.GetComponent<Troup>().isVisible) || (currentAttackedTroup != null && currentAttackedTroup.GetComponent<Troup>().isVisible))
+        {
+            isFollowingEnemy = false;
+            isAttackingEnemy = false;
+            currentAttackedTroup = null;
+            currentFollowedTroup = null;
+            actionQueue.Clear();
+            agent.isStopped = true;
+            agent.ResetPath();
+            StopCoroutine(currentActionCoroutine);
+            actionQueue.Enqueue(new Standby());
+            StartCoroutine(currentActionCoroutine);
+        }
 
         
         
@@ -584,7 +677,7 @@ public abstract class Troup : MonoBehaviour
             HashSet<Troup> enemies = GameManager.Instance.getEnemies();
             foreach (var enemy in enemies)
             {
-                if (Vector3.Distance(transform.position, enemy.transform.position) <= attackRange)
+                if (enemy.isVisible && Vector3.Distance(transform.position, enemy.transform.position) <= attackRange)
                 {
                     inRangeEnemies.Add(enemy.gameObject);
                 }
@@ -595,7 +688,7 @@ public abstract class Troup : MonoBehaviour
             HashSet<Troup>  allies = GameManager.Instance.getAllies();
             foreach (var ally in allies)
             {
-                if (Vector3.Distance(transform.position, ally.transform.position) <= attackRange)
+                if (ally.isVisible && Vector3.Distance(transform.position, ally.transform.position) <= attackRange)
                 {
                     inRangeEnemies.Add(ally.gameObject);
                 }
@@ -660,6 +753,11 @@ public abstract class Troup : MonoBehaviour
             isAttackingEnemy = false;
         }
 
+        if (currentAttackedTroup != null)
+        {
+            transform.LookAt(currentAttackedTroup.transform.position);
+        }
+
     }
 
     protected abstract IEnumerator Attack(Troup enemy);
@@ -668,18 +766,25 @@ public abstract class Troup : MonoBehaviour
 
     protected IEnumerator SpecialAbilityCountdown()
     {
-        while (specialAbilityDelay > 0)
+        float currentDelay = specialAbilityDelay;
+
+        while (currentDelay > 0)
         {
-            specialAbilityDelay--;
-            yield return new WaitForSeconds(1f);
+            currentDelay -= Time.deltaTime;
+            specialAbilityDelay -= Time.deltaTime;
+            abilityBar.fillAmount = 1 - currentDelay / specialAbilityRechargeTime;
+
+            yield return null;
         }
+
+        abilityBar.fillAmount = 1;
     }
 
     public virtual void TakeDamage(float damage)
     {
         float beforeHealth = health;
 
-        health -= damage - armor;
+        health -= Mathf.Max(damage - armor, 0);
 
         float newHealth = health;
 
@@ -703,6 +808,11 @@ public abstract class Troup : MonoBehaviour
         {
             StartCoroutine(UpdateHealthBar());
         }
+    }
+
+    public virtual void Heal(float healAmount)
+    {
+        health = Mathf.Min(maxHealth, health + healAmount);
     }
 
     // IAction Interface ------------------------------------------------------------------------------------------
@@ -805,11 +915,13 @@ public abstract class Troup : MonoBehaviour
         // public bool IsStandBy { get; set; }
         private Vector3 targetPosition;
         private NavMeshAgent navMeshAgent;
+        float positionThreshold;
 
-        public MoveToPosition(NavMeshAgent agent, Vector3 position)
+        public MoveToPosition(NavMeshAgent agent, Vector3 position, float apositionThreshold)
         {
             navMeshAgent = agent;
             targetPosition = position;
+            positionThreshold = apositionThreshold;
         }
 
         public void Execute()
@@ -824,7 +936,7 @@ public abstract class Troup : MonoBehaviour
 
             Debug.Log("Distance initiale : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
 
-            while (Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= 1f)
+            while (Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= positionThreshold)
             {
                 // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
                 yield return null;
@@ -883,14 +995,14 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
-    protected class MoveToEnemy : IAction
+    protected class MoveToUnit : IAction
     {
         public bool IsActionComplete { get; set; }
         public GameObject unitToFollow;
         private NavMeshAgent navMeshAgent;
         private float range;
 
-        public MoveToEnemy(NavMeshAgent agent, GameObject unit, float attackRange)
+        public MoveToUnit(NavMeshAgent agent, GameObject unit, float attackRange)
         {
             navMeshAgent = agent;
             unitToFollow = unit;
@@ -913,7 +1025,7 @@ public abstract class Troup : MonoBehaviour
 
             // navMeshAgent.SetDestination(targetPosition);
 
-            while (unitToFollow != null && Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= range)
+            while (unitToFollow != null && navMeshAgent != null && Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= range && unitToFollow.GetComponent<Troup>().isVisible)
             {
                 // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
                 navMeshAgent.isStopped = false;
@@ -986,9 +1098,9 @@ public abstract class Troup : MonoBehaviour
                 isFollowingOrders = true;
                 StartCoroutine(followUnit.StartFollowing());
             }
-            if (currentAction is MoveToEnemy moveToEnemy)
+            if (currentAction is MoveToUnit moveToUnit)
             {
-                StartCoroutine(moveToEnemy.StartFollowing());
+                StartCoroutine(moveToUnit.StartFollowing());
             }
 
             yield return new WaitUntil(() => currentAction.IsActionComplete);

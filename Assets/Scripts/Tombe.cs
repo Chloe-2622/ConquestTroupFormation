@@ -9,11 +9,12 @@ public class Tombe : MonoBehaviour
     [SerializeField] private TombeUnitType tombeUnitType;
     [SerializeField] public TombeTroupType tombeTroupType;
     [SerializeField] private float lifeTime = 5f;
+    [SerializeField] private float reviveTime;
     private float lifeTimeLeft;
 
     [Header("Scene objects")]
     [SerializeField] private Image lifeCircle;
-    [SerializeField] private Camera camera1;
+    [SerializeField] private Camera mainCamera;
 
 
     public enum TombeTroupType { Ally, Enemy }
@@ -25,10 +26,12 @@ public class Tombe : MonoBehaviour
 
     private void Awake()
     {
-        camera1 = GameManager.Instance.mainCamera;
+        lifeCircle = transform.Find("Canvas").Find("LifeCircle").GetComponent<Image>();
+
+        mainCamera = GameManager.Instance.mainCamera;
         lifeTimeLeft = lifeTime;
 
-        Vector3 lifeCirclePosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y, transform.position.z));
+        Vector3 lifeCirclePosition = mainCamera.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y, transform.position.z));
         lifeCircle.transform.position = new Vector3(lifeCirclePosition.x, lifeCirclePosition.y, lifeCirclePosition.z);
 
         StartCoroutine(Timer());
@@ -43,7 +46,7 @@ public class Tombe : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 lifeCirclePosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y, transform.position.z));
+        Vector3 lifeCirclePosition = mainCamera.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y, transform.position.z));
         // Debug.Log("Position du lifecircle : " + lifeCirclePosition);
         // Debug.Log("position camera : " + camera1.transform.position);
         lifeCircle.transform.position = new Vector3(lifeCirclePosition.x, lifeCirclePosition.y, lifeCirclePosition.z);
@@ -65,45 +68,55 @@ public class Tombe : MonoBehaviour
 
     public void Revive()
     {
+        GameObject model;
+
+        Vector3 positionModel = new Vector3(transform.position.x, transform.position.y - 1, transform.position.z);
+
         if (tombeUnitType == TombeUnitType.Combattant)
         {
-            Instantiate(GameManager.Instance.Combattant, transform.position, Quaternion.identity);
+            model = Instantiate(GameManager.Instance.Combattant.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Archer)
         {
-            Instantiate(GameManager.Instance.Archer, transform.position, Quaternion.identity);
+            model = Instantiate(GameManager.Instance.Archer.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Cavalier)
         {
-            Instantiate(GameManager.Instance.Cavalier, transform.position, Quaternion.identity);
+            model = Instantiate(GameManager.Instance.Cavalier.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Guerisseur)
         {
-            Instantiate(GameManager.Instance.Guerisseur, transform.position, Quaternion.identity);
+            model = Instantiate(GameManager.Instance.Guerisseur.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Catapulte)
         {
-            Instantiate(GameManager.Instance.Catapulte, transform.position, Quaternion.identity);
+            model = Instantiate(GameManager.Instance.Catapulte.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Porte_bouclier)
         {
-            Instantiate(GameManager.Instance.Porte_bouclier, transform.position, Quaternion.identity);
+            model = Instantiate(GameManager.Instance.Porte_bouclier.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Porte_etendard)
         {
-            Instantiate(GameManager.Instance.Porte_etendard, transform.position, Quaternion.identity);
+            model = Instantiate(GameManager.Instance.Porte_etendard.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Batisseur)
         {
-            Instantiate(GameManager.Instance.Batisseur, transform.position, Quaternion.identity);
+            model = Instantiate(GameManager.Instance.Batisseur.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
         if (tombeUnitType == TombeUnitType.Belier)
         {
-            Instantiate(GameManager.Instance.Belier, transform.position, Quaternion.identity);
+            model = Instantiate(GameManager.Instance.Belier.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
+            StartCoroutine(ReviveAnimation(model));
         }
-
-        StopCoroutine(Timer());
-        Destroy(gameObject);
     }
 
     public IEnumerator Timer()
@@ -116,6 +129,85 @@ public class Tombe : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
 
+        Destroy(gameObject);
+    }
+
+    private IEnumerator ReviveAnimation(GameObject model)
+    {
+        Vector3 firstPosition = model.transform.position - .8f * transform.right;
+        Vector3 finalPosition = transform.position + new Vector3(0, GameManager.Instance.defaultHeight / 2, 0) - .8f * transform.right;
+
+        model.transform.position = firstPosition;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < reviveTime)
+        {
+            model.transform.position = firstPosition + (elapsedTime / reviveTime) * (finalPosition - firstPosition);
+            
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        model.transform.position = finalPosition;
+
+        Destroy(model);
+
+        if (tombeUnitType == TombeUnitType.Combattant)
+        {
+            GameObject spawnedUnit = Instantiate(GameManager.Instance.Combattant, transform.position - .8f * transform.right, Quaternion.identity);
+            spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
+        }
+        if (tombeUnitType == TombeUnitType.Archer)
+        {
+            GameObject spawnedUnit = Instantiate(GameManager.Instance.Archer, transform.position - .8f * transform.right, Quaternion.identity);
+            spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
+        }
+        if (tombeUnitType == TombeUnitType.Cavalier)
+        {
+            GameObject spawnedUnit = Instantiate(GameManager.Instance.Cavalier, transform.position - .8f * transform.right, Quaternion.identity);
+            spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
+        }
+        if (tombeUnitType == TombeUnitType.Guerisseur)
+        {
+            GameObject spawnedUnit = Instantiate(GameManager.Instance.Guerisseur, transform.position - .8f * transform.right, Quaternion.identity);
+            spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
+        }
+        if (tombeUnitType == TombeUnitType.Catapulte)
+        {
+            GameObject spawnedUnit = Instantiate(GameManager.Instance.Catapulte, transform.position - .8f * transform.right, Quaternion.identity);
+            spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
+        }
+        if (tombeUnitType == TombeUnitType.Porte_bouclier)
+        {
+            GameObject spawnedUnit = Instantiate(GameManager.Instance.Porte_bouclier, transform.position - .8f * transform.right, Quaternion.identity);
+            spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
+        }
+        if (tombeUnitType == TombeUnitType.Porte_etendard)
+        {
+            GameObject spawnedUnit = Instantiate(GameManager.Instance.Porte_etendard, transform.position - .8f * transform.right, Quaternion.identity);
+            spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
+        }
+        if (tombeUnitType == TombeUnitType.Batisseur)
+        {
+            GameObject spawnedUnit = Instantiate(GameManager.Instance.Batisseur, transform.position - .8f * transform.right, Quaternion.identity);
+            spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
+        }
+        if (tombeUnitType == TombeUnitType.Belier)
+        {
+            GameObject spawnedUnit = Instantiate(GameManager.Instance.Belier, transform.position - .8f * transform.right, Quaternion.identity);
+            spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
+        }
+
+        StopCoroutine(Timer());
         Destroy(gameObject);
     }
 }

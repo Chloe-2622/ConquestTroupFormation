@@ -5,6 +5,10 @@ using UnityEngine.AI;
 
 public class Combattant : Troup
 {
+    [Header("Combattant properties")]
+    [SerializeField] private float enragedTime;
+    [SerializeField] private float enragedSpeed;
+    [SerializeField] private float enragedAttackRechargeTime;
 
     protected override void Awake()
     {
@@ -23,7 +27,14 @@ public class Combattant : Troup
     {
         while (enemy != null)
         {
-            enemy.TakeDamage(attackDamage);
+            if (enemy.unitType == UnitType.Archer)
+            {
+                enemy.TakeDamage(2 * attackDamage);
+            }
+            else
+            {
+                enemy.TakeDamage(attackDamage);
+            }
             yield return new WaitForSeconds(attackRechargeTime);
         }
     }
@@ -31,6 +42,26 @@ public class Combattant : Troup
     protected override IEnumerator SpecialAbility()
     {
         Debug.Log("Combattant special ability activated");
-        yield return null;
+        agent.speed = enragedSpeed;
+
+        float defaultRechargeTime = attackRechargeTime;
+        attackRechargeTime = enragedAttackRechargeTime;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < enragedTime)
+        {
+            abilityBar.fillAmount = 1 - elapsedTime / enragedTime;
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+        abilityBar.fillAmount = 0;
+
+        agent.speed = movingSpeed;
+        attackRechargeTime = defaultRechargeTime;
+        Debug.Log("Combattant special ability ended");
+
+        specialAbilityDelay = specialAbilityRechargeTime;
+        StartCoroutine(SpecialAbilityCountdown());
     }
 }

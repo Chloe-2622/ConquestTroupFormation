@@ -5,6 +5,9 @@ using UnityEngine.AI;
 
 public class Cavalier : Troup
 {
+    [Header("Cavalier properties")]
+    [SerializeField] private float chargeTime;
+    [SerializeField] private float chargeSpeed;
 
     protected override void Awake()
     {
@@ -19,11 +22,18 @@ public class Cavalier : Troup
         AttackBehaviour();
     }
 
-    protected override IEnumerator Attack(Troup ennemy)
+    protected override IEnumerator Attack(Troup enemy)
     {
-        while (ennemy != null)
+        while (enemy != null)
         {
-            ennemy.TakeDamage(attackDamage);
+            if (enemy.unitType == UnitType.Combattant)
+            {
+                enemy.TakeDamage(2 * attackDamage);
+            } else
+            {
+                enemy.TakeDamage(attackDamage);
+            }
+            
             yield return new WaitForSeconds(attackRechargeTime);
         }
     }
@@ -31,6 +41,22 @@ public class Cavalier : Troup
     protected override IEnumerator SpecialAbility()
     {
         Debug.Log("Cavalier special ability activated");
-        yield return null;
+
+        agent.speed = chargeSpeed;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < chargeTime)
+        {
+            abilityBar.fillAmount = 1 - elapsedTime / chargeTime;
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+        abilityBar.fillAmount = 0;
+
+        agent.speed = movingSpeed;
+
+        specialAbilityDelay = specialAbilityRechargeTime;
+        StartCoroutine(SpecialAbilityCountdown());
     }
 }

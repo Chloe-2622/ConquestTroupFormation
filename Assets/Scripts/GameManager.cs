@@ -40,11 +40,15 @@ public class GameManager : MonoBehaviour
     public GameObject PatrolingCircles;
     public GameObject SelectionParticleCircles;
     public LayerMask troupMask;
+    public float defaultHeight;
+    public float outlineWidth;
 
     [Header("Purchase")]
     public TroupPurchase troupPurchase;
 
     private bool pause;
+    public bool isCrownCollected;
+    public GameObject king;
 
     // Allies and Enemis dictionnary -----------------------------------------------------------------------------
     private static HashSet<Troup> Allies = new HashSet<Troup>();
@@ -87,13 +91,13 @@ public class GameManager : MonoBehaviour
     }
 
     // Allies
-    public void addAlly(Troup troup) { Allies.Add(troup); }
+    public void addAlly(Troup troup) { Allies.Add(troup); updateTroupCounter.Invoke(); }
     public void removeAlly(Troup troup) { Allies.Remove(troup); updateTroupCounter.Invoke();  }
     public HashSet<Troup> getAllies() { return Allies; }
     public int alliesCount() { return Allies.Count; }
 
     // Enemies
-    public void addEnemy(Troup troup) { Enemies.Add(troup); }
+    public void addEnemy(Troup troup) { Enemies.Add(troup); updateTroupCounter.Invoke(); }
     public void removeEnemy(Troup troup) { Enemies.Remove(troup); updateTroupCounter.Invoke(); }
     public HashSet<Troup> getEnemies() { return Enemies; }
     public int enemiesCount() { return Enemies.Count; }

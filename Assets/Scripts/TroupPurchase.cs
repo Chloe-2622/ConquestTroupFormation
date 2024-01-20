@@ -21,6 +21,7 @@ public class TroupPurchase : MonoBehaviour
 
     [Header("Placement Options")]
     [SerializeField] private float minDistanceBetweenUnits;
+    [SerializeField] private float maxRemoveDistance;
 
     [Header("Layers")]
     [SerializeField] private LayerMask floorLayerMask;
@@ -74,8 +75,6 @@ public class TroupPurchase : MonoBehaviour
 
     private void showPlacement(InputAction.CallbackContext context)
     {
-        Debug.Log(gameManager.getAllies().Count);
-
         // Si la souris est sur l'UI, on ne fait rien
         if (isOnUI) { return; }
 
@@ -105,6 +104,7 @@ public class TroupPurchase : MonoBehaviour
                     preview = Instantiate(unitPrefabs[(int)currentSelectedUnitType - 1], closestHit.position, new Quaternion(0, 0, 0, 0));
                     previewTroupComponent = preview.GetComponent<Troup>();
                     previewTroupComponent.enabled = false;
+                    preview.GetComponent<NavMeshAgent>().enabled = false;
                 }
 
                 // On sauvegarde la dernière position valide
@@ -127,23 +127,42 @@ public class TroupPurchase : MonoBehaviour
 
         // Si l'unité est trop près d'une unité déjà placée, il ne se passe rien
         HashSet<Troup> allies = gameManager.getAllies();
-        Debug.Log(allies.Count);
         foreach (Troup ally in allies)
         {
-            Debug.Log(ally);
-            Debug.Log(ally.gameObject);
-            Debug.Log(ally.gameObject.transform.position);
-            Debug.Log(lastPosition);
-            if (Vector3.Distance(ally.gameObject.transform.position, lastPosition) < minDistanceBetweenUnits) { return; }
+            if (Vector3.Distance(ally.gameObject.transform.position, lastPosition) < minDistanceBetweenUnits)
+            {
+                Debug.Log(Vector3.Distance(ally.gameObject.transform.position, lastPosition));
+                return; 
+            }
         }
 
         GameObject newUnit = Instantiate(unitPrefabs[(int)currentSelectedUnitType - 1], lastPosition, new Quaternion(0, 0, 0, 0));
         gameManager.addAlly(newUnit.GetComponent<Troup>());
+        Debug.Log("Unit succesfully added");
     }
 
     private void removeUnit(InputAction.CallbackContext context)
     {
+        Ray ray = gameManager.mainCamera.ScreenPointToRay(context.action.ReadValue<Vector2>());
+        RaycastHit hit;
 
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        {
+            float minDistance = maxRemoveDistance;
+            Troup nearestTroup = null;
+            HashSet<Troup> allies = gameManager.getAllies();
+            foreach (Troup ally in allies)
+            {
+                float distance = Vector3.Distance(hit.point, ally.gameObject.transform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearestTroup = ally;
+                }
+            }
+            GameObject.Destroy(nearestTroup.gameObject);
+            gameManager.removeAlly(nearestTroup);
+        }
     }
 
     private void removeSelection(InputAction.CallbackContext context)

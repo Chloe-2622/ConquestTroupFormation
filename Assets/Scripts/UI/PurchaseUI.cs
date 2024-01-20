@@ -32,7 +32,7 @@ public class PurchaseUI : MonoBehaviour
 
         int numberOfUnitType = gameManager.getUnitPrebasLenght();
 
-        for (int i = 1; i < numberOfUnitType; i++)
+        for (int i = 1; i <= numberOfUnitType; i++)
         {
             createButton(i - numberOfUnitType / 2f, i, newNav);
         }
@@ -57,11 +57,8 @@ public class PurchaseUI : MonoBehaviour
 
         // Add image to the button
         Texture2D tex = Resources.Load<Texture2D>(((Troup.UnitType)index).ToString());
-        Debug.Log(((Troup.UnitType)index).ToString());
-        Debug.Log(tex);
 
         Image buttonImage = unitImage.gameObject.GetComponent<Image>();
-        Debug.Log(buttonImage);
         buttonImage.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
 
         // Add function to the button
@@ -93,6 +90,6 @@ public class PurchaseUI : MonoBehaviour
         inGameUI.startTimer();
     }
 
-    public void enterUI() { Debug.Log("UI Enter");  troupPurchase.set_isOnUI(true); }
-    public void exitUI() { Debug.Log("UI Exit");  troupPurchase.set_isOnUI(false); }
+    public void enterUI() { Debug.Log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! UI Enter");  troupPurchase.set_isOnUI(true); }
+    public void exitUI() { Debug.Log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! UI Exit");  troupPurchase.set_isOnUI(false); }
 }
