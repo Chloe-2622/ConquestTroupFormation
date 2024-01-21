@@ -119,7 +119,7 @@ public class TroupPurchase : MonoBehaviour
                     GameObject.Destroy(preview);
                     preview = Instantiate(unitPrefabs[(int)currentSelectedUnitType - 1], closestHit.position, new Quaternion(0, 0, 0, 0));
                     previewTroupComponent = preview.GetComponent<Troup>();
-                    //previewTroupComponent.enabled = false;
+                    previewTroupComponent.enabled = false;
                     unitGoldCost = previewTroupComponent.getCost();
                     preview.GetComponent<NavMeshAgent>().enabled = false;
                 }

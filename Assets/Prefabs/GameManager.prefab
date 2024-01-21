@@ -48,14 +48,20 @@ MonoBehaviour:
   Archer: {fileID: 3630770809780813079, guid: 971d9cda443708c42b9eac777dffd92b, type: 3}
   Cavalier: {fileID: 3630770809780813079, guid: c5ecd2c48a4bca24c9e64687225e3c13, type: 3}
   Guerisseur: {fileID: 5728111852519809403, guid: fc5cfd98596d6914dbb65a75865470c8, type: 3}
-  Catapulte: {fileID: 0}
-  Porte_bouclier: {fileID: 0}
-  Porte_etendard: {fileID: 0}
+  Catapulte: {fileID: 7307699464318762355, guid: 39d9fec12bd70da43b3762e69af3faa2, type: 3}
+  Porte_bouclier: {fileID: 3630770809780813079, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+  Porte_etendard: {fileID: 3630770809780813079, guid: c5d22b4f320fc63428aa592c4bcac429, type: 3}
   Batisseur: {fileID: 0}
-  Belier: {fileID: 0}
+  Belier: {fileID: 3630770809780813079, guid: e81cdeaffcdc3d94e907dd179ef4d8b3, type: 3}
+  unitBarsPrefab: {fileID: 8586180851725442582, guid: 9f42824ae665a7749bab0c9ba0746ae5, type: 3}
   FirstPatrolPointPrefab: {fileID: 1957205012629558366, guid: 2b8610a4404d6634fb0bc9c1d8d1ccd3, type: 3}
   SecondPatrolPointPrefab: {fileID: 4101480151872354233, guid: 1322ffed0cb3c7e438d16e3f0a1076a4, type: 3}
   SelectionParticleCirclePrefab: {fileID: 7830544220555725457, guid: df1c145a994ae044ba363795b8c7d3f8, type: 3}
+  BoostParticleEffectPrefab: {fileID: 0}
+  ArmorBoostParticleEffectPrefab: {fileID: 0}
+  CatapulteCroixPrefab: {fileID: 0}
+  BoulderPrefab: {fileID: 0}
+  BigBoulderPrefab: {fileID: 0}
   TroupSelectionPopUp: {fileID: 0}
   PlaceSelectionPopUp: {fileID: 0}
   PatrolSelectionPopUp1: {fileID: 0}
@@ -70,9 +76,18 @@ MonoBehaviour:
     m_Bits: 64
   PatrolingCircles: {fileID: 0}
   SelectionParticleCircles: {fileID: 0}
+  CatapulteCroix: {fileID: 6159395647826122530, guid: 25f44e0cd051a7c4081de3daf3a8dc23, type: 3}
+  BoostParticles: {fileID: 2512279740521446448, guid: 5c9b279fcc47b5d438bf55c5ff884864, type: 3}
   troupMask:
     serializedVersion: 2
     m_Bits: 256
+  defaultHeight: 0
+  outlineWidth: 0
+  troupPurchase: {fileID: 0}
+  UI: {fileID: 0}
+  goldPerArena: 0a000000140000001e0000002800000032000000
+  isCrownCollected: 0
+  king: {fileID: 0}
   updateTroupCounter:
     m_PersistentCalls:
       m_Calls: []

@@ -963,11 +963,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b74af56ff25f6cc4ba36e3b663bd9820, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  troupType: 0
+  troupType: 1
   unitType: 4
   isSelected: 0
   hasCrown: 0
-  goldCost: 15
+  goldCost: 0
   movingSpeed: 2
   health: 200
   armor: 0
@@ -1052,8 +1052,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   outlineMode: 0
-  outlineColor: {r: 0, g: 0.9054296, b: 1, a: 1}
-  outlineWidth: 4
+  outlineColor: {r: 1, g: 0, b: 0.009674549, a: 1}
+  outlineWidth: 2
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []

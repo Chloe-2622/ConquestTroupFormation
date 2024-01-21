@@ -257,6 +257,95 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 28562674}
   m_CullTransparentMesh: 1
+--- !u!1001 &29562720
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1521062601527964750, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: m_Name
+      value: GameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879268326813356259, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 11.892658
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879268326813356259, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.6450043
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879268326813356259, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 21.764372
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879268326813356259, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879268326813356259, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879268326813356259, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879268326813356259, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879268326813356259, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879268326813356259, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3879268326813356259, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: UI
+      value: 
+      objectReference: {fileID: 750130855}
+    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 1152333479}
+    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: BoulderPrefab
+      value: 
+      objectReference: {fileID: 1488345525442576840, guid: 52923ef2c83e7144aa43beb2943c2341, type: 3}
+    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: troupPurchase
+      value: 
+      objectReference: {fileID: 801605590}
+    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: BigBoulderPrefab
+      value: 
+      objectReference: {fileID: 1488345525442576840, guid: 6d1da80999474c84fa8579bd167a4afe, type: 3}
+    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: PatrolingCircles
+      value: 
+      objectReference: {fileID: 1839055716}
+    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: selectionManager
+      value: 
+      objectReference: {fileID: 2107619706}
+    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: SelectionParticleCircles
+      value: 
+      objectReference: {fileID: 476492057}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 01484fe3373627847853f6347de842e0, type: 3}
 --- !u!1 &37372287
 GameObject:
   m_ObjectHideFlags: 0
@@ -471,93 +560,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 04e1f1758a74aa84299307f042570e72, type: 3}
---- !u!1 &443859181
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 443859183}
-  - component: {fileID: 443859182}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &443859182
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 443859181}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29a3c94a0fe9b4f4b8d7eb64388d12a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Combattant: {fileID: 3630770809780813079, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
-  Archer: {fileID: 3630770809780813079, guid: 971d9cda443708c42b9eac777dffd92b, type: 3}
-  Cavalier: {fileID: 3630770809780813079, guid: c5ecd2c48a4bca24c9e64687225e3c13, type: 3}
-  Guerisseur: {fileID: 3630770809780813079, guid: 3d22409efb8f8e340816ac548896391a, type: 3}
-  Catapulte: {fileID: 7307699464318762355, guid: 39d9fec12bd70da43b3762e69af3faa2, type: 3}
-  Porte_bouclier: {fileID: 0}
-  Porte_etendard: {fileID: 0}
-  Batisseur: {fileID: 0}
-  Belier: {fileID: 3630770809780813079, guid: e81cdeaffcdc3d94e907dd179ef4d8b3, type: 3}
-  unitBarsPrefab: {fileID: 8586180851725442582, guid: 9f42824ae665a7749bab0c9ba0746ae5, type: 3}
-  FirstPatrolPointPrefab: {fileID: 1957205012629558366, guid: 2b8610a4404d6634fb0bc9c1d8d1ccd3, type: 3}
-  SecondPatrolPointPrefab: {fileID: 4101480151872354233, guid: 1322ffed0cb3c7e438d16e3f0a1076a4, type: 3}
-  SelectionParticleCirclePrefab: {fileID: 7830544220555725457, guid: df1c145a994ae044ba363795b8c7d3f8, type: 3}
-  CatapulteCroixPrefab: {fileID: 0}
-  BoulderPrefab: {fileID: 0}
-  TroupSelectionPopUp: {fileID: 557443961}
-  PlaceSelectionPopUp: {fileID: 1034241598}
-  PatrolSelectionPopUp1: {fileID: 1109991914}
-  PatrolSelectionPopUp2: {fileID: 28562676}
-  FollowSelectionPopUp: {fileID: 817974414}
-  selectionManager: {fileID: 2107619706}
-  selectionArrow: {fileID: 694776103}
-  tombe: {fileID: 8754737974659679140, guid: cf5713f7f4e857340ac275da5ea97ef3, type: 3}
-  mainCamera: {fileID: 1152333479}
-  floorMask:
-    serializedVersion: 2
-    m_Bits: 0
-  PatrolingCircles: {fileID: 1839055716}
-  SelectionParticleCircles: {fileID: 476492057}
-  CatapulteCroix: {fileID: 0}
-  troupMask:
-    serializedVersion: 2
-    m_Bits: 256
-  defaultHeight: 0
-  outlineWidth: 5
-  troupPurchase: {fileID: 801605590}
-  UI: {fileID: 750130855}
-  goldPerArena: 0a000000140000001e0000002800000032000000
-  isCrownCollected: 0
-  king: {fileID: 0}
-  updateTroupCounter:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!4 &443859183
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 443859181}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.892658, y: 4.6450043, z: 21.764372}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &476492057
 GameObject:
   m_ObjectHideFlags: 0
@@ -817,11 +819,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!4 &694776103 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 00a85a373062c63479e4b487e7d50b2e, type: 3}
-  m_PrefabInstance: {fileID: 2066431004}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &750130855 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2422361567366102289, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
@@ -2041,7 +2038,7 @@ SceneRoots:
   - {fileID: 2066431004}
   - {fileID: 1839055717}
   - {fileID: 476492058}
-  - {fileID: 443859183}
+  - {fileID: 29562720}
   - {fileID: 366001138}
   - {fileID: 878327311}
   - {fileID: 3541501254261480804}

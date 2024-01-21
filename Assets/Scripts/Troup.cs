@@ -8,6 +8,26 @@ using UnityEngine.AI;
 public abstract class Troup : MonoBehaviour
 {
 
+    /* 
+     TODO : 
+
+                Carte avec terrain mieux, plus belle
+        -DONE-  Couronne (modèle + récupérable + qui flotte)
+        -DONE-  Roi (comportement des unités si Roi)
+                Modèle des unités
+                Animation basique des unités
+                Ecran menu principal (blender avec mise en scène non contractuelle des modèles)
+                Finir les unités : 
+	    -DONE-      - Catapulte
+	    -DONE-      - Porte-étendard
+	    -DONE-      - Porte-bouclier
+                Capa spécial bélier
+                Catapulte avec queue (si le temps)   
+                SFX basiques
+
+    */
+
+
     [Header("General stats")]
     [SerializeField] public TroupType troupType;
     [SerializeField] public UnitType unitType;
@@ -56,6 +76,8 @@ public abstract class Troup : MonoBehaviour
     protected GameObject FirstPatrolPoint;
     protected GameObject SecondPatrolPoint;
     protected GameObject SelectionParticleCircle;
+    protected GameObject BoostParticle;
+    protected GameObject ArmorBoostParticle;
     protected GameObject QueueUI;
     protected NavMeshAgent agent;
     protected LayerMask troupMask;
@@ -148,13 +170,13 @@ public abstract class Troup : MonoBehaviour
 
     public void OnEnable()
     {
-        healthBar.enabled = true;
-        abilityBar.enabled = true;
+        //healthBar.enabled = true;
+        //abilityBar.enabled = true;
     }
     public void OnDisable()
     {
-        healthBar.enabled = false;
-        abilityBar.enabled = false;
+        //healthBar.enabled = false;
+        //abilityBar.enabled = false;
 
         GameObject.Destroy(SelectionParticleCircle);
     }
@@ -192,10 +214,24 @@ public abstract class Troup : MonoBehaviour
             }
         }
 
+        if (BoostParticle != null)
+        {
+            if (BoostParticle.activeSelf)
+            {
+                BoostParticle.transform.position = transform.position;
+            }
+            if (ArmorBoostParticle.activeSelf)
+            {
+                ArmorBoostParticle.transform.position = transform.position;
+            }
+        }        
+
         SelectedBehaviour();
 
         HealthBarControl();
         AbilityBarControl();
+
+        transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
 
     }
 
@@ -286,6 +322,7 @@ public abstract class Troup : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.F) && specialAbilityDelay == 0)
             {
                 StartCoroutine(SpecialAbility());
+                specialAbilityDelay = -1f;
             }
 
         }
@@ -490,34 +527,17 @@ public abstract class Troup : MonoBehaviour
     {
         float targetFillAmount = health / maxHealth;
         float t = 0f;
+        Debug.Log("Je heal de " + healthBar.fillAmount + " à " + targetFillAmount);
         while (t < 1f && healthBar.fillAmount != targetFillAmount)
         {
             t += Time.deltaTime / 0.5f; // 0.5f est la dur�e de la transition en secondes, ajustez selon vos besoins
             healthBar.fillAmount = Mathf.Lerp(healthBar.fillAmount, targetFillAmount, t);
-            Debug.Log("Je passe le fillAmount � : " + healthBar.fillAmount);
+            Debug.Log("Je passe le fillAmount à : " + healthBar.fillAmount);
             yield return null;
         }
 
         healthBar.fillAmount = targetFillAmount;
     }
-
-    /* 
-     TODO : 
-
-                Carte avec terrain mieux, plus belle
-        -DONE-  Couronne (modèle + récupérable + qui flotte)
-        -DONE-  Roi (comportement des unités si Roi)
-                Modèle des unités
-                Animation basique des unités
-                Ecran menu principal (blender avec mise en scène non contractuelle des modèles)
-                Finir les unités : 
-	                - Catapulte
-	                - Porte-étendard
-	                - Porte-bouclier( si on a le temps)
-                Capa spécial bélier
-                SFX basiques
-
-    */
 
     protected void HealthBarControl()
     {
@@ -577,6 +597,15 @@ public abstract class Troup : MonoBehaviour
     {
         // Debug.Log("max health = " + maxHealth + "et health = " + health);
         return health < maxHealth;
+    }
+    public void ActivateBoostParticle(bool activate)
+    {
+        BoostParticle.SetActive(activate);
+    }
+
+    public void ActivateArmorBoostParticle(bool activate)
+    {
+        ArmorBoostParticle.SetActive(activate);
     }
 
     private void OnDrawGizmos()
@@ -801,6 +830,8 @@ public abstract class Troup : MonoBehaviour
             yield return null;
         }
 
+        specialAbilityDelay = 0f;
+
         abilityBar.fillAmount = 1;
     }
 
@@ -824,6 +855,8 @@ public abstract class Troup : MonoBehaviour
             tombeMort.GetComponent<Tombe>().SetUnitType((Tombe.TombeUnitType)unitType);
             tombeMort.GetComponent<Tombe>().SetTroupType((Tombe.TombeTroupType)troupType);
             Destroy(SelectionParticleCircle);
+            Destroy(BoostParticle);
+            Destroy(ArmorBoostParticle);
             Destroy(FirstPatrolPoint);
             Destroy(SecondPatrolPoint);
             selectionManager.removeObject(gameObject);
@@ -834,9 +867,25 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
+    public virtual void AddDamage(float damage)
+    {
+        attackDamage += damage;
+    }
+
+    public virtual void AddArmor(float armorCount)
+    {
+        armor += armorCount;
+    }
+
+    public virtual void ChangeAttackSpeed(float multiplier)
+    {
+        attackRechargeTime *= multiplier;
+    }
+
     public virtual void Heal(float healAmount)
     {
         health = Mathf.Min(maxHealth, health + healAmount);
+        StartCoroutine(UpdateHealthBar());
     }
 
     // IAction Interface ------------------------------------------------------------------------------------------
