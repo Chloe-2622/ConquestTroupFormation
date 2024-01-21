@@ -46,13 +46,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placeUnitAction: {fileID: 5251578040215752085, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
   showPlacementAction: {fileID: 5420062200291776804, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
+  rotateUnitAction: {fileID: -937949179103924940, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
   removeUnitAction: {fileID: -1327735771851980269, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
   removeSelectionAction: {fileID: -7814924995636463926, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
   minDistanceBetweenUnits: 2
   maxRemoveDistance: 2
-  allyZoneLayerMask:
-    serializedVersion: 2
-    m_Bits: 0
+  unitRotation: {x: 0, y: 0, z: 0, w: 0}
   debugMode: 0
   cameraMovement:
     m_PersistentCalls:

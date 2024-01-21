@@ -44,13 +44,15 @@ public class GameManager : MonoBehaviour
     public GameObject PatrolingCircles;
     public GameObject SelectionParticleCircles;
 
+    [Header("Layers")]
+    public LayerMask floorMask;
+    public LayerMask troupMask;
+    public LayerMask allyZoneMask;
 
     [Header("Other")]    
     public Transform selectionArrow;
     public GameObject tombe;
     public GameObject BoostParticles;
-    public LayerMask floorMask;
-    public LayerMask troupMask;
     public float defaultHeight;
     public float outlineWidth;
 
@@ -65,8 +67,16 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI PatrolSelectionPopUp2;
     public TextMeshProUGUI FollowSelectionPopUp;
 
+    [Header("Victory Phrases")]
+    [SerializeField] private string crownArrived;
+    [SerializeField] private string allEnemiesDead;
+
+    [Header("Loss Phrases")]
+    [SerializeField] private string deathOfKing;
+    [SerializeField] private string noUnitsRemaining;
 
     private bool pause;
+    private bool gameHasStarted;
     public bool isCrownCollected;
     public GameObject king;
 
@@ -75,6 +85,9 @@ public class GameManager : MonoBehaviour
     private static HashSet<Troup> Enemies = new HashSet<Troup>();
 
     private List<GameObject> UnitPrefabs = new List<GameObject>();
+
+
+    // Events
     [HideInInspector] public UnityEvent updateTroupCounter;
 
     private void Awake()
@@ -97,7 +110,32 @@ public class GameManager : MonoBehaviour
         completeGoldenBook();
     }
 
-        // Pause
+    public void crownCaptured() { victory(crownArrived);  }
+
+    public void allEnemiesDefeated() { victory(allEnemiesDead); }
+
+    public void kingIsDead()
+    {
+        PauseGame();
+    }
+    public void allUnitsAreDead()
+    {
+        PauseGame();
+    }
+
+    public void victory(string victoryPhrase)
+    {
+        PauseGame();
+        //Debug.Log("!! " + victoryPhrase);
+    }
+
+
+
+    // Game has started
+    public bool hasGameStarted() { return gameHasStarted; }
+    public void startGame() { gameHasStarted = true;  }
+
+    // Pause
     public bool isInPause() { return pause; }
 
     public void PauseGame()
@@ -134,7 +172,6 @@ public class GameManager : MonoBehaviour
     public int enemiesCount() { return Enemies.Count; }
 
     // List of unit prefabs
-
     public List<GameObject> getUnitPrefabs() { return UnitPrefabs; }
     public int getUnitPrebasLenght() { return UnitPrefabs.Count; }
 
@@ -165,5 +202,4 @@ public class GameManager : MonoBehaviour
         }
         Debug.Log("Golden Book Completed");
     }
-
 }

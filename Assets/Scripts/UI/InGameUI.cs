@@ -11,6 +11,34 @@ using System.ComponentModel;
 
 public class InGameUI : MonoBehaviour
 {
+    /* 
+    TODO
+
+    Batisseur et murs
+    Debug le fait de pouvoir jouer en purchase phase
+
+    Ecrans de victoire/défaite
+    Revoir l'esthétisme de l'UI
+            - Agrandir l'UI en haut (noms + or)
+            - Trouver de jolis fonds
+   
+
+    Changer la qualité
+    Cherche comment changer la résolution
+
+    
+    Ctrl + A = sélectionne tout les unités
+    Bug des golds qui reapparaissent
+
+    
+    1,2,3,4 ... pour choisir les unités         DONE
+    R pour rotate les unités                    DONE
+    */
+
+
+
+
+
     private SelectionManager selectionManager;
 
     [Header("Timer")]
@@ -46,19 +74,21 @@ public class InGameUI : MonoBehaviour
     [SerializeField] public GameObject bars;
 
     private List<Color> unitColorList;
+    private GameManager gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        selectionManager = GameManager.Instance.selectionManager;
+        gameManager = GameManager.Instance;
+        selectionManager = gameManager.selectionManager;
 
         AIName_UI.text = AIName;
         playerName_UI.text = OptionsManager.Instance.getPlayerName();
 
-        AIUnitCounter.text = GameManager.Instance.enemiesCount().ToString();
-        playerUnitCounter.text = GameManager.Instance.alliesCount().ToString();
+        AIUnitCounter.text = gameManager.enemiesCount().ToString();
+        playerUnitCounter.text = gameManager.alliesCount().ToString();
 
-        GameManager.Instance.updateTroupCounter.AddListener(updateCounter);
+        gameManager.updateTroupCounter.AddListener(updateCounter);
         selectionManager.newSelection.AddListener(updateSelectedTroups);
 
         unitColorList = new List<Color> { combatantColor, archerColor, cavalierColor,
@@ -89,7 +119,6 @@ public class InGameUI : MonoBehaviour
         {
             if (selectionCount[i] != 0)
             {
-                //Debug.Log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 GameObject unitIcon = Instantiate(unitIconPrefab);
 
                 unitIcon.transform.SetParent(unitIconsSection.transform);
@@ -113,8 +142,13 @@ public class InGameUI : MonoBehaviour
 
     private void updateCounter()
     {
-        AIUnitCounter.text = GameManager.Instance.enemiesCount().ToString();
-        playerUnitCounter.text = GameManager.Instance.alliesCount().ToString();
+        AIUnitCounter.text = gameManager.enemiesCount().ToString();
+        playerUnitCounter.text = gameManager.alliesCount().ToString();
+        if (gameManager.hasGameStarted())
+        {
+            if (gameManager.alliesCount() == 0) { gameManager.allEnemiesDefeated(); }
+            else if (gameManager.enemiesCount() == 0) { gameManager.allUnitsAreDead(); }
+        }
     }    
 
     public void startTimer()

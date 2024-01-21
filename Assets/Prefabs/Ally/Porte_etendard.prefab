@@ -139,7 +139,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troupType: 0
-  unitType: 6
+  unitType: 7
   isSelected: 0
   hasCrown: 0
   goldCost: 0
@@ -160,6 +160,7 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
   damageBoost: 10
   attackSpeedBoost: 1.5
   zoneRadius: 10

@@ -964,7 +964,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troupType: 0
-  unitType: 4
+  unitType: 5
   isSelected: 0
   hasCrown: 0
   goldCost: 15
@@ -985,6 +985,7 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
   wheelRotationSpeed: 20
   croix: {fileID: 0}
   shootPoint: {x: 0, y: 0, z: 0}

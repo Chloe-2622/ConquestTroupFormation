@@ -406,7 +406,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troupType: 0
-  unitType: 3
+  unitType: 4
   isSelected: 0
   hasCrown: 0
   goldCost: 4
@@ -427,6 +427,7 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
   healAmount: 10
   healRange: 10
   healRechargeTime: 1

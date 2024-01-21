@@ -370,7 +370,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troupType: 0
-  unitType: 8
+  unitType: 9
   isSelected: 0
   hasCrown: 0
   goldCost: 10
@@ -391,6 +391,7 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
   wheelRotationSpeed: 20
 --- !u!195 &8753042273054374063
 NavMeshAgent:

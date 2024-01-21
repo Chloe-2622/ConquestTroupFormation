@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -10,19 +11,21 @@ public class TroupPurchase : MonoBehaviour
     [Header("Actions")]
     [SerializeField] private InputActionReference placeUnitAction;
     [SerializeField] private InputActionReference showPlacementAction;
+    [SerializeField] private InputActionReference rotateUnitAction;
     [SerializeField] private InputActionReference removeUnitAction;
     [SerializeField] private InputActionReference removeSelectionAction;
+    [SerializeField] private InputActionReference chooseUnitAction;
 
     [Header("Placement Options")]
     [SerializeField] private float minDistanceBetweenUnits;
     [SerializeField] private float maxRemoveDistance;
-
-    [Header("Layers")]
-    [SerializeField] private LayerMask allyZoneLayerMask;
-    [SerializeField] private LayerMask troupMask;
+    [SerializeField] private float unitRotation;
 
     [Header("Debug")]
     [SerializeField] private bool debugMode;
+
+    private LayerMask allyZoneLayerMask;
+    private LayerMask troupMask;   
 
     private List<GameObject> unitPrefabs;
     private Troup.UnitType currentSelectedUnitType;
@@ -37,23 +40,27 @@ public class TroupPurchase : MonoBehaviour
     private int unitGoldCost;
     private int usableGold;
 
-    [HideInInspector] public UnityEvent cameraMovement;
+    [HideInInspector] public UnityEvent refreshPreview;
     [HideInInspector] public UnityEvent goldUpdate;
     [HideInInspector] public UnityEvent notEnoughtGold;
 
 
     private void OnEnable()
     {
-        cameraMovement.AddListener(callShowPlacement);
+        refreshPreview.AddListener(callShowPlacement);
 
         placeUnitAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
         showPlacementAction.action.Enable();
+        rotateUnitAction.action.Enable();
         removeUnitAction.action.Enable();
         removeSelectionAction.action.Enable();
+        chooseUnitAction.action.Enable();
         placeUnitAction.action.performed += placeUnit; // S'active lorque la valeur de ReadValue change
         showPlacementAction.action.performed += showPlacement;
+        rotateUnitAction.action.started += rotateUnit;
         removeUnitAction.action.performed += removeUnit;
         removeSelectionAction.action.started += removeSelection;
+        chooseUnitAction.action.started += chooseUnit;
     }
 
     // On se désabonne aux évènements du Event System
@@ -62,21 +69,30 @@ public class TroupPurchase : MonoBehaviour
         Debug.Log("Troup Purchase Disabled");
         GameObject.Destroy(preview);
 
-        cameraMovement.RemoveAllListeners();
+        refreshPreview.RemoveAllListeners();
 
         placeUnitAction.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
         showPlacementAction.action.Disable();
+        rotateUnitAction.action.Disable();
         removeUnitAction.action.Disable();
         removeSelectionAction.action.Disable();
+        chooseUnitAction.action.Disable();
         placeUnitAction.action.performed -= placeUnit;
         showPlacementAction.action.performed -= showPlacement;
+        rotateUnitAction.action.started -= rotateUnit;
         removeUnitAction.action.performed -= removeUnit;
         removeSelectionAction.action.started -= removeSelection;
+        chooseUnitAction.action.started -= chooseUnit;
     }
 
     public void Start()
     {
         gameManager = GameManager.Instance;
+
+        // Layers
+        allyZoneLayerMask = gameManager.allyZoneMask;
+        troupMask = gameManager.troupMask;
+        
         if (debugMode) { usableGold = gameManager.getGoldInArena("Arene_1"); }
         else { usableGold = gameManager.getGoldInArena(SceneManager.GetActiveScene().name); }
         goldUpdate.Invoke();
@@ -133,7 +149,18 @@ public class TroupPurchase : MonoBehaviour
                 Debug.Log("Couldn't find near NavMesh");
             }
         }
-    }   
+    }
+
+    public void rotateUnit(InputAction.CallbackContext context)
+    {
+        // Si on a pas sélectionné de troupe, on ne fait rien
+        if (currentSelectedUnitType == Troup.UnitType.Null) { return; }
+
+        if (preview != null)
+        {
+            preview.transform.Rotate(new Vector3(0, unitRotation, 0));
+        }
+    }
 
     private void placeUnit(InputAction.CallbackContext context)
     {
@@ -171,8 +198,6 @@ public class TroupPurchase : MonoBehaviour
 
     private void removeUnit(InputAction.CallbackContext context)
     {
-
-
         Ray ray = gameManager.mainCamera.ScreenPointToRay(context.action.ReadValue<Vector2>());
         RaycastHit hit_troup;
         RaycastHit hit_allyZone;
@@ -205,6 +230,10 @@ public class TroupPurchase : MonoBehaviour
             GameObject.Destroy(troupToRemove.gameObject);
             gameManager.removeAlly(troupToRemove);
         }
+        else
+        {
+            setCurrentSelectedTroupType(Troup.UnitType.Null);
+        }
     }
 
     private void removeSelection(InputAction.CallbackContext context)
@@ -221,7 +250,23 @@ public class TroupPurchase : MonoBehaviour
         }
     }
 
+    public void chooseUnit(InputAction.CallbackContext context)
+    {
+        // Pour obtenir la touche pressée
+        InputControl control = context.control;
+        int unitIndex = int.Parse(control.name);
 
+        Debug.Log(((Troup.UnitType)unitIndex).ToString());
+        if ((Troup.UnitType)unitIndex == currentSelectedUnitType)
+        {
+            setCurrentSelectedTroupType(Troup.UnitType.Null);
+        }
+        else
+        {
+            setCurrentSelectedTroupType((Troup.UnitType)unitIndex);
+        }
+        refreshPreview.Invoke();
+    }
 
     // is Cursor on UI
     public void set_isOnUI(bool newValue) { isOnUI = newValue; }

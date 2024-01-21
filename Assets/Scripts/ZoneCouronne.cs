@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ZoneCouronne : MonoBehaviour
 {
+    private LayerMask troupLayerMask;
     private GameObject crown;
     private bool crownCollected;
 
@@ -12,6 +13,8 @@ public class ZoneCouronne : MonoBehaviour
         crown = transform.Find("Crown").gameObject;
         StartCoroutine(FloatCrown());
         StartCoroutine(SpinCrown());
+
+        troupLayerMask = GameManager.Instance.troupMask;
     }
 
     // Update is called once per frame
@@ -19,7 +22,7 @@ public class ZoneCouronne : MonoBehaviour
     {
         if (!crownCollected)
         {
-            Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2);
+            Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2, new Quaternion(0, 0, 0, 0), troupLayerMask);
 
             foreach (Collider collider in colliders)
             {
@@ -29,10 +32,10 @@ public class ZoneCouronne : MonoBehaviour
                     unit.transform.Find("Crown").gameObject.SetActive(true);
                     crownCollected = true;
                     Destroy(crown);
+                    Debug.Log("!! Crown Get");
                 }
             }
         }
-
     }
 
     private IEnumerator FloatCrown()
