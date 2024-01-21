@@ -80,43 +80,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Combattant: {fileID: 3630770809780813079, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
-  Archer: {fileID: 3630770809780813079, guid: 971d9cda443708c42b9eac777dffd92b, type: 3}
+  Archer: {fileID: 3630770809780813079, guid: 9786ae7cb6327624a9f2cee6018ac599, type: 3}
   Cavalier: {fileID: 3630770809780813079, guid: c5ecd2c48a4bca24c9e64687225e3c13, type: 3}
   Guerisseur: {fileID: 3630770809780813079, guid: 3d22409efb8f8e340816ac548896391a, type: 3}
   Catapulte: {fileID: 7307699464318762355, guid: 39d9fec12bd70da43b3762e69af3faa2, type: 3}
   Porte_bouclier: {fileID: 3630770809780813079, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
-  Porte_etendard: {fileID: 3630770809780813079, guid: c5d22b4f320fc63428aa592c4bcac429, type: 3}
+  Porte_etendard: {fileID: 3630770809780813079, guid: 0062b60676c4a004d8827e9fa5501e44, type: 3}
   Batisseur: {fileID: 0}
   Belier: {fileID: 3630770809780813079, guid: e81cdeaffcdc3d94e907dd179ef4d8b3, type: 3}
+  unitBarsPrefab: {fileID: 8586180851725442582, guid: 9f42824ae665a7749bab0c9ba0746ae5, type: 3}
   FirstPatrolPointPrefab: {fileID: 1957205012629558366, guid: 2b8610a4404d6634fb0bc9c1d8d1ccd3, type: 3}
   SecondPatrolPointPrefab: {fileID: 4101480151872354233, guid: 1322ffed0cb3c7e438d16e3f0a1076a4, type: 3}
   SelectionParticleCirclePrefab: {fileID: 7830544220555725457, guid: df1c145a994ae044ba363795b8c7d3f8, type: 3}
   BoostParticleEffectPrefab: {fileID: 2512279740521446448, guid: 5c9b279fcc47b5d438bf55c5ff884864, type: 3}
   ArmorBoostParticleEffectPrefab: {fileID: 2512279740521446448, guid: 45de9d26b2c5ba341b97b71288c1d918, type: 3}
   CatapulteCroixPrefab: {fileID: 6159395647826122530, guid: 25f44e0cd051a7c4081de3daf3a8dc23, type: 3}
+  CatapulteCroix: {fileID: 3613254223512856748}
   BoulderPrefab: {fileID: 1488345525442576840, guid: 52923ef2c83e7144aa43beb2943c2341, type: 3}
   BigBoulderPrefab: {fileID: 1488345525442576840, guid: 6d1da80999474c84fa8579bd167a4afe, type: 3}
+  ArrowPrefab: {fileID: 1488345525442576840, guid: 6d1da80999474c84fa8579bd167a4afe, type: 3}
+  mainCamera: {fileID: 0}
+  selectionManager: {fileID: 0}
+  troupPurchase: {fileID: 0}
+  UI: {fileID: 0}
+  PatrolingCircles: {fileID: 1061220208115533391}
+  SelectionParticleCircles: {fileID: 8101969785001855467}
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 64
+  troupMask:
+    serializedVersion: 2
+    m_Bits: 256
+  allyZoneMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  selectionArrow: {fileID: -8679921383154817045, guid: 00a85a373062c63479e4b487e7d50b2e, type: 3}
+  tombe: {fileID: 8754737974659679140, guid: cf5713f7f4e857340ac275da5ea97ef3, type: 3}
+  BoostParticles: {fileID: 2786005768850215309}
+  defaultHeight: 2
+  outlineWidth: 4
+  goldPerArena: 0a000000140000001e0000002800000032000000
   TroupSelectionPopUp: {fileID: 0}
   PlaceSelectionPopUp: {fileID: 0}
   PatrolSelectionPopUp1: {fileID: 0}
   PatrolSelectionPopUp2: {fileID: 0}
   FollowSelectionPopUp: {fileID: 0}
-  selectionManager: {fileID: 0}
-  selectionArrow: {fileID: 0}
-  tombe: {fileID: 8754737974659679140, guid: cf5713f7f4e857340ac275da5ea97ef3, type: 3}
-  mainCamera: {fileID: 0}
-  floorMask:
-    serializedVersion: 2
-    m_Bits: 64
-  PatrolingCircles: {fileID: 1061220208115533391}
-  SelectionParticleCircles: {fileID: 8101969785001855467}
-  CatapulteCroix: {fileID: 3613254223512856748}
-  BoostParticles: {fileID: 2786005768850215309}
-  troupMask:
-    serializedVersion: 2
-    m_Bits: 256
-  defaultHeight: 2
-  outlineWidth: 4
+  crownArrived: 
+  allEnemiesDead: 
+  deathOfKing: 
+  noUnitsRemaining: 
   isCrownCollected: 0
   king: {fileID: 0}
   updateTroupCounter:

@@ -57,6 +57,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected float specialAbilityDelay = 0f;
     [SerializeField] protected bool isVisible = true;
     [SerializeField] protected bool isAddedWhenAwake = false;
+    [SerializeField] public Vector3 moveTargetDestination;
     private bool isPlayingCircleAnim;
     private bool isChosingPlacement;
     private bool isChosingFollow;
@@ -138,6 +139,8 @@ public abstract class Troup : MonoBehaviour
         FirstPatrolPoint = Instantiate(gameManager.FirstPatrolPointPrefab, gameManager.PatrolingCircles.transform);
         SecondPatrolPoint = Instantiate(gameManager.SecondPatrolPointPrefab, gameManager.PatrolingCircles.transform);
         SelectionParticleCircle = Instantiate(gameManager.SelectionParticleCirclePrefab, gameManager.SelectionParticleCircles.transform);
+        BoostParticle = Instantiate(gameManager.BoostParticleEffectPrefab, gameManager.BoostParticles.transform);
+        ArmorBoostParticle = Instantiate(gameManager.ArmorBoostParticleEffectPrefab, gameManager.BoostParticles.transform);
 
         unitBar = Instantiate(gameManager.unitBarsPrefab, gameManager.UI.bars.transform);
         healthBar = unitBar.transform.GetChild(0).GetComponent<Image>();
@@ -177,10 +180,27 @@ public abstract class Troup : MonoBehaviour
 
     public void OnDisable()
     {
-        healthBar.enabled = false;
-        abilityBar.enabled = false;
-
-        GameObject.Destroy(SelectionParticleCircle);
+        if (healthBar != null)
+        {
+            healthBar.enabled = false;
+        }
+        if (abilityBar != null)
+        {
+            abilityBar.enabled = false;
+        }
+        if (BoostParticle != null)
+        {
+            BoostParticle.SetActive(false);
+        }
+        if (ArmorBoostParticle != null)
+        {
+            ArmorBoostParticle.SetActive(false);
+        }
+        if (SelectionParticleCircle != null)
+        {
+            GameObject.Destroy(SelectionParticleCircle);
+        }
+        
     }
 
     // Get stats
@@ -363,11 +383,48 @@ public abstract class Troup : MonoBehaviour
 
                 if (Input.GetMouseButton(0))
                 {
+                    float selectionCount = selectionManager.numberOfSelected();
+                    Vector3 targetPosition = new Vector3(0, 0, 0);
+
+                    if (selectionCount == 1)
+                    {
+                        targetPosition = hit.point;
+                    } else if (selectionCount > 1)
+                    {
+                        Vector3 center = new Vector3(0, 0, 0);
+
+                        foreach (GameObject troup in selectionManager.getCurrentSelection())
+                        {
+                            center += troup.transform.position / selectionCount;
+                        }
+
+                        NavMeshPath navMeshPath = new NavMeshPath();
+                        agent.CalculatePath(hit.point + transform.position - center, navMeshPath);
+
+                        if (navMeshPath.status == NavMeshPathStatus.PathComplete)
+                        {
+                            targetPosition = hit.point + transform.position - center;
+                        } else
+                        {
+                            NavMeshHit closestHit;
+
+                            
+                            if (NavMesh.SamplePosition(hit.point, out closestHit, 10, 1))
+                            {
+                                targetPosition = closestHit.position;
+                            } else
+                            {
+                                closestHit.position = hit.point;
+                            }                            
+                        }
+                    }
+
                     Debug.Log("Target position clicked : " + hit.point);
-                    AddAction(new MoveToPosition(agent, hit.point, positionThreshold));
+                    AddAction(new MoveToPosition(agent,targetPosition , positionThreshold));
                     hasSelected = true;
                     SelectionArrow.GetComponent<MeshRenderer>().enabled = false;
                     PlaceSelectionPopUp.enabled = false;
+
                 }
             }
 
@@ -1026,13 +1083,26 @@ public abstract class Troup : MonoBehaviour
 
             Debug.Log("Distance initiale : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
 
-            while (Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= positionThreshold)
+            navMeshAgent.transform.GetComponent<Troup>().moveTargetDestination = targetPosition;
+
+            while (!navMeshAgent.isStopped && Vector2.Distance(new Vector2(navMeshAgent.transform.position.x, navMeshAgent.transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) >= positionThreshold)
             {
                 // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
+                Debug.Log("Moving to destination : " + targetPosition + " and current Position : " + navMeshAgent.transform.position);
                 yield return null;
             }
 
-            navMeshAgent.isStopped = true;
+
+
+            Debug.Log("I arrived at destination ! My position is " + navMeshAgent.transform.position + " and destination is " + targetPosition);
+
+            if (Vector2.Distance(new Vector2(navMeshAgent.transform.position.x, navMeshAgent.transform.position.z), new Vector2(navMeshAgent.transform.GetComponent<Troup>().moveTargetDestination.x, navMeshAgent.transform.GetComponent<Troup>().moveTargetDestination.z)) <= positionThreshold)
+            {
+                navMeshAgent.isStopped = true;
+            }
+
+
+            
             IsActionComplete = true;
 
             Debug.Log("Movement complete");

@@ -93,6 +93,14 @@ public class Porte_etendard : Troup
         yield return null;
     }
 
+    private void OnDestroy()
+    {
+        foreach (Troup troup in troupToBoost)
+        {
+            troup.ActivateBoostParticle(false);
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(transform.position, zoneRadius);

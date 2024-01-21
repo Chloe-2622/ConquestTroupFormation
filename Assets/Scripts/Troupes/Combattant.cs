@@ -26,6 +26,8 @@ public class Combattant : Troup
     {
         base.Update();
 
+        swingTime = attackRechargeTime / 2;
+
         AttackBehaviour();
     }
 

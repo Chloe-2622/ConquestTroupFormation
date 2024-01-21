@@ -922,7 +922,7 @@ GameObject:
   - component: {fileID: 8349985202907488932}
   - component: {fileID: 3410021225126253725}
   m_Layer: 8
-  m_Name: Catapulte
+  m_Name: CatapulteEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -964,7 +964,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troupType: 1
-  unitType: 4
+  unitType: 5
   isSelected: 0
   hasCrown: 0
   goldCost: 0

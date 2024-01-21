@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 4835511943431903293}
   - component: {fileID: 6808962653269764608}
   m_Layer: 8
-  m_Name: Porte_etendard
+  m_Name: Porte_etendardEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
