@@ -9,10 +9,16 @@ public class Combattant : Troup
     [SerializeField] private float enragedTime;
     [SerializeField] private float enragedSpeed;
     [SerializeField] private float enragedAttackRechargeTime;
+    [SerializeField] private float swingTime;
+
+    private GameObject sword;
+    
 
     protected override void Awake()
     {
         base.Awake();
+
+        sword = transform.Find("Sword").gameObject;
     }
 
     // Update is called once per frame
@@ -27,6 +33,7 @@ public class Combattant : Troup
     {
         while (enemy != null)
         {
+            StartCoroutine(SwingSword());
             if (enemy.unitType == UnitType.Archer)
             {
                 enemy.TakeDamage(2 * attackDamage);
@@ -63,5 +70,32 @@ public class Combattant : Troup
 
         specialAbilityDelay = specialAbilityRechargeTime;
         StartCoroutine(SpecialAbilityCountdown());
+    }
+
+    private IEnumerator SwingSword()
+    {
+        float timer = 0f;
+        Debug.Log("I am swinging sword");
+
+        while (timer < swingTime / 2)
+        {
+            timer += Time.deltaTime;
+            sword.transform.RotateAround(sword.transform.position, sword.transform.right, 90 * (Time.deltaTime / (swingTime / 2)));
+            Debug.Log("swingR : " + sword.transform.localEulerAngles.x);
+
+            yield return null;
+        }
+        sword.transform.localEulerAngles = new Vector3(90f, 0f, 0f);
+        Debug.Log("swingRL");
+        while (timer < swingTime)
+        {
+            timer += Time.deltaTime;
+            sword.transform.RotateAround(sword.transform.position, sword.transform.right, -90 * (Time.deltaTime / (swingTime / 2)));
+            Debug.Log("swingL : " + sword.transform.localEulerAngles.x);
+
+            yield return null;
+        }
+        sword.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+        
     }
 }

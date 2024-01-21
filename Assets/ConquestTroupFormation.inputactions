@@ -369,12 +369,12 @@
                 },
                 {
                     "name": "Remove Unit",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "805adf85-d8ba-47b5-acf6-6ee6e0bce37a",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Remove Selection",

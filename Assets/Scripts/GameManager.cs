@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     // Instance statique du GameManager
     public static GameManager Instance { get; private set; }
 
-    [Header("Prefabs")]
+    [Header("Units Prefabs")]
     public GameObject Combattant;
     public GameObject Archer;
     public GameObject Cavalier;
@@ -21,15 +21,42 @@ public class GameManager : MonoBehaviour
     public GameObject Porte_etendard;
     public GameObject Batisseur;
     public GameObject Belier;
+
+    [Header("Common to all units")]
     public GameObject unitBarsPrefab;
     public GameObject FirstPatrolPointPrefab;
     public GameObject SecondPatrolPointPrefab;
     public GameObject SelectionParticleCirclePrefab;
     public GameObject BoostParticleEffectPrefab;
     public GameObject ArmorBoostParticleEffectPrefab;
+
+    [Header("Catapulte")]
     public GameObject CatapulteCroixPrefab;
+    public GameObject CatapulteCroix;
     public GameObject BoulderPrefab;
     public GameObject BigBoulderPrefab;
+
+    [Header("Scene Dependant Objects")]
+    public Camera mainCamera;
+    public SelectionManager selectionManager;
+    public TroupPurchase troupPurchase;
+    public InGameUI UI;
+    public GameObject PatrolingCircles;
+    public GameObject SelectionParticleCircles;
+
+
+    [Header("Other")]    
+    public Transform selectionArrow;
+    public GameObject tombe;
+    public GameObject BoostParticles;
+    public LayerMask floorMask;
+    public LayerMask troupMask;
+    public float defaultHeight;
+    public float outlineWidth;
+
+    [Header("Arena Gold")]
+    [SerializeField] private List<int> goldPerArena = new List<int>(5);
+    private Dictionary<string, int> goldenBook = new Dictionary<string, int>();
 
     [Header("Text PopUps")]
     public TextMeshProUGUI TroupSelectionPopUp;
@@ -37,28 +64,6 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI PatrolSelectionPopUp1;
     public TextMeshProUGUI PatrolSelectionPopUp2;
     public TextMeshProUGUI FollowSelectionPopUp;
-
-    [Header("Misc")]
-    public SelectionManager selectionManager;
-    public Transform selectionArrow;
-    public GameObject tombe;
-    public Camera mainCamera;
-    public LayerMask floorMask;
-    public GameObject PatrolingCircles;
-    public GameObject SelectionParticleCircles;
-    public GameObject CatapulteCroix;
-    public GameObject BoostParticles;
-    public LayerMask troupMask;
-    public float defaultHeight;
-    public float outlineWidth;
-
-    [Header("Other")]
-    public TroupPurchase troupPurchase;
-    public InGameUI UI;
-        
-    [Header("Arena Gold")]
-    [SerializeField] private List<int> goldPerArena = new List<int>(5);
-    private Dictionary<string, int> goldenBook = new Dictionary<string, int>();
 
 
     private bool pause;

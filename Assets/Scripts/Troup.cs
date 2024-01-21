@@ -62,6 +62,7 @@ public abstract class Troup : MonoBehaviour
     protected bool isFollowingOrders;
     private bool hasSpawnedTombe;
     private bool isMovingToKing;
+    private bool isBoosted;
     private float maxHealth;
     protected IEnumerator currentActionCoroutine;
     private IEnumerator attackCoroutine;
@@ -168,15 +169,10 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
-    public void OnEnable()
-    {
-        //healthBar.enabled = true;
-        //abilityBar.enabled = true;
-    }
     public void OnDisable()
     {
-        //healthBar.enabled = false;
-        //abilityBar.enabled = false;
+        healthBar.enabled = false;
+        abilityBar.enabled = false;
 
         GameObject.Destroy(SelectionParticleCircle);
     }
@@ -190,10 +186,6 @@ public abstract class Troup : MonoBehaviour
     public float getAttackSpeed() { return attackRechargeTime; }
     public float getAttackRange() { return attackRange; }
     public float getAbilityRecharge() { return specialAbilityRechargeTime; }
-
-
-
-
 
     // Update
     protected virtual void Update()
@@ -598,9 +590,16 @@ public abstract class Troup : MonoBehaviour
         // Debug.Log("max health = " + maxHealth + "et health = " + health);
         return health < maxHealth;
     }
+
+    public bool IsBoosted()
+    {
+        return isBoosted;
+    }
+
     public void ActivateBoostParticle(bool activate)
     {
         BoostParticle.SetActive(activate);
+        isBoosted = activate;
     }
 
     public void ActivateArmorBoostParticle(bool activate)
@@ -808,7 +807,10 @@ public abstract class Troup : MonoBehaviour
 
         if (currentAttackedTroup != null)
         {
-            transform.LookAt(currentAttackedTroup.transform.position);
+            Vector3 targetPosition = currentAttackedTroup.transform.position;
+            targetPosition.y = transform.position.y;  // Keep the same y position as the object you are rotating
+
+            transform.LookAt(targetPosition);
         }
 
     }
@@ -870,6 +872,10 @@ public abstract class Troup : MonoBehaviour
     public virtual void AddDamage(float damage)
     {
         attackDamage += damage;
+        if (damage < 0)
+        {
+            isBoosted = false;
+        }
     }
 
     public virtual void AddArmor(float armorCount)

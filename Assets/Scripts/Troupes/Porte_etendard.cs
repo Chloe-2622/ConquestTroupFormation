@@ -56,7 +56,7 @@ public class Porte_etendard : Troup
                     troupToBoost.Add(troup);
                     troup.AddDamage(damageBoost);
                     troup.ChangeAttackSpeed(attackSpeedBoost);
-                    troup.ActivateBoostParticle(true);
+                    // troup.ActivateBoostParticle(true);
                 }
             }
             else
@@ -66,10 +66,17 @@ public class Porte_etendard : Troup
                     troupToBoost.Remove(troup);
                     troup.AddDamage(-damageBoost);
                     troup.ChangeAttackSpeed(1 / attackSpeedBoost);
-                    troup.ActivateBoostParticle(false);
+                    // troup.ActivateBoostParticle(false);
                 }
             }
+
+            if (!troup.IsBoosted())
+            {
+                troup.ActivateBoostParticle(troupToBoost.Contains(troup));
+            }
+
         }
+
 
     }
 
@@ -80,6 +87,7 @@ public class Porte_etendard : Troup
         GameObject etendard = Instantiate(etendardPrefab, transform.position + transform.forward + - .2f * transform.up, Quaternion.identity, null);
         etendard.GetComponent<Etendard>().isPlaced = true;
 
+        abilityBar.fillAmount = 0f;
         specialAbilityDelay = -1;
 
         yield return null;

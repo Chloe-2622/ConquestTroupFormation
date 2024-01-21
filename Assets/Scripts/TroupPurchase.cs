@@ -68,10 +68,10 @@ public class TroupPurchase : MonoBehaviour
         showPlacementAction.action.Disable();
         removeUnitAction.action.Disable();
         removeSelectionAction.action.Disable();
-        placeUnitAction.action.performed += placeUnit;
+        placeUnitAction.action.performed -= placeUnit;
         showPlacementAction.action.performed -= showPlacement;
-        removeUnitAction.action.performed += removeUnit;
-        removeSelectionAction.action.started += removeSelection;
+        removeUnitAction.action.performed -= removeUnit;
+        removeSelectionAction.action.started -= removeSelection;
     }
 
     public void Start()
@@ -171,6 +171,8 @@ public class TroupPurchase : MonoBehaviour
 
     private void removeUnit(InputAction.CallbackContext context)
     {
+
+
         Ray ray = gameManager.mainCamera.ScreenPointToRay(context.action.ReadValue<Vector2>());
         RaycastHit hit_troup;
         RaycastHit hit_allyZone;
@@ -195,7 +197,7 @@ public class TroupPurchase : MonoBehaviour
                 }
             }
         }
-        if (troupToRemove != null)
+        if (troupToRemove != null && troupToRemove != previewTroupComponent)
         {
             usableGold += troupToRemove.getCost();
             goldUpdate.Invoke();
