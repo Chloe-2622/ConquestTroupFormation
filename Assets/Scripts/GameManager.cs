@@ -35,6 +35,8 @@ public class GameManager : MonoBehaviour
     public GameObject CatapulteCroix;
     public GameObject BoulderPrefab;
     public GameObject BigBoulderPrefab;
+
+    [Header("Archer")]
     public GameObject ArrowPrefab;
 
     [Header("Scene Dependant Objects")]

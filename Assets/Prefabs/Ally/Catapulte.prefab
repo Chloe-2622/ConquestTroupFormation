@@ -964,7 +964,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troupType: 0
-  unitType: 4
+  unitType: 5
   isSelected: 0
   hasCrown: 0
   goldCost: 15

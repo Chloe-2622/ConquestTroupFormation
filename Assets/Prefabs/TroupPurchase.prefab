@@ -52,8 +52,11 @@ MonoBehaviour:
   maxRemoveDistance: 2
   allyZoneLayerMask:
     serializedVersion: 2
-    m_Bits: 0
-  debugMode: 0
+    m_Bits: 1024
+  troupMask:
+    serializedVersion: 2
+    m_Bits: 256
+  debugMode: 1
   cameraMovement:
     m_PersistentCalls:
       m_Calls: []

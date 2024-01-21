@@ -36,6 +36,7 @@ public class TroupPurchase : MonoBehaviour
     private Troup previewTroupComponent;
     private int unitGoldCost;
     private int usableGold;
+    private int maxUsableGold;
 
     [HideInInspector] public UnityEvent cameraMovement;
     [HideInInspector] public UnityEvent goldUpdate;
@@ -81,6 +82,7 @@ public class TroupPurchase : MonoBehaviour
         else { usableGold = gameManager.getGoldInArena(SceneManager.GetActiveScene().name); }
         goldUpdate.Invoke();
         unitPrefabs = gameManager.getUnitPrefabs();
+        maxUsableGold = usableGold;
     }
 
 
@@ -118,6 +120,7 @@ public class TroupPurchase : MonoBehaviour
                 {
                     GameObject.Destroy(preview);
                     preview = Instantiate(unitPrefabs[(int)currentSelectedUnitType - 1], closestHit.position, new Quaternion(0, 0, 0, 0));
+                    preview.transform.eulerAngles = new Vector3(0, 90, 0);
                     previewTroupComponent = preview.GetComponent<Troup>();
                     previewTroupComponent.enabled = false;
                     unitGoldCost = previewTroupComponent.getCost();
@@ -164,6 +167,7 @@ public class TroupPurchase : MonoBehaviour
         usableGold -= unitGoldCost;
         goldUpdate.Invoke();
         GameObject newUnit = Instantiate(unitPrefabs[(int)currentSelectedUnitType - 1], lastPosition, new Quaternion(0, 0, 0, 0));
+        newUnit.transform.eulerAngles = new Vector3(0, 90, 0);
         //newUnit.GetComponent<Troup>().enabled = false;
         gameManager.addAlly(newUnit.GetComponent<Troup>());
         Debug.Log("Unit succesfully added");
