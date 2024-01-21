@@ -33,6 +33,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] public UnitType unitType;
     [SerializeField] protected bool isSelected;
     [SerializeField] protected bool hasCrown = false;
+    [SerializeField] protected int goldCost;
     [SerializeField] protected float movingSpeed;
     [SerializeField] protected float health;
     [SerializeField] protected float armor;
@@ -89,12 +90,17 @@ public abstract class Troup : MonoBehaviour
     protected TextMeshProUGUI FollowSelectionPopUp;
     protected Image healthBar;
     protected Image abilityBar;
+    protected GameObject unitBar;
+    protected GameObject Bars;
+
+
+    private GameManager gameManager;
 
     // Troup types ------------------------------------------------------------------------------------------------
     public enum TroupType { Ally, Enemy }
     public enum UnitType
     {
-        Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
+        Null, Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
     }
 
     // Action Queue -----------------------------------------------------------------------------------------------
@@ -104,11 +110,6 @@ public abstract class Troup : MonoBehaviour
 
     protected virtual void Awake() 
     {
-        // Children variable setup
-        healthBar = transform.Find("Canvas").Find("Vie").GetComponent<Image>();
-        abilityBar = transform.Find("Canvas").Find("Ability").GetComponent<Image>();
-        SelectionCircle = transform.Find("SelectionCircle");
-
         if (troupType == TroupType.Ally)
         {
             QueueUI = transform.Find("Canvas").Find("Queue").gameObject;
@@ -116,46 +117,77 @@ public abstract class Troup : MonoBehaviour
 
         // Setup and show Health Bar
         maxHealth = health;
-        healthBar.enabled = true;
 
         // Agent setup
         agent = GetComponent<NavMeshAgent>();
         agent.speed = movingSpeed;
 
         // GameManager variable setup
-        Debug.Log("GameManager of " + troupType + " " + unitType + " = " + GameManager.Instance);
-        camera1 = GameManager.Instance.mainCamera;
-        selectionManager = GameManager.Instance.selectionManager;
-        SelectionArrow = GameManager.Instance.selectionArrow;
-        tombe = GameManager.Instance.tombe;
-        PlaceSelectionPopUp = GameManager.Instance.PlaceSelectionPopUp;
-        PatrolSelectionPopUp1 = GameManager.Instance.PatrolSelectionPopUp1;
-        PatrolSelectionPopUp2 = GameManager.Instance.PatrolSelectionPopUp2;
-        FollowSelectionPopUp = GameManager.Instance.FollowSelectionPopUp;
-        FirstPatrolPoint = Instantiate(GameManager.Instance.FirstPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
-        SecondPatrolPoint = Instantiate(GameManager.Instance.SecondPatrolPointPrefab, GameManager.Instance.PatrolingCircles.transform);
-        SelectionParticleCircle = Instantiate(GameManager.Instance.SelectionParticleCirclePrefab, GameManager.Instance.SelectionParticleCircles.transform);
-        BoostParticle = Instantiate(GameManager.Instance.BoostParticleEffectPrefab, GameManager.Instance.BoostParticles.transform);
-        ArmorBoostParticle = Instantiate(GameManager.Instance.ArmorBoostParticleEffectPrefab, GameManager.Instance.BoostParticles.transform);
-        troupMask = GameManager.Instance.troupMask;
+        gameManager = GameManager.Instance;
 
-        // Ally or Enemy
-        if (troupType == TroupType.Ally)
-        {
-            GameManager.Instance.addAlly(this);
-            selectionManager.completeDictionnary(transform.gameObject);
-        }
-        if (troupType == TroupType.Enemy)
-        {
-            GameManager.Instance.addEnemy(this);
-        }
+        Debug.Log("GameManager of " + troupType + " " + unitType + " = " + gameManager);
+        camera1 = gameManager.mainCamera;
+        selectionManager = gameManager.selectionManager;
+        SelectionArrow = gameManager.selectionArrow;
+        tombe = gameManager.tombe;
+        PlaceSelectionPopUp = gameManager.PlaceSelectionPopUp;
+        PatrolSelectionPopUp1 = gameManager.PatrolSelectionPopUp1;
+        PatrolSelectionPopUp2 = gameManager.PatrolSelectionPopUp2;
+        FollowSelectionPopUp = gameManager.FollowSelectionPopUp;
+        FirstPatrolPoint = Instantiate(gameManager.FirstPatrolPointPrefab, gameManager.PatrolingCircles.transform);
+        SecondPatrolPoint = Instantiate(gameManager.SecondPatrolPointPrefab, gameManager.PatrolingCircles.transform);
+        SelectionParticleCircle = Instantiate(gameManager.SelectionParticleCirclePrefab, gameManager.SelectionParticleCircles.transform);
+
+        unitBar = Instantiate(gameManager.unitBarsPrefab, gameManager.UI.bars.transform);
+        healthBar = unitBar.transform.GetChild(0).GetComponent<Image>();
+        abilityBar = unitBar.transform.GetChild(1).GetComponent<Image>();
+
+        troupMask = gameManager.troupMask;
 
         // Start Action Queue
         currentActionCoroutine = ExecuteActionQueue();
         AddAction(new Standby());
         StartCoroutine(currentActionCoroutine);
+
+        if (troupType == TroupType.Enemy)
+        {
+            gameManager.addEnemy(this);
+        }
     }
 
+    // Ally or Enemy
+    public void addToGroup()
+    {
+        if (troupType == TroupType.Ally)
+        {
+            gameManager.addAlly(this);
+            selectionManager.completeDictionnary(transform.gameObject);
+        }
+        if (troupType == TroupType.Enemy)
+        {
+            gameManager.addEnemy(this);
+        }
+    }
+
+    public void OnDisable()
+    {
+        healthBar.enabled = false;
+        abilityBar.enabled = false;
+
+        GameObject.Destroy(SelectionParticleCircle);
+    }
+
+    // Get stats
+    public int getCost() { return goldCost; }
+    public float getHealth() { return health; }
+    public float getArmor() { return armor; }
+    public float getSpeed() { return movingSpeed; }
+    public float getAttack() { return attackDamage; }
+    public float getAttackSpeed() { return attackRechargeTime; }
+    public float getAttackRange() { return attackRange; }
+    public float getAbilityRecharge() { return specialAbilityRechargeTime; }
+
+    // Update
     protected virtual void Update()
     {
         if (isFollowingOrders)
@@ -169,22 +201,22 @@ public abstract class Troup : MonoBehaviour
             if (transform.Find("Crown").gameObject.activeSelf == true)
             {
                 hasCrown = true;
-                GameManager.Instance.isCrownCollected = true;
-                GameManager.Instance.king = gameObject;
+                gameManager.isCrownCollected = true;
+                gameManager.king = gameObject;
             }
         }
 
-        if (BoostParticle.activeSelf)
+        if (BoostParticle != null)
         {
-            BoostParticle.transform.position = transform.position;
-        }
-        if (ArmorBoostParticle.activeSelf)
-        {
-            ArmorBoostParticle.transform.position = transform.position;
-        }
-
-
-
+            if (BoostParticle.activeSelf)
+            {
+                BoostParticle.transform.position = transform.position;
+            }
+            if (ArmorBoostParticle.activeSelf)
+            {
+                ArmorBoostParticle.transform.position = transform.position;
+            }
+        }        
 
         SelectedBehaviour();
 
@@ -201,7 +233,6 @@ public abstract class Troup : MonoBehaviour
 
         if (selectionManager.isSelected(this.gameObject))
         {
-            // SelectionCircle.GetComponent<MeshRenderer>().enabled = true;
             SelectionParticleCircle.SetActive(true);
             if (!isPlayingCircleAnim)
             {
@@ -289,7 +320,6 @@ public abstract class Troup : MonoBehaviour
         }
         else
         {
-            SelectionCircle.GetComponent<MeshRenderer>().enabled = false;
             FirstPatrolPoint.GetComponent<Renderer>().enabled = false;
             SecondPatrolPoint.GetComponent<Renderer>().enabled = false;
             SelectionParticleCircle.SetActive(false);
@@ -505,7 +535,7 @@ public abstract class Troup : MonoBehaviour
     {
         // Health Bar control
         float normalizedHealth = health / maxHealth;
-        healthBar.enabled = !GameManager.Instance.isInPause();
+        healthBar.enabled = !gameManager.isInPause();
 
         Vector3 healthBarPosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + agent.height, transform.position.z));
         healthBar.transform.position = new Vector3(healthBarPosition.x, healthBarPosition.y, healthBarPosition.z);
@@ -532,7 +562,7 @@ public abstract class Troup : MonoBehaviour
     {
         // Ability Bar control
         // float normalizedHealth = health / maxHealth;
-        abilityBar.enabled = !GameManager.Instance.isInPause();
+        abilityBar.enabled = !gameManager.isInPause();
 
         Vector3 abilityBarPosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + agent.height, transform.position.z));
         abilityBar.transform.position = new Vector3(abilityBarPosition.x, abilityBarPosition.y - 5.5f, abilityBarPosition.z);
@@ -591,9 +621,9 @@ public abstract class Troup : MonoBehaviour
     // Attack and ability -----------------------------------------------------------------------------------------
     protected void AttackBehaviour()
     {
-        if (troupType == TroupType.Enemy && GameManager.Instance.isCrownCollected)
+        if (troupType == TroupType.Enemy && gameManager.isCrownCollected)
         {
-            GameObject king = GameManager.Instance.king;
+            GameObject king = gameManager.king;
             
             if (king != null && king.GetComponent<Troup>().isVisible && !isMovingToKing)
             {
@@ -615,7 +645,7 @@ public abstract class Troup : MonoBehaviour
         HashSet<GameObject> detectedEnemies = new HashSet<GameObject>();
         if (troupType == TroupType.Ally)
         {
-            HashSet<Troup> enemies = GameManager.Instance.getEnemies();
+            HashSet<Troup> enemies = gameManager.getEnemies();
             foreach (Troup enemie in enemies)
             {
                 if (enemie.isVisible && Vector3.Distance(transform.position, enemie.transform.position) <= detectionRange)
@@ -625,7 +655,7 @@ public abstract class Troup : MonoBehaviour
             }
         } else
         {
-            HashSet<Troup> allies = GameManager.Instance.getAllies();
+            HashSet<Troup> allies = gameManager.getAllies();
             foreach (Troup ally in allies)
             {
                 if (ally.isVisible && Vector3.Distance(transform.position, ally.transform.position) <= detectionRange)
@@ -696,7 +726,7 @@ public abstract class Troup : MonoBehaviour
         HashSet<GameObject> inRangeEnemies = new HashSet<GameObject>();
         if (troupType == TroupType.Ally)
         {
-            HashSet<Troup> enemies = GameManager.Instance.getEnemies();
+            HashSet<Troup> enemies = gameManager.getEnemies();
             foreach (var enemy in enemies)
             {
                 if (enemy.isVisible && Vector3.Distance(transform.position, enemy.transform.position) <= attackRange)
@@ -707,7 +737,7 @@ public abstract class Troup : MonoBehaviour
         }
         else
         {
-            HashSet<Troup>  allies = GameManager.Instance.getAllies();
+            HashSet<Troup>  allies = gameManager.getAllies();
             foreach (var ally in allies)
             {
                 if (ally.isVisible && Vector3.Distance(transform.position, ally.transform.position) <= attackRange)
@@ -819,8 +849,8 @@ public abstract class Troup : MonoBehaviour
 
         if (beforeHealth * newHealth <= 0 && !hasSpawnedTombe)
         {
-            if (troupType == TroupType.Ally) { GameManager.Instance.removeAlly(this); }
-            if (troupType == TroupType.Enemy) { GameManager.Instance.removeEnemy(this);  }
+            if (troupType == TroupType.Ally) { gameManager.removeAlly(this); }
+            if (troupType == TroupType.Enemy) { gameManager.removeEnemy(this);  }
             GameObject tombeMort = Instantiate(tombe, transform.position, transform.rotation, null);
             hasSpawnedTombe = true;
             // if (troupType == TroupType.Enemy) { tombeMort.transform.position += Vector3.up * 3; }

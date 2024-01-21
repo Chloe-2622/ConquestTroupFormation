@@ -223,7 +223,7 @@
             "id": "d65ca780-1c11-4ab9-9ab6-2fe3d5626532",
             "actions": [
                 {
-                    "name": "Placement",
+                    "name": "GoTo",
                     "type": "Button",
                     "id": "743f5429-d313-40eb-a42b-0cc02e9de542",
                     "expectedControlType": "Button",
@@ -276,7 +276,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Placement",
+                    "action": "GoTo",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -327,7 +327,7 @@
             ]
         },
         {
-            "name": "InGame",
+            "name": "InGameUI",
             "id": "1363c5cd-5d7a-4114-8b4f-fa64166b2384",
             "actions": [
                 {
@@ -349,6 +349,138 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Purchase Phase",
+            "id": "82d1b556-4155-4280-a463-1f15283cd7c5",
+            "actions": [
+                {
+                    "name": "Place unit",
+                    "type": "Value",
+                    "id": "dc1b91fc-53b6-4b41-820f-96a390d9a8a4",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Remove Unit",
+                    "type": "Value",
+                    "id": "805adf85-d8ba-47b5-acf6-6ee6e0bce37a",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Remove Selection",
+                    "type": "Button",
+                    "id": "44de2dc8-7fdc-401b-b373-a877593cd2fc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Show Placement",
+                    "type": "Value",
+                    "id": "3188ce93-5f66-4287-bc91-2762f06e4006",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "Left Click",
+                    "id": "0cbf0b36-12bb-4364-9547-321df67ab477",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Place unit",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "bc21aa4a-e9bd-4a7f-b1e3-1a2791744cc0",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Place unit",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "b9220dfd-277e-4f15-800c-fe2fa464f934",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Place unit",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "b651d89e-7fd1-41d1-a427-e8d33636e3fc",
+                    "path": "<Keyboard>/delete",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Remove Selection",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Right Click",
+                    "id": "eea7ab21-72d6-4eef-92a6-71db78dfdd88",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Remove Unit",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "7973f8df-1133-4935-b2e0-23dab0537a45",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Remove Unit",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "ad69151d-0cb3-44bd-9f39-be588c871935",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Remove Unit",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "7a60bebd-79c9-4c87-8e17-459e0278c185",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Show Placement",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

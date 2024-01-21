@@ -20,7 +20,7 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private InputActionReference zoom;
 
     private Camera cameraObject;
-    private bool isPaused = false;
+    private bool isMoving;
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +34,8 @@ public class CameraMovement : MonoBehaviour
         sprint.action.Enable();
         zoom.action.Enable();
 
+        movement.action.started += startCameraMove;
+        movement.action.canceled += stopCameraMove;
         zoom.action.started += zoomCamera;
     }
 
@@ -44,12 +46,95 @@ public class CameraMovement : MonoBehaviour
         sprint.action.Disable();
         zoom.action.Disable();
 
+        movement.action.started -= startCameraMove;
+        movement.action.canceled -= stopCameraMove;
         zoom.action.started -= zoomCamera;
     }
+
+    public void startCameraMove(InputAction.CallbackContext context)
+    {
+        if (GameManager.Instance.isInPause()) { return; }
+        isMoving = true;
+    }
+
+    public void stopCameraMove(InputAction.CallbackContext context)
+    {
+        isMoving = false;
+    }
+
+    public void Update()
+    {
+        if ( isMoving ) 
+        {
+            float currentSpeed;
+            if (sprint.action.inProgress)
+            {
+                currentSpeed = sprintMultiplier * defaultSpeed;
+            }
+            else { currentSpeed = defaultSpeed; }
+
+            float dx = 0f;
+            float dz = 0f;
+            Vector2 movementInput = movement.action.ReadValue<Vector2>();
+
+            if (movementInput.x > 0)
+            {
+                dx++;
+                dz--;
+            }
+            if (movementInput.x < 0)
+            {
+                dx--;
+                dz++;
+            }
+            if (movementInput.y > 0)
+            {
+                dx++;
+                dz++;
+            }
+            if (movementInput.y < 0)
+            {
+                dx--;
+                dz--;
+            }
+
+            GameManager.Instance.troupPurchase.cameraMovement.Invoke();
+            cameraObject.transform.Translate(new Vector3(dx * currentSpeed * Time.deltaTime, 0, dz * currentSpeed * Time.deltaTime), Space.World);
+        }
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public void zoomCamera(InputAction.CallbackContext context)
     {
+        if (GameManager.Instance.isInPause() ) { return; }
+
         Vector2 zoomVector = zoom.action.ReadValue<Vector2>();
         zoomVector.Normalize();
 
@@ -58,7 +143,6 @@ public class CameraMovement : MonoBehaviour
 
         // Calculate the new position
         Vector3 newPosition = transform.position + (transform.forward * zoomVector.y * scrollSpeed);
-        Debug.Log(newPosition);
 
         // Clamp the y component between 6 and 30
         newPosition.y = Mathf.Clamp(newPosition.y, 6f, 30f);
@@ -81,21 +165,14 @@ public class CameraMovement : MonoBehaviour
         {
             transform.position = newPosition;
         }
-
-        /*
-         if ((newPosition.y == 6f && zoomVector.y > 0) || (newPosition.y == 30f && zoomVector.y < 0))
-        {
-            // Scroll is not allowed at the current position, do not update the position
-        }
-        else
-        {
-            // Apply the new position
-            transform.position = newPosition;
-        }
-        */
-
     }
 
+
+
+
+
+
+    /*
     // Update is called once per frame
     void Update()
     {
@@ -131,9 +208,7 @@ public class CameraMovement : MonoBehaviour
             dz--;
         }
 
-        if (!isPaused)
-        {
-            cameraObject.transform.Translate(new Vector3(dx * currentSpeed * Time.deltaTime, 0, dz * currentSpeed * Time.deltaTime), Space.World);
-        }
+        cameraObject.transform.Translate(new Vector3(dx * currentSpeed * Time.deltaTime, 0, dz * currentSpeed * Time.deltaTime), Space.World);
     }
+    */
 }

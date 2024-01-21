@@ -117,8 +117,6 @@ public class Tombe : MonoBehaviour
             model = Instantiate(GameManager.Instance.Belier.transform.Find("Model").gameObject, positionModel, Quaternion.identity);
             StartCoroutine(ReviveAnimation(model));
         }
-
-        
     }
 
     public IEnumerator Timer()
@@ -158,46 +156,55 @@ public class Tombe : MonoBehaviour
         {
             GameObject spawnedUnit = Instantiate(GameManager.Instance.Combattant, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
         }
         if (tombeUnitType == TombeUnitType.Archer)
         {
             GameObject spawnedUnit = Instantiate(GameManager.Instance.Archer, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
         }
         if (tombeUnitType == TombeUnitType.Cavalier)
         {
             GameObject spawnedUnit = Instantiate(GameManager.Instance.Cavalier, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
         }
         if (tombeUnitType == TombeUnitType.Guerisseur)
         {
             GameObject spawnedUnit = Instantiate(GameManager.Instance.Guerisseur, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
         }
         if (tombeUnitType == TombeUnitType.Catapulte)
         {
             GameObject spawnedUnit = Instantiate(GameManager.Instance.Catapulte, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
         }
         if (tombeUnitType == TombeUnitType.Porte_bouclier)
         {
             GameObject spawnedUnit = Instantiate(GameManager.Instance.Porte_bouclier, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
         }
         if (tombeUnitType == TombeUnitType.Porte_etendard)
         {
             GameObject spawnedUnit = Instantiate(GameManager.Instance.Porte_etendard, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
         }
         if (tombeUnitType == TombeUnitType.Batisseur)
         {
             GameObject spawnedUnit = Instantiate(GameManager.Instance.Batisseur, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
         }
         if (tombeUnitType == TombeUnitType.Belier)
         {
             GameObject spawnedUnit = Instantiate(GameManager.Instance.Belier, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
+            spawnedUnit.GetComponent<Troup>().addToGroup();
         }
 
         StopCoroutine(Timer());

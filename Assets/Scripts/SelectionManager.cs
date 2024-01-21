@@ -9,6 +9,7 @@ using UnityEngine.UIElements;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Linq;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -26,6 +27,10 @@ public class SelectionManager : MonoBehaviour
     [Header("Input System")]
     [SerializeField] private InputActionReference selectionAction;
 
+    [Header("Layer to Intersect")]
+    [SerializeField] private LayerMask troupMask;
+    [SerializeField] private LayerMask floorMask;
+
 
     private Dictionary<GameObject, bool> selectionableObjects = new Dictionary<GameObject, bool>();
     private List<GameObject> currentSelections = new List<GameObject>();
@@ -36,8 +41,7 @@ public class SelectionManager : MonoBehaviour
     private Vector2 position_1;
     private Vector2 position_2;
 
-    public UnityEvent newSelection;
-
+    [HideInInspector] public UnityEvent newSelection;
 
     private void Awake()
     {
@@ -46,7 +50,7 @@ public class SelectionManager : MonoBehaviour
     }
 
         // On s'abonne aux évènements du Event System
-        private void OnEnable()
+    private void OnEnable()
     {
         selectionAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
         selectionAction.action.started += OnInputStarted; // S'active à la pression initiale des touches
@@ -115,7 +119,7 @@ public class SelectionManager : MonoBehaviour
     public void selectUnit()
     {
         RemoveNullKeys(selectionableObjects);
-        Debug.Log("Clé Unit Selection");
+        Debug.Log("?? Clé Unit Selection");
         /* foreach (GameObject selectionableObject in selectionableObjects.Keys)
         {
             if (selectionableObject == null)
@@ -130,24 +134,43 @@ public class SelectionManager : MonoBehaviour
             Debug.Log("clé : " + selectionableObject + " et value : " + selectionableObjects[selectionableObject]);
 
         }
-        Ray ray_1 = shootingCamera.ScreenPointToRay(position_1);
-        RaycastHit hit_1;
-        Physics.Raycast(ray_1, out hit_1, Mathf.Infinity);
-        float minDistance = unitSelectionDistanceLimit;
-        GameObject nearestObject = null;
-        foreach (GameObject selectionableObject in selectionableObjects.Keys)
+        Ray ray = shootingCamera.ScreenPointToRay(position_1);
+        RaycastHit hit_troup;
+        RaycastHit hit_floor;
+        RaycastHit hit_test;
+
+        GameObject newObjectToSelect = null;
+
+        Physics.Raycast(ray, out hit_test, Mathf.Infinity);
+        Debug.Log("?? " + hit_test.transform.gameObject.layer);
+
+
+
+
+        if (Physics.Raycast(ray, out hit_troup, Mathf.Infinity, troupMask))
         {
-            Debug.Log("Point 1 : " + hit_1);
-            Debug.Log("Point selObj : " + selectionableObject);
-            float distance = Vector3.Distance(hit_1.point, selectionableObject.transform.position);
-            if (distance < minDistance)
+            if (selectionableObjects.ContainsKey(hit_troup.transform.gameObject))
             {
-                minDistance = distance;
-                nearestObject = selectionableObject;
+                newObjectToSelect = hit_troup.transform.gameObject;
             }
         }
-        select(new List<GameObject> { nearestObject });
-        
+        else if (Physics.Raycast(ray, out hit_floor, Mathf.Infinity, floorMask))
+        {
+            float minDistance = unitSelectionDistanceLimit;
+            foreach (GameObject selectionableObject in selectionableObjects.Keys)
+            {
+                Debug.Log("Point 1 : " + hit_floor);
+                Debug.Log("Point selObj : " + selectionableObject);
+                float distance = Vector3.Distance(hit_floor.point, selectionableObject.transform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    newObjectToSelect = selectionableObject;
+                }
+            }
+        }
+        select(new List<GameObject> { newObjectToSelect });
+
     }
 
     // Détermine les unités qui se situent dans la zone sélectionnée
@@ -225,22 +248,7 @@ public class SelectionManager : MonoBehaviour
     public void drawSquare()
     {
         Vector2 currentPosition = selectionAction.action.ReadValue<Vector2>();
-        /* Ray ray_1 = shootingCamera.ScreenPointToRay(position_1);
-        RaycastHit hit_1;
-        Ray ray_2 = shootingCamera.ScreenPointToRay(new Vector2(currentPosition.x, position_1.y));
-        RaycastHit hit_2;
-        Ray ray_3 = shootingCamera.ScreenPointToRay(currentPosition);
-        RaycastHit hit_3;
-        Ray ray_4 = shootingCamera.ScreenPointToRay(new Vector2(position_1.x, currentPosition.y));
-        RaycastHit hit_4; */
-
-        /* Physics.Raycast(ray_1, out hit_1, Mathf.Infinity);
-        Physics.Raycast(ray_2, out hit_2, Mathf.Infinity);
-        Physics.Raycast(ray_3, out hit_3, Mathf.Infinity);
-        Physics.Raycast(ray_4, out hit_4, Mathf.Infinity); */
-
         
-
         SquareBarTop.transform.position = new Vector2((position_1.x + currentPosition.x) / 2, position_1.y);
         SquareBarTop.transform.localScale = new Vector3((currentPosition.x - position_1.x) / 20, SquareBarTop.transform.localScale.y, SquareBarTop.transform.localScale.z);
 
@@ -252,14 +260,6 @@ public class SelectionManager : MonoBehaviour
 
         SquareBarLeft.transform.position = new Vector2(position_1.x, (position_1.y + currentPosition.y) / 2);
         SquareBarLeft.transform.localScale = new Vector3((currentPosition.y - position_1.y) / 20, SquareBarLeft.transform.localScale.y, SquareBarLeft.transform.localScale.z);
-
-
-
-        /*  Debug.DrawLine(hit_1.point, hit_2.point, Color.red);
-        Debug.DrawLine(hit_2.point, hit_3.point, Color.red);
-        Debug.DrawLine(hit_3.point, hit_4.point, Color.red);
-        Debug.DrawLine(hit_4.point, hit_1.point, Color.red);
-        */
     }
 
     // Désélectionne tous les éléments précédements sélectionnés
