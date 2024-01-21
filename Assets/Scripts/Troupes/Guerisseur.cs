@@ -193,7 +193,10 @@ public class Guerisseur : Troup
 
         if (currentHealedAlly != null)
         {
-            transform.LookAt(currentHealedAlly.transform.position);
+            Vector3 targetPosition = currentHealedAlly.transform.position;
+            targetPosition.y = transform.position.y;  // Keep the same y position as the object you are rotating
+
+            transform.LookAt(targetPosition);
         }
 
         if (currentHealedAlly != null && !currentHealedAlly.GetComponent<Troup>().IsInjured())

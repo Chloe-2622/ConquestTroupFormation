@@ -510,6 +510,91 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 971d9cda443708c42b9eac777dffd92b, type: 3}
+--- !u!1001 &168087586
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1235189750}
+    m_Modifications:
+    - target: {fileID: 3630770809780813079, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: m_Name
+      value: Porte_bouclier
+      objectReference: {fileID: 0}
+    - target: {fileID: 5553734684380484190, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: armor
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5553734684380484190, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: health
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 5553734684380484190, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: boostTime
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5553734684380484190, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: armureBoost
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5553734684380484190, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: boostRadius
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5553734684380484190, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: movingSpeed
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5553734684380484190, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: specialAbilityRechargeTime
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7738217919041393844, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -21.951324
+      objectReference: {fileID: 0}
+    - target: {fileID: 7738217919041393844, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.1090555
+      objectReference: {fileID: 0}
+    - target: {fileID: 7738217919041393844, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.1453247
+      objectReference: {fileID: 0}
+    - target: {fileID: 7738217919041393844, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7738217919041393844, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7738217919041393844, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7738217919041393844, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7738217919041393844, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7738217919041393844, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7738217919041393844, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
 --- !u!4 &279647874 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7738217919041393844, guid: 3d22409efb8f8e340816ac548896391a, type: 3}
@@ -786,6 +871,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 756917051}
     m_Modifications:
+    - target: {fileID: 5354981711675546, guid: 8f9e6f454d69d3b42984f0ad4c84eed5, type: 3}
+      propertyPath: unitType
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3630770809780813079, guid: 8f9e6f454d69d3b42984f0ad4c84eed5, type: 3}
       propertyPath: m_Name
       value: CavalierEnemy
@@ -1345,10 +1434,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: CombattantEnemy (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 3630770809780813079, guid: 4974e50f826d25a418343314b28b9403, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7738217919041393844, guid: 4974e50f826d25a418343314b28b9403, type: 3}
       propertyPath: m_LocalPosition.x
       value: 20.697403
@@ -1743,6 +1828,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1235189750}
     m_Modifications:
+    - target: {fileID: 3140712140878663487, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
+      propertyPath: swingTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3630770809780813079, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
       propertyPath: m_Name
       value: Combattant
@@ -1796,6 +1885,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
+--- !u!4 &922536384 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7738217919041393844, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
+  m_PrefabInstance: {fileID: 168087586}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &937522363 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7738217919041393844, guid: 971d9cda443708c42b9eac777dffd92b, type: 3}
@@ -2434,6 +2528,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 756917051}
     m_Modifications:
+    - target: {fileID: 5354981711675546, guid: 8f9e6f454d69d3b42984f0ad4c84eed5, type: 3}
+      propertyPath: unitType
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3630770809780813079, guid: 8f9e6f454d69d3b42984f0ad4c84eed5, type: 3}
       propertyPath: m_Name
       value: CavalierEnemy (1)
@@ -2530,6 +2628,7 @@ Transform:
   - {fileID: 1413111955}
   - {fileID: 16178502}
   - {fileID: 136086919}
+  - {fileID: 922536384}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1263680772
@@ -2574,10 +2673,6 @@ PrefabInstance:
     - target: {fileID: 3630770809780813079, guid: 4974e50f826d25a418343314b28b9403, type: 3}
       propertyPath: m_Name
       value: CombattantEnemy (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 3630770809780813079, guid: 4974e50f826d25a418343314b28b9403, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7738217919041393844, guid: 4974e50f826d25a418343314b28b9403, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2707,6 +2802,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1235189750}
     m_Modifications:
+    - target: {fileID: 3140712140878663487, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
+      propertyPath: health
+      value: 1500
+      objectReference: {fileID: 0}
+    - target: {fileID: 3140712140878663487, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
+      propertyPath: swingTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3630770809780813079, guid: 57de98ad0b2d7544bb13f67fa577ff79, type: 3}
       propertyPath: m_Name
       value: Combattant (1)
@@ -12434,6 +12537,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3630770809780813079, guid: e81cdeaffcdc3d94e907dd179ef4d8b3, type: 3}
     - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: Batisseur
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
       propertyPath: Catapulte
       value: 
       objectReference: {fileID: 7307699464318762355, guid: 39d9fec12bd70da43b3762e69af3faa2, type: 3}
@@ -12517,6 +12624,10 @@ PrefabInstance:
       propertyPath: BoostParticleEffectPrefab
       value: 
       objectReference: {fileID: 2512279740521446448, guid: 5c9b279fcc47b5d438bf55c5ff884864, type: 3}
+    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: ArmorBoostParticleEffectPrefab
+      value: 
+      objectReference: {fileID: 2512279740521446448, guid: 45de9d26b2c5ba341b97b71288c1d918, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:

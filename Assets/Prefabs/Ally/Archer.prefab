@@ -157,6 +157,7 @@ MonoBehaviour:
   currentAttackedTroup: {fileID: 0}
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
+  isVisible: 1
   invisibleTime: 10
   invisibleMaterial: {fileID: 2100000, guid: b2893209e057c48409a2c339ff33e055, type: 2}
 --- !u!195 &8753042273054374063
@@ -218,7 +219,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineMode: 0
   outlineColor: {r: 0, g: 0.9054296, b: 1, a: 1}
-  outlineWidth: 2
+  outlineWidth: 4
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []

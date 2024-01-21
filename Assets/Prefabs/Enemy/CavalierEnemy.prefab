@@ -241,7 +241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troupType: 1
-  unitType: 0
+  unitType: 2
   isSelected: 0
   hasCrown: 0
   movingSpeed: 10
@@ -260,6 +260,7 @@ MonoBehaviour:
   currentAttackedTroup: {fileID: 0}
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
+  isVisible: 1
   chargeTime: 3
   chargeSpeed: 20
 --- !u!195 &8753042273054374063

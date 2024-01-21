@@ -46,7 +46,7 @@ public class Etendard : MonoBehaviour
                     troupToBoost.Add(troup);
                     troup.AddDamage(damageBoost);
                     troup.ChangeAttackSpeed(attackSpeedBoost);
-                    troup.ActivateBoostParticle(true);
+                    // troup.ActivateBoostParticle(true);
                 }
             }
             else
@@ -56,9 +56,15 @@ public class Etendard : MonoBehaviour
                     troupToBoost.Remove(troup);
                     troup.AddDamage(-damageBoost);
                     troup.ChangeAttackSpeed(1 / attackSpeedBoost);
-                    troup.ActivateBoostParticle(false);
+                    // troup.ActivateBoostParticle(false);
                 }
             }
+
+            if (!troup.IsBoosted())
+            {
+                troup.ActivateBoostParticle(troupToBoost.Contains(troup));
+            }
+
         }
 
     }

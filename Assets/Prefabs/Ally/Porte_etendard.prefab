@@ -92,10 +92,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7738217919041393844}
+  - component: {fileID: 6808962653269764608}
   - component: {fileID: 8753042273054374063}
   - component: {fileID: 3232482504679713669}
   - component: {fileID: 4835511943431903293}
-  - component: {fileID: 6808962653269764608}
   m_Layer: 8
   m_Name: Porte_etendard
   m_TagString: Untagged
@@ -126,6 +126,43 @@ Transform:
   - {fileID: 6743982980660826655}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6808962653269764608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3630770809780813079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db980ab08957a2d49a6c4ac415fa3580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  troupType: 0
+  unitType: 6
+  isSelected: 0
+  hasCrown: 0
+  movingSpeed: 7
+  health: 75
+  armor: 0
+  detectionRange: 0
+  positionThreshold: 1
+  attackDamage: 0
+  attackRechargeTime: 0
+  attackRange: 0
+  specialAbilityRechargeTime: 0
+  isChosingPatrol: 0
+  isFollowingEnemy: 0
+  isAttackingEnemy: 0
+  isPatroling: 0
+  currentAttackedTroup: {fileID: 0}
+  currentFollowedTroup: {fileID: 0}
+  specialAbilityDelay: 0
+  isVisible: 1
+  damageBoost: 10
+  attackSpeedBoost: 1.5
+  zoneRadius: 10
+  etendardPrefab: {fileID: 0}
 --- !u!195 &8753042273054374063
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -189,42 +226,6 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
---- !u!114 &6808962653269764608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3630770809780813079}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db980ab08957a2d49a6c4ac415fa3580, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  troupType: 0
-  unitType: 6
-  isSelected: 0
-  hasCrown: 0
-  movingSpeed: 7
-  health: 75
-  armor: 0
-  detectionRange: 0
-  positionThreshold: 1
-  attackDamage: 0
-  attackRechargeTime: 0
-  attackRange: 0
-  specialAbilityRechargeTime: 0
-  isChosingPatrol: 0
-  isFollowingEnemy: 0
-  isAttackingEnemy: 0
-  isPatroling: 0
-  currentAttackedTroup: {fileID: 0}
-  currentFollowedTroup: {fileID: 0}
-  specialAbilityDelay: 0
-  isVisible: 1
-  damageBoost: 10
-  attackSpeedBoost: 1.5
-  zoneRadius: 10
 --- !u!1 &3734902876993795461
 GameObject:
   m_ObjectHideFlags: 0
