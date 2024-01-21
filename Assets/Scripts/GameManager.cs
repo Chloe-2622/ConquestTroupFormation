@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
     public GameObject Porte_etendard;
     public GameObject Batisseur;
     public GameObject Belier;
+    public GameObject unitBarsPrefab;
     public GameObject FirstPatrolPointPrefab;
     public GameObject SecondPatrolPointPrefab;
     public GameObject SelectionParticleCirclePrefab;
@@ -46,8 +48,14 @@ public class GameManager : MonoBehaviour
     public float defaultHeight;
     public float outlineWidth;
 
-    [Header("Purchase")]
+    [Header("Other")]
     public TroupPurchase troupPurchase;
+    public InGameUI UI;
+        
+    [Header("Arena Gold")]
+    [SerializeField] private List<int> goldPerArena = new List<int>(5);
+    private Dictionary<string, int> goldenBook = new Dictionary<string, int>();
+
 
     private bool pause;
     public bool isCrownCollected;
@@ -58,7 +66,7 @@ public class GameManager : MonoBehaviour
     private static HashSet<Troup> Enemies = new HashSet<Troup>();
 
     private List<GameObject> UnitPrefabs = new List<GameObject>();
-    public UnityEvent updateTroupCounter;
+    [HideInInspector] public UnityEvent updateTroupCounter;
 
     private void Awake()
     {
@@ -77,6 +85,7 @@ public class GameManager : MonoBehaviour
         }
 
         chargeUnitPrefab();
+        completeGoldenBook();
     }
 
         // Pause
@@ -94,8 +103,18 @@ public class GameManager : MonoBehaviour
     }
 
     // Allies
-    public void addAlly(Troup troup) { Allies.Add(troup); updateTroupCounter.Invoke(); }
-    public void removeAlly(Troup troup) { Allies.Remove(troup); updateTroupCounter.Invoke();  }
+    public void addAlly(Troup troup) 
+    { 
+        Allies.Add(troup);
+        selectionManager.completeDictionnary(troup.gameObject);
+        updateTroupCounter.Invoke(); 
+    }
+    public void removeAlly(Troup troup) 
+    {
+        Allies.Remove(troup);
+        selectionManager.removeObject(troup.gameObject);
+        updateTroupCounter.Invoke();
+    }
     public HashSet<Troup> getAllies() { return Allies; }
     public int alliesCount() { return Allies.Count; }
 
@@ -109,7 +128,6 @@ public class GameManager : MonoBehaviour
 
     public List<GameObject> getUnitPrefabs() { return UnitPrefabs; }
     public int getUnitPrebasLenght() { return UnitPrefabs.Count; }
-
 
     // Complete list of Unit Prefabs
     public void chargeUnitPrefab()
@@ -126,4 +144,17 @@ public class GameManager : MonoBehaviour
 
         Debug.Log(UnitPrefabs.Count);
     }
+
+    // List of gold allowed for each arena
+    public int getGoldInArena(string arenaName) { return goldenBook[arenaName]; }
+
+    public void completeGoldenBook()
+    {
+        for (int i = 0; i < goldPerArena.Count; i++)
+        {
+            goldenBook.Add("Arene_" + (i+1).ToString(), goldPerArena[i]);
+        }
+        Debug.Log("Golden Book Completed");
+    }
+
 }

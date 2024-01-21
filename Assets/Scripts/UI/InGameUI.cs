@@ -42,6 +42,9 @@ public class InGameUI : MonoBehaviour
     [SerializeField] private Color batisseurColor;
     [SerializeField] private Color belierColor;
 
+    [Header("Health and Ability Display")]
+    [SerializeField] public GameObject bars;
+
     private List<Color> unitColorList;
 
     // Start is called before the first frame update

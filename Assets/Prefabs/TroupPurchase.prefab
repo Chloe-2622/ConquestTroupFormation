@@ -48,3 +48,18 @@ MonoBehaviour:
   showPlacementAction: {fileID: 5420062200291776804, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
   removeUnitAction: {fileID: -1327735771851980269, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
   removeSelectionAction: {fileID: -7814924995636463926, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
+  minDistanceBetweenUnits: 2
+  maxRemoveDistance: 2
+  allyZoneLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  debugMode: 0
+  cameraMovement:
+    m_PersistentCalls:
+      m_Calls: []
+  goldUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  notEnoughtGold:
+    m_PersistentCalls:
+      m_Calls: []

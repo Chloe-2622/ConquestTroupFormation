@@ -9,7 +9,7 @@ public class OptionsManager : MonoBehaviour
     public static OptionsManager Instance;
 
     private string playerName;
-    public int chosenArena;
+    [HideInInspector] public int chosenArena;
 
     [Header("General Volume")]
     [SerializeField] float generalVolume = 0.5f;
