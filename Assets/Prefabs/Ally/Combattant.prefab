@@ -298,7 +298,7 @@ MonoBehaviour:
   isVisible: 1
   enragedTime: 5
   enragedSpeed: 12
-  enragedAttackRechargeTime: 0.2
+  enragedAttackRechargeTime: 0.5
   swingTime: 0.5
 --- !u!195 &8753042273054374063
 NavMeshAgent:

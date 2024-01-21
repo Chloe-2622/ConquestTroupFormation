@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     public GameObject CatapulteCroixPrefab;
     public GameObject BoulderPrefab;
     public GameObject BigBoulderPrefab;
+    public GameObject ArrowPrefab;
 
     [Header("Text PopUps")]
     public TextMeshProUGUI TroupSelectionPopUp;
