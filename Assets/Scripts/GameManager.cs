@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
 using System.Runtime.InteropServices.WindowsRuntime;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
@@ -43,7 +44,7 @@ public class GameManager : MonoBehaviour
     public Camera mainCamera;
     public SelectionManager selectionManager;
     public TroupPurchase troupPurchase;
-    public InGameUI UI;
+    public EventSystem eventSystem;
     public GameObject PatrolingCircles;
     public GameObject SelectionParticleCircles;
 
@@ -70,18 +71,18 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI PatrolSelectionPopUp2;
     public TextMeshProUGUI FollowSelectionPopUp;
 
-    [Header("Victory Phrases")]
+    [Header("Victory Sentences")]
     [SerializeField] private string crownArrived;
     [SerializeField] private string allEnemiesDead;
 
-    [Header("Loss Phrases")]
+    [Header("Defeat Sentences")]
     [SerializeField] private string deathOfKing;
     [SerializeField] private string noUnitsRemaining;
 
     private bool pause;
     private bool gameHasStarted;
-    public bool isCrownCollected;
-    public GameObject king;
+    [HideInInspector] public bool isCrownCollected;
+    [HideInInspector] public GameObject king;
 
     // Allies and Enemis dictionnary -----------------------------------------------------------------------------
     private static HashSet<Troup> Allies = new HashSet<Troup>();
@@ -113,23 +114,17 @@ public class GameManager : MonoBehaviour
         completeGoldenBook();
     }
 
-    public void crownCaptured() { victory(crownArrived);  }
+    public void crownCaptured() { victoryOrDefeat(true, crownArrived);  }
 
-    public void allEnemiesDefeated() { victory(allEnemiesDead); }
+    public void allEnemiesDefeated() { victoryOrDefeat(true, allEnemiesDead); }
 
-    public void kingIsDead()
+    public void kingIsDead() { victoryOrDefeat(false, deathOfKing); }
+    public void allUnitsAreDead() { victoryOrDefeat(false, noUnitsRemaining); }
+    public void victoryOrDefeat(bool victory, string sentence)
     {
         PauseGame();
-    }
-    public void allUnitsAreDead()
-    {
-        PauseGame();
-    }
-
-    public void victory(string victoryPhrase)
-    {
-        PauseGame();
-        //Debug.Log("!! " + victoryPhrase);
+        Debug.Log("!! " + sentence);
+        eventSystem.GetComponent<GameEnd>().showEndPanel(victory, sentence);
     }
 
 

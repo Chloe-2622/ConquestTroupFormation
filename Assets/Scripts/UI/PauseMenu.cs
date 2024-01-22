@@ -4,21 +4,25 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
     [Header("Pause")]
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private InputActionReference pauseAction;
+    [SerializeField] private Button pauseButton;
+
+    private GameManager gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
+        gameManager = GameManager.Instance;
         resumeGame();
 
         if (OptionsManager.Instance.getPreviousScene() == SceneManager.GetActiveScene().name)
         {
-            pausePanel.SetActive(true);
             pauseGame();
         }
     }
@@ -35,12 +39,15 @@ public class PauseMenu : MonoBehaviour
     {
         pauseAction.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
         pauseAction.action.started -= OnInputStarted;
+
+        pausePanel.SetActive(false);
+        pauseButton.gameObject.SetActive(false);
     }
 
     public void OnInputStarted(InputAction.CallbackContext context)
     {
-        Debug.Log(GameManager.Instance.isInPause());
-        if (!GameManager.Instance.isInPause())
+        Debug.Log(gameManager.isInPause());
+        if (!gameManager.isInPause())
         {
             pauseGame();
         }
@@ -53,13 +60,13 @@ public class PauseMenu : MonoBehaviour
     public void pauseGame()
     {
         pausePanel.SetActive(true);
-        GameManager.Instance.PauseGame();
+        gameManager.PauseGame();
     }
     public void resumeGame()
     {
         pausePanel.SetActive(false);
-        GameManager.Instance.ResumeGame();
-    }    
+        gameManager.ResumeGame();
+    }     
 
     public void goToOptions()
     {
@@ -73,8 +80,6 @@ public class PauseMenu : MonoBehaviour
         SceneManager.LoadScene("Title Screen");
     }
 
-    public void quit()
-    {
-        Application.Quit();
-    }
+    public void resetGame() { SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    public void quit() { Application.Quit(); }
 }
