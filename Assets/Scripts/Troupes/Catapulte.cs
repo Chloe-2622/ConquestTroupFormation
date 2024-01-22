@@ -216,8 +216,15 @@ public class Catapulte : Troup
 
                 croix.transform.position = hit.point;
 
-                if (Input.GetMouseButton(0) && Vector3.Distance(transform.position, hit.point) <= maxShootingRange)
+                if (Input.GetMouseButton(0))
                 {
+                    if (Vector3.Distance(transform.position, hit.point) > maxShootingRange)
+                    {
+                        AddAction(new MoveToPosition(agent, hit.point, positionThreshold));
+                        yield return new WaitWhile(() => Vector3.Distance(transform.position, hit.point) > maxShootingRange);
+                        AddAction(new Standby());
+                    }
+
                     Debug.Log("Target position clicked : " + hit.point);
                     // hasSelected = true;
                     SelectionArrow.GetComponent<MeshRenderer>().enabled = false;

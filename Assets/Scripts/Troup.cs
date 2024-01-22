@@ -60,6 +60,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected bool isAddedWhenAwake = false;
     [SerializeField] public Vector3 moveTargetDestination;
     [SerializeField] protected float timeBeforeNextAction;
+    private Wall wallComponent;
     private bool isPlayingCircleAnim;
     private bool isChosingPlacement;
     private bool isChosingFollow;
@@ -104,7 +105,7 @@ public abstract class Troup : MonoBehaviour
     public enum TroupType { Ally, Enemy }
     public enum UnitType
     {
-        Null, Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
+        Null, Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier, Mur
     }
 
     // Action Queue -----------------------------------------------------------------------------------------------
@@ -114,7 +115,7 @@ public abstract class Troup : MonoBehaviour
 
     protected virtual void Awake() 
     {
-        if (troupType == TroupType.Ally)
+        if (troupType == TroupType.Ally && unitType != UnitType.Mur)
         {
             QueueUI = transform.Find("Canvas").Find("Queue").gameObject;
         }
@@ -150,6 +151,11 @@ public abstract class Troup : MonoBehaviour
 
         troupMask = gameManager.troupMask;
 
+        if (unitType == Troup.UnitType.Mur)
+        {
+            wallComponent = GetComponent<Wall>();
+        }
+
         // Start Action Queue
         currentActionCoroutine = ExecuteActionQueue();
         AddAction(new Standby());
@@ -170,12 +176,11 @@ public abstract class Troup : MonoBehaviour
     }
 
     // Ally or Enemy
-    public void addToGroup()
+    public virtual void addToGroup()
     {
         if (troupType == TroupType.Ally)
         {
             gameManager.addAlly(this);
-            // selectionManager.completeDictionnary(transform.gameObject);
         }
         if (troupType == TroupType.Enemy)
         {
@@ -357,6 +362,7 @@ public abstract class Troup : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.F) && specialAbilityDelay == 0)
             {
+                Debug.Log("-- Activate Ability");
                 StartCoroutine(SpecialAbility());
                 specialAbilityDelay = -1f;
             }
@@ -459,8 +465,6 @@ public abstract class Troup : MonoBehaviour
             
             yield return null;
         }
-
-        
     }
 
     protected IEnumerator FollowSelection()
@@ -543,7 +547,7 @@ public abstract class Troup : MonoBehaviour
                 Debug.Log("Target position clicked : " + hit.point);
                 firstPos = hit.point;
                 Debug.Log("firstPos : " + firstPos);
-                FirstPatrolPoint.transform.position= new Vector3(firstPos.x, firstPos.y + 0.1f, firstPos.z);
+                FirstPatrolPoint.transform.position = new Vector3(firstPos.x, firstPos.y + 0.1f, firstPos.z);
             }
 
             if (Input.GetMouseButtonDown(0))
@@ -615,8 +619,16 @@ public abstract class Troup : MonoBehaviour
         float normalizedHealth = health / maxHealth;
         healthBar.enabled = !gameManager.isInPause();
 
-        Vector3 healthBarPosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + agent.height, transform.position.z));
-        healthBar.transform.position = new Vector3(healthBarPosition.x, healthBarPosition.y, healthBarPosition.z);
+        if (unitType == UnitType.Mur)
+        {
+            Vector3 healthBarPosition = camera1.WorldToScreenPoint(wallComponent.getCentralPosition());
+            healthBar.transform.position = healthBarPosition;
+        }
+        else
+        {
+            Vector3 healthBarPosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + agent.height, transform.position.z));
+            healthBar.transform.position = healthBarPosition;
+        }
 
         if (normalizedHealth >= .75)
         {
@@ -1318,17 +1330,20 @@ public abstract class Troup : MonoBehaviour
             // Affichage des actions de la queue
             if (troupType == TroupType.Ally)
             {
-                QueueUI.GetComponent<TextMeshProUGUI>().text = "Current action: " + (currentAction.ToString().StartsWith("Troup+") ? currentAction.ToString().Substring("Troup+".Length) : currentAction.ToString());
-
-                string queueText = "";
-
-                foreach (IAction action in actionQueue)
+                if (QueueUI != null)
                 {
-                    Debug.Log("Action " + action + " ajout�e � la liste");
-                    queueText += "\n" + (action.ToString().StartsWith("Troup+") ? action.ToString().Substring("Troup+".Length) : action.ToString());
+                    QueueUI.GetComponent<TextMeshProUGUI>().text = "Current action: " + (currentAction.ToString().StartsWith("Troup+") ? currentAction.ToString().Substring("Troup+".Length) : currentAction.ToString());
+
+                    string queueText = "";
+
+                    foreach (IAction action in actionQueue)
+                    {
+                        Debug.Log("Action " + action + " ajout�e � la liste");
+                        queueText += "\n" + (action.ToString().StartsWith("Troup+") ? action.ToString().Substring("Troup+".Length) : action.ToString());
+                    }
+                    QueueUI.GetComponent<TextMeshProUGUI>().text += "\n Enqueued action: ";
+                    QueueUI.GetComponent<TextMeshProUGUI>().text += queueText;
                 }
-                QueueUI.GetComponent<TextMeshProUGUI>().text += "\n Enqueued action: ";
-                QueueUI.GetComponent<TextMeshProUGUI>().text += queueText;
             }
 
             Debug.Log("Treating action : " + currentAction);
