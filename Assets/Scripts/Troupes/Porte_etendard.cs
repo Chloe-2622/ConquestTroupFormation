@@ -28,18 +28,8 @@ public class Porte_etendard : Troup
 
     protected override IEnumerator Attack(Troup enemy)
     {
-        while (enemy != null)
-        {
-            if (enemy.unitType == UnitType.Archer)
-            {
-                enemy.TakeDamage(2 * attackDamage);
-            }
-            else
-            {
-                enemy.TakeDamage(attackDamage);
-            }
-            yield return new WaitForSeconds(attackRechargeTime);
-        }
+        // Le porte étendard n'attaque pas
+        yield return null;
     }
 
     private void BoostBehaviour()

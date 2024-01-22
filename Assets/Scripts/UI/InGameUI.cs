@@ -116,7 +116,7 @@ public class InGameUI : MonoBehaviour
 
         foreach (GameObject selectedGameObject in currentSelections)
         {
-            selectionCount[(int)selectedGameObject.GetComponent<Troup>().unitType]++;
+            selectionCount[(int)(selectedGameObject.GetComponent<Troup>().unitType - 1)]++;
         }
 
         string liste = "";
