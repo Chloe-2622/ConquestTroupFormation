@@ -142,7 +142,7 @@ public abstract class Troup : MonoBehaviour
         BoostParticle = Instantiate(gameManager.BoostParticleEffectPrefab, gameManager.BoostParticles.transform);
         ArmorBoostParticle = Instantiate(gameManager.ArmorBoostParticleEffectPrefab, gameManager.BoostParticles.transform);
 
-        unitBar = Instantiate(gameManager.unitBarsPrefab, gameManager.UI.bars.transform);
+        unitBar = Instantiate(gameManager.unitBarsPrefab, gameManager.eventSystem.GetComponent<InGameUI>().bars.transform);
         healthBar = unitBar.transform.GetChild(0).GetComponent<Image>();
         abilityBar = unitBar.transform.GetChild(1).GetComponent<Image>();
 
@@ -243,7 +243,25 @@ public abstract class Troup : MonoBehaviour
             {
                 ArmorBoostParticle.transform.position = transform.position;
             }
-        }        
+        }
+
+        if (selectionManager.isSelected(this.gameObject))
+        {
+            SelectionParticleCircle.SetActive(true);
+            if (!isPlayingCircleAnim)
+            {
+                SelectionParticleCircle.GetComponent<ParticleSystem>().Play();
+                isPlayingCircleAnim = true;
+            }
+        }
+        else
+        {
+            SelectionParticleCircle.SetActive(false);
+            SelectionParticleCircle.GetComponent<ParticleSystem>().Stop();
+            isPlayingCircleAnim = false;
+        }
+
+        SelectionParticleCircle.transform.position = new Vector3(transform.position.x, transform.position.y + 0.3f, transform.position.z);
 
         SelectedBehaviour();
 
@@ -256,20 +274,10 @@ public abstract class Troup : MonoBehaviour
 
     protected virtual void SelectedBehaviour()
     {
-        isSelected = selectionManager.isSelected(this.gameObject);
+        if (!gameManager.hasGameStarted()) { return; }
 
         if (selectionManager.isSelected(this.gameObject))
         {
-            SelectionParticleCircle.SetActive(true);
-            if (!isPlayingCircleAnim)
-            {
-                SelectionParticleCircle.GetComponent<ParticleSystem>().Play();
-                isPlayingCircleAnim = true;
-            }
-
-            SelectionParticleCircle.transform.position = new Vector3(transform.position.x, transform.position.y + 0.3f, transform.position.z);
-
-
             if (troupType == TroupType.Ally)
             {
                 if (selectionManager.numberOfSelected() == 1)
@@ -281,8 +289,6 @@ public abstract class Troup : MonoBehaviour
                     QueueUI.SetActive(false);
                 }
             }
-
-
 
             if (!isChosingPatrol)
             {
@@ -349,9 +355,6 @@ public abstract class Troup : MonoBehaviour
         {
             FirstPatrolPoint.GetComponent<Renderer>().enabled = false;
             SecondPatrolPoint.GetComponent<Renderer>().enabled = false;
-            SelectionParticleCircle.SetActive(false);
-            SelectionParticleCircle.GetComponent<ParticleSystem>().Stop();
-            isPlayingCircleAnim = false;
 
             if (troupType == TroupType.Ally)
             {
@@ -630,23 +633,6 @@ public abstract class Troup : MonoBehaviour
 
         Vector3 abilityBarPosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + agent.height, transform.position.z));
         abilityBar.transform.position = new Vector3(abilityBarPosition.x, abilityBarPosition.y - 5.5f, abilityBarPosition.z);
-
-        /* if (normalizedHealth >= .75)
-        {
-            healthBar.color = Color.green;
-        }
-        if (normalizedHealth >= .5 && normalizedHealth <= .75)
-        {
-            healthBar.color = Color.yellow;
-        }
-        if (normalizedHealth >= .25 && normalizedHealth <= .5)
-        {
-            healthBar.color = new Color(1.0f, 0.5f, 0.0f);
-        }
-        if (normalizedHealth <= .25)
-        {
-            healthBar.color = Color.red;
-        } */
 }
 
     public bool IsInjured()
@@ -685,6 +671,8 @@ public abstract class Troup : MonoBehaviour
     // Attack and ability -----------------------------------------------------------------------------------------
     protected void AttackBehaviour()
     {
+        if (hasCrown) { return; }
+
         if (troupType == TroupType.Enemy && gameManager.isCrownCollected)
         {
             GameObject king = gameManager.king;

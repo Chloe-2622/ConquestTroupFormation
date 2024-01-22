@@ -98,11 +98,11 @@ MonoBehaviour:
   CatapulteCroix: {fileID: 3613254223512856748}
   BoulderPrefab: {fileID: 1488345525442576840, guid: 52923ef2c83e7144aa43beb2943c2341, type: 3}
   BigBoulderPrefab: {fileID: 1488345525442576840, guid: 6d1da80999474c84fa8579bd167a4afe, type: 3}
-  ArrowPrefab: {fileID: 1488345525442576840, guid: 6d1da80999474c84fa8579bd167a4afe, type: 3}
+  ArrowPrefab: {fileID: 2897191137781764108, guid: fecae67398f66c947b095718df9880c9, type: 3}
   mainCamera: {fileID: 0}
   selectionManager: {fileID: 0}
   troupPurchase: {fileID: 0}
-  UI: {fileID: 0}
+  eventSystem: {fileID: 0}
   PatrolingCircles: {fileID: 1061220208115533391}
   SelectionParticleCircles: {fileID: 8101969785001855467}
   floorMask:
@@ -125,10 +125,10 @@ MonoBehaviour:
   PatrolSelectionPopUp1: {fileID: 0}
   PatrolSelectionPopUp2: {fileID: 0}
   FollowSelectionPopUp: {fileID: 0}
-  crownArrived: 
-  allEnemiesDead: 
-  deathOfKing: 
-  noUnitsRemaining: 
+  crownArrived: You succesfully stole the crown
+  allEnemiesDead: ' Tatakae !!!'
+  deathOfKing: A bas la monarchie !
+  noUnitsRemaining: "Ils sont pass\xE9s o\xF9 ?"
   isCrownCollected: 0
   king: {fileID: 0}
   updateTroupCounter:

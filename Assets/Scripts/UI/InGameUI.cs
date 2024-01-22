@@ -15,24 +15,24 @@ public class InGameUI : MonoBehaviour
     TODO
 
     Batisseur et murs
-    Debug le fait de pouvoir jouer en purchase phase
-
-    Ecrans de victoire/défaite
+    
     Revoir l'esthétisme de l'UI
             - Agrandir l'UI en haut (noms + or)
             - Trouver de jolis fonds
    
-
     Changer la qualité
     Cherche comment changer la résolution
-
     
-    Ctrl + A = sélectionne tout les unités
-    Bug des golds qui reapparaissent
+    Bugs à fix :
+        Bug des golds qui reapparaissent
+        
 
-    
-    1,2,3,4 ... pour choisir les unités         DONE
-    R pour rotate les unités                    DONE
+
+    Ecrans de victoire/défaite                          DONE
+    Debug le fait de pouvoir jouer en purchase phase    DONE
+    Ctrl + A = sélectionne tout les unités              DONE
+    1,2,3,4 ... pour choisir les unités                 DONE
+    R pour rotate les unités                            DONE
     */
 
 
@@ -40,6 +40,8 @@ public class InGameUI : MonoBehaviour
 
 
     private SelectionManager selectionManager;
+    [Header("Global")]
+    [SerializeField] private GameObject inGameUI;
 
     [Header("Timer")]
     [SerializeField] public GameObject timer;
@@ -75,6 +77,13 @@ public class InGameUI : MonoBehaviour
 
     private List<Color> unitColorList;
     private GameManager gameManager;
+
+    public void OnDisable()
+    {
+        inGameUI.SetActive(false);
+        unitIconsSection.SetActive(false);
+    }
+
 
     // Start is called before the first frame update
     void Start()
@@ -146,8 +155,8 @@ public class InGameUI : MonoBehaviour
         playerUnitCounter.text = gameManager.alliesCount().ToString();
         if (gameManager.hasGameStarted())
         {
-            if (gameManager.alliesCount() == 0) { gameManager.allEnemiesDefeated(); }
-            else if (gameManager.enemiesCount() == 0) { gameManager.allUnitsAreDead(); }
+            if (gameManager.enemiesCount() == 0) { gameManager.allEnemiesDefeated(); }
+            else if (gameManager.alliesCount() == 0) { gameManager.allUnitsAreDead(); }
         }
     }    
 
@@ -155,6 +164,8 @@ public class InGameUI : MonoBehaviour
     {
         StartCoroutine(Timer());
     }
+
+    public string getTimerText() { return timer_text.text; }
 
     public IEnumerator Timer()
     {
