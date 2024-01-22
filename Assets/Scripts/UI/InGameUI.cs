@@ -25,7 +25,8 @@ public class InGameUI : MonoBehaviour
     
     Bugs à fix :
         Bug des golds qui reapparaissent
-        
+
+    Bonus: Faire l'indication des dégats        
 
 
     Ecrans de victoire/défaite                          DONE

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4313879581609688195}
   - component: {fileID: 716738154793037806}
   - component: {fileID: 4446593654473677199}
-  - component: {fileID: 5870589644073972390}
+  - component: {fileID: -2911208783690738693}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -111,7 +111,7 @@ MonoBehaviour:
   movement: {fileID: 8337235914002305391, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
   sprint: {fileID: -1132531467846782809, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
   zoom: {fileID: 0}
---- !u!114 &5870589644073972390
+--- !u!114 &-2911208783690738693
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
