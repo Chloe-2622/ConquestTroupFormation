@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     public EventSystem eventSystem;
     public GameObject PatrolingCircles;
     public GameObject SelectionParticleCircles;
+    public GameObject CrownPosition;
 
     [Header("Layers")]
     public LayerMask floorMask;
@@ -103,15 +104,34 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Gardez le GameManager lors des changements de scène
+            // DontDestroyOnLoad(gameObject); // Gardez le GameManager lors des changements de scène
         }
         else
         {
             Destroy(gameObject); // Détruisez les doublons
         }
 
+        mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        selectionManager = GameObject.Find("SelectionManager").GetComponent<SelectionManager>();
+        troupPurchase = GameObject.Find("TroupPurchase").GetComponent<TroupPurchase>();
+        eventSystem = GameObject.Find("UI").transform.Find("EventSystem").GetComponent<EventSystem>();
+        PatrolingCircles = transform.Find("PatrolingCircles").gameObject;
+        SelectionParticleCircles = transform.Find("SelectionParticleCircles").gameObject;
+        CrownPosition = GameObject.Find("ZoneCouronne").gameObject;
+
         chargeUnitPrefab();
         completeGoldenBook();
+    }
+
+    private void OnLevelWasLoaded(int level)
+    {
+        mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        selectionManager = GameObject.Find("SelectionManager").GetComponent<SelectionManager>();
+        troupPurchase = GameObject.Find("TroupPurchase").GetComponent<TroupPurchase>();
+        eventSystem = GameObject.Find("UI").transform.Find("EventSystem").GetComponent<EventSystem>();
+        PatrolingCircles = transform.Find("PatrolingCircles").gameObject;
+        SelectionParticleCircles = transform.Find("SelectionParticleCircles").gameObject;
+        CrownPosition = GameObject.Find("ZoneCouronne").gameObject;
     }
 
     public void crownCaptured() { victoryOrDefeat(true, crownArrived);  }

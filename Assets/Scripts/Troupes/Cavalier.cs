@@ -58,7 +58,11 @@ public class Cavalier : Troup
             StopCoroutine(animJambe1);
             StopCoroutine(animJambe2);
         }
+
+        if (troupType == TroupType.Enemy && currentFollowedTroup == null && currentAttackedTroup == null) { IAEnemy(); }
     }
+
+    protected override void IAEnemy() { }
 
     private IEnumerator MoveAnimation(bool isRight)
     {

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 33824537730079500}
   - component: {fileID: 23693811526290372}
   - component: {fileID: 136486588218137092}
+  - component: {fileID: 1343092097424439638}
   m_Layer: 0
   m_Name: Oak_tree1
   m_TagString: Untagged
@@ -108,3 +109,19 @@ CapsuleCollider:
   m_Height: 8.15
   m_Direction: 1
   m_Center: {x: 0, y: 2.11, z: 0}
+--- !u!208 &1343092097424439638
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1243781198178196}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 10.478001, y: 7.044, z: 10.089001}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0.282, y: 6.275, z: 0.021000002}
+  m_TimeToStationary: 0.5

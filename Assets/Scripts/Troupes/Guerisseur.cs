@@ -41,6 +41,8 @@ public class Guerisseur : Troup
         HealBehaviour();
     }
 
+    protected override void IAEnemy() { }
+
     protected override IEnumerator Attack(Troup enemy)
     {
         yield return null;

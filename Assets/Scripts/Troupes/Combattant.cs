@@ -29,11 +29,14 @@ public class Combattant : Troup
         swingTime = attackRechargeTime / 2;
 
         AttackBehaviour();
+
+
+        if (troupType == TroupType.Enemy) { IAEnemy(); }
     }
 
     protected override IEnumerator Attack(Troup enemy)
     {
-        while (enemy != null)
+        while (enemy != null && !isFollowingOrders)
         {
             StartCoroutine(SwingSword());
             if (enemy.unitType == UnitType.Archer)
@@ -45,6 +48,32 @@ public class Combattant : Troup
                 enemy.TakeDamage(attackDamage);
             }
             yield return new WaitForSeconds(attackRechargeTime);
+        }
+    }
+    
+    protected override void IAEnemy()
+    {
+
+        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
+        {
+            StartCoroutine(SpecialAbility());
+            specialAbilityDelay = -1f;
+        }
+
+        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
+        {
+            int nextActionIndex = Random.Range(0, 2);
+
+            if (nextActionIndex == 0)
+            {
+                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(GameManager.Instance.CrownPosition.transform.position, 20f), positionThreshold));
+            } else
+            {
+                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(GameManager.Instance.CrownPosition.transform.position, 20f), RandomVectorInFlatCircle(GameManager.Instance.CrownPosition.transform.position, 20f)));
+            }
+
+            timeBeforeNextAction = Random.Range(5f, 10f);
+            StartCoroutine(IAactionCountdown());
         }
     }
 

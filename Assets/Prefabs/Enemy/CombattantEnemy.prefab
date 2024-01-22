@@ -383,7 +383,7 @@ MonoBehaviour:
   unitType: 1
   isSelected: 0
   hasCrown: 0
-  goldCost: 0
+  goldCost: 1
   movingSpeed: 7
   health: 150
   armor: 15
@@ -401,9 +401,12 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
+  moveTargetDestination: {x: 0, y: 0, z: 0}
+  timeBeforeNextAction: 0
   enragedTime: 5
   enragedSpeed: 12
-  enragedAttackRechargeTime: 0.2
+  enragedAttackRechargeTime: 0.5
   swingTime: 0.5
 --- !u!195 &8753042273054374063
 NavMeshAgent:

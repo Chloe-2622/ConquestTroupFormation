@@ -23,7 +23,10 @@ public class Porte_bouclier : Troup
         base.Update();
 
         AttackBehaviour();
+        if (troupType == TroupType.Enemy && currentFollowedTroup == null && currentAttackedTroup == null) { IAEnemy(); }
     }
+
+    protected override void IAEnemy() { }
 
     protected override IEnumerator Attack(Troup enemy)
     {

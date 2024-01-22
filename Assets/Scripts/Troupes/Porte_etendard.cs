@@ -24,7 +24,10 @@ public class Porte_etendard : Troup
         base.Update();
 
         BoostBehaviour();
+        if (troupType == TroupType.Enemy && currentFollowedTroup == null && currentAttackedTroup == null) { IAEnemy(); }
     }
+
+    protected override void IAEnemy() { }
 
     protected override IEnumerator Attack(Troup enemy)
     {

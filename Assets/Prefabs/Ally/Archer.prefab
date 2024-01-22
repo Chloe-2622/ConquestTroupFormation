@@ -569,7 +569,7 @@ MonoBehaviour:
   armor: 0
   detectionRange: 15
   positionThreshold: 1
-  attackDamage: 10
+  attackDamage: 20
   attackRechargeTime: 1
   attackRange: 10
   specialAbilityRechargeTime: 30
@@ -581,7 +581,9 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
+  timeBeforeNextAction: 0
   invisibleTime: 10
   invisibleMaterial: {fileID: 2100000, guid: b2893209e057c48409a2c339ff33e055, type: 2}
   arrowSpeed: 0.5
