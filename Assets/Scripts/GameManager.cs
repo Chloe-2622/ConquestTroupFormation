@@ -40,6 +40,9 @@ public class GameManager : MonoBehaviour
     [Header("Archer")]
     public GameObject ArrowPrefab;
 
+    [Header("Batisseur")]
+    public GameObject WallPrefab;
+
     [Header("Scene Dependant Objects")]
     public Camera mainCamera;
     public SelectionManager selectionManager;
@@ -52,6 +55,7 @@ public class GameManager : MonoBehaviour
     public LayerMask floorMask;
     public LayerMask troupMask;
     public LayerMask allyZoneMask;
+    public LayerMask wallMaxCircleMask;
 
     [Header("Other")]    
     public Transform selectionArrow;
@@ -86,7 +90,9 @@ public class GameManager : MonoBehaviour
 
     // Allies and Enemis dictionnary -----------------------------------------------------------------------------
     private static HashSet<Troup> Allies = new HashSet<Troup>();
+    private static HashSet<Wall> AllyWalls = new HashSet<Wall>();
     private static HashSet<Troup> Enemies = new HashSet<Troup>();
+    private static HashSet<Wall> EnemiyWalls = new HashSet<Wall>();
 
     private List<GameObject> UnitPrefabs = new List<GameObject>();
 
@@ -160,6 +166,7 @@ public class GameManager : MonoBehaviour
         selectionManager.removeObject(troup.gameObject);
         updateTroupCounter.Invoke();
     }
+
     public HashSet<Troup> getAllies() { return Allies; }
     public int alliesCount() { return Allies.Count; }
 
@@ -168,6 +175,17 @@ public class GameManager : MonoBehaviour
     public void removeEnemy(Troup troup) { Enemies.Remove(troup); updateTroupCounter.Invoke(); }
     public HashSet<Troup> getEnemies() { return Enemies; }
     public int enemiesCount() { return Enemies.Count; }
+
+    // Ally walls
+    public void addAllyWall(Wall wall) { AllyWalls.Add(wall);  }
+    public void removeAllyWall(Wall wall) { AllyWalls.Remove(wall);  }
+    public HashSet<Wall> getAllyWalls() { return AllyWalls; }
+
+    // Enemy walls
+    public void addEnemyWall(Wall wall) { EnemiyWalls.Add(wall); }
+    public void removeEnemyWall(Wall wall) { EnemiyWalls.Remove(wall); }
+    public HashSet<Wall> getEnemyWalls() { return EnemiyWalls; }
+
 
     // List of unit prefabs
     public List<GameObject> getUnitPrefabs() { return UnitPrefabs; }

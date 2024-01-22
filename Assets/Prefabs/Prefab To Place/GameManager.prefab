@@ -99,6 +99,7 @@ MonoBehaviour:
   BoulderPrefab: {fileID: 1488345525442576840, guid: 52923ef2c83e7144aa43beb2943c2341, type: 3}
   BigBoulderPrefab: {fileID: 1488345525442576840, guid: 6d1da80999474c84fa8579bd167a4afe, type: 3}
   ArrowPrefab: {fileID: 2897191137781764108, guid: fecae67398f66c947b095718df9880c9, type: 3}
+  WallPrefab: {fileID: 2114470120617509491, guid: 03f6c398b1d78b64c90668522e027f68, type: 3}
   mainCamera: {fileID: 0}
   selectionManager: {fileID: 0}
   troupPurchase: {fileID: 0}
@@ -114,6 +115,9 @@ MonoBehaviour:
   allyZoneMask:
     serializedVersion: 2
     m_Bits: 1024
+  wallMaxLenghtMask:
+    serializedVersion: 2
+    m_Bits: 2048
   selectionArrow: {fileID: -8679921383154817045, guid: 00a85a373062c63479e4b487e7d50b2e, type: 3}
   tombe: {fileID: 8754737974659679140, guid: cf5713f7f4e857340ac275da5ea97ef3, type: 3}
   BoostParticles: {fileID: 2786005768850215309}

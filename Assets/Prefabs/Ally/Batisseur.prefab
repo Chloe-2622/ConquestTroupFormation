@@ -539,11 +539,10 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
-  enragedTime: 0
-  enragedSpeed: 0
-  enragedAttackRechargeTime: 0
   swingTime: 0
+  wallRechargeTime: 0
 --- !u!1 &4034192431365901071
 GameObject:
   m_ObjectHideFlags: 0

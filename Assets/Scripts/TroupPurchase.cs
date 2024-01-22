@@ -99,7 +99,6 @@ public class TroupPurchase : MonoBehaviour
         goldUpdate.Invoke();
         unitPrefabs = gameManager.getUnitPrefabs();
 
-        Debug.Log("-- "  + usableGold);
         maxUsableGold = usableGold;
     }
 

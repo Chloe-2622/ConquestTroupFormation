@@ -165,12 +165,11 @@ public abstract class Troup : MonoBehaviour
     }
 
     // Ally or Enemy
-    public void addToGroup()
+    public virtual void addToGroup()
     {
         if (troupType == TroupType.Ally)
         {
             gameManager.addAlly(this);
-            selectionManager.completeDictionnary(transform.gameObject);
         }
         if (troupType == TroupType.Enemy)
         {
@@ -346,6 +345,7 @@ public abstract class Troup : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.F) && specialAbilityDelay == 0)
             {
+                Debug.Log("-- Activate Ability");
                 StartCoroutine(SpecialAbility());
                 specialAbilityDelay = -1f;
             }
@@ -448,8 +448,6 @@ public abstract class Troup : MonoBehaviour
             
             yield return null;
         }
-
-        
     }
 
     protected IEnumerator FollowSelection()
@@ -532,7 +530,7 @@ public abstract class Troup : MonoBehaviour
                 Debug.Log("Target position clicked : " + hit.point);
                 firstPos = hit.point;
                 Debug.Log("firstPos : " + firstPos);
-                FirstPatrolPoint.transform.position= new Vector3(firstPos.x, firstPos.y + 0.1f, firstPos.z);
+                FirstPatrolPoint.transform.position = new Vector3(firstPos.x, firstPos.y + 0.1f, firstPos.z);
             }
 
             if (Input.GetMouseButtonDown(0))
