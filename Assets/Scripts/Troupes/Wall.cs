@@ -9,7 +9,6 @@ public class Wall : Troup
     public float maxLenght;
     public float wallFusionMaxDistance;
 
-
     [Header("GameObjects")]
     [SerializeField] private GameObject tower_1;
     [SerializeField] private GameObject tower_2;
@@ -19,14 +18,13 @@ public class Wall : Troup
 
     protected override void Awake()
     {
-        Debug.Log("----" + maxLenght + maxLenghtCircle);
-        maxLenghtCircle.transform.localScale = new Vector3(maxLenght, maxLenghtCircle.transform.localScale.y, maxLenght);
-        Debug.Log("----" + maxLenghtCircle.transform.localScale);
+        maxLenghtCircle.transform.localScale = new Vector3(maxLenght*2, maxLenght*2, maxLenghtCircle.transform.localScale.z);
         base.Awake();
     }
 
     public override void addToGroup()
     {
+        maxLenghtCircle.SetActive(false);
         if (troupType == TroupType.Ally)
         {
             GameManager.Instance.addAllyWall(this);
@@ -44,10 +42,9 @@ public class Wall : Troup
     }
 
     public HashSet<Vector3> getTowersPosition() { return new HashSet<Vector3>() { tower_1.transform.position, tower_2.transform.position }; }
-
+    public Vector3 getCentralPosition() {  return junctionWall.transform.position; }
     public void setTower_1_Position(Vector3 position) { tower_1.transform.position = position; updateJunctionWall(); }
     public void setTower_2_Position(Vector3 position) { tower_2.transform.position = position; updateJunctionWall(); }
-
 
     public void updateJunctionWall()
     {
@@ -60,14 +57,12 @@ public class Wall : Troup
 
 
 
-    // Les murs n'attaquent pas
-    protected override IEnumerator Attack(Troup enemy)
-    {
-        yield return null;
-    }
 
-    protected override IEnumerator SpecialAbility()
-    {
-        yield return null;
-    }
+
+
+
+    // Les murs n'attaquent pas
+    protected override void IAEnemy() { }
+    protected override IEnumerator Attack(Troup enemy) { yield return null; }
+    protected override IEnumerator SpecialAbility() { yield return null; }
 }

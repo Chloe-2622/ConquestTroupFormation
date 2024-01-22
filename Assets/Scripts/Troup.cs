@@ -11,19 +11,20 @@ public abstract class Troup : MonoBehaviour
     /* 
      TODO : 
 
-                Carte avec terrain mieux, plus belle
+        -DONE-  Carte avec terrain mieux, plus belle
         -DONE-  Couronne (modèle + récupérable + qui flotte)
         -DONE-  Roi (comportement des unités si Roi)
-                Modèle des unités
-                Animation basique des unités
+        -DONE-  Modèle des unités
+        -DONE-  Animation basique des unités
                 Ecran menu principal (blender avec mise en scène non contractuelle des modèles)
-                Finir les unités : 
+        -DONE-  Finir les unités : 
 	    -DONE-      - Catapulte
 	    -DONE-      - Porte-étendard
 	    -DONE-      - Porte-bouclier
                 Capa spécial bélier
                 Catapulte avec queue (si le temps)   
                 SFX basiques
+                IA des ennemis
 
     */
 
@@ -53,11 +54,13 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] private bool isAttackingEnemy;
     [SerializeField] private bool isPatroling;
     [SerializeField] protected GameObject currentAttackedTroup;
-    [SerializeField] private GameObject currentFollowedTroup;
+    [SerializeField] protected GameObject currentFollowedTroup;
     [SerializeField] protected float specialAbilityDelay = 0f;
     [SerializeField] protected bool isVisible = true;
     [SerializeField] protected bool isAddedWhenAwake = false;
     [SerializeField] public Vector3 moveTargetDestination;
+    [SerializeField] protected float timeBeforeNextAction;
+    private Wall wallComponent;
     private bool isPlayingCircleAnim;
     private bool isChosingPlacement;
     private bool isChosingFollow;
@@ -65,7 +68,7 @@ public abstract class Troup : MonoBehaviour
     private bool hasSpawnedTombe;
     private bool isMovingToKing;
     private bool isBoosted;
-    private float maxHealth;
+    protected float maxHealth;
     protected IEnumerator currentActionCoroutine;
     private IEnumerator attackCoroutine;
 
@@ -96,13 +99,13 @@ public abstract class Troup : MonoBehaviour
     protected GameObject Bars;
 
 
-    private GameManager gameManager;
+    protected GameManager gameManager;
 
     // Troup types ------------------------------------------------------------------------------------------------
     public enum TroupType { Ally, Enemy }
     public enum UnitType
     {
-        Null, Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
+        Null, Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier, Mur
     }
 
     // Action Queue -----------------------------------------------------------------------------------------------
@@ -112,7 +115,7 @@ public abstract class Troup : MonoBehaviour
 
     protected virtual void Awake() 
     {
-        if (troupType == TroupType.Ally)
+        if (troupType == TroupType.Ally && unitType != UnitType.Mur)
         {
             QueueUI = transform.Find("Canvas").Find("Queue").gameObject;
         }
@@ -148,10 +151,18 @@ public abstract class Troup : MonoBehaviour
 
         troupMask = gameManager.troupMask;
 
+        if (unitType == Troup.UnitType.Mur)
+        {
+            wallComponent = GetComponent<Wall>();
+        }
+
         // Start Action Queue
         currentActionCoroutine = ExecuteActionQueue();
         AddAction(new Standby());
         StartCoroutine(currentActionCoroutine);
+
+        timeBeforeNextAction = Random.Range(5f, 10f);
+        StartCoroutine(IAactionCountdown());
 
         if (troupType == TroupType.Enemy)
         {
@@ -212,10 +223,14 @@ public abstract class Troup : MonoBehaviour
     public float getAttackRange() { return attackRange; }
     public float getAbilityRecharge() { return specialAbilityRechargeTime; }
     public bool isKing() { return hasCrown; }
+    public bool IsInjured() { return health < maxHealth; }
+    public bool IsBoosted() { return isBoosted; }
 
     // Update
     protected virtual void Update()
     {
+        isSelected = selectionManager.isSelected(this.gameObject);
+
         if (isFollowingOrders)
         {
             isFollowingEnemy = false;
@@ -602,8 +617,16 @@ public abstract class Troup : MonoBehaviour
         float normalizedHealth = health / maxHealth;
         healthBar.enabled = !gameManager.isInPause();
 
-        Vector3 healthBarPosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + agent.height, transform.position.z));
-        healthBar.transform.position = new Vector3(healthBarPosition.x, healthBarPosition.y, healthBarPosition.z);
+        if (unitType == UnitType.Mur)
+        {
+            Vector3 healthBarPosition = camera1.WorldToScreenPoint(wallComponent.getCentralPosition());
+            healthBar.transform.position = healthBarPosition;
+        }
+        else
+        {
+            Vector3 healthBarPosition = camera1.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + agent.height, transform.position.z));
+            healthBar.transform.position = healthBarPosition;
+        }
 
         if (normalizedHealth >= .75)
         {
@@ -633,17 +656,6 @@ public abstract class Troup : MonoBehaviour
         abilityBar.transform.position = new Vector3(abilityBarPosition.x, abilityBarPosition.y - 5.5f, abilityBarPosition.z);
 }
 
-    public bool IsInjured()
-    {
-        // Debug.Log("max health = " + maxHealth + "et health = " + health);
-        return health < maxHealth;
-    }
-
-    public bool IsBoosted()
-    {
-        return isBoosted;
-    }
-
     public void ActivateBoostParticle(bool activate)
     {
         BoostParticle.SetActive(activate);
@@ -653,6 +665,29 @@ public abstract class Troup : MonoBehaviour
     public void ActivateArmorBoostParticle(bool activate)
     {
         ArmorBoostParticle.SetActive(activate);
+    }
+
+    public Vector3 RandomVectorInFlatCircle(Vector3 center, float circleRadius)
+    {
+        float randomAngle = Random.Range(0f, 2f * Mathf.PI);
+        float randomRadius = Mathf.Sqrt(Random.Range(0f, 1f)) * circleRadius;
+
+        float x = center.x + randomRadius * Mathf.Cos(randomAngle);
+        float z = center.z + randomRadius * Mathf.Sin(randomAngle);
+
+        float y = transform.position.y;
+
+        return new Vector3(x, y, z);
+    }
+
+    public IEnumerator IAactionCountdown()
+    {
+        while (timeBeforeNextAction > 0)
+        {
+            timeBeforeNextAction -= Time.deltaTime;
+            yield return null;
+        }
+        timeBeforeNextAction = 0f;
     }
 
     private void OnDrawGizmos()
@@ -670,6 +705,8 @@ public abstract class Troup : MonoBehaviour
     protected void AttackBehaviour()
     {
         if (hasCrown) { return; }
+
+        Debug.Log(this + " doesn't have crown");
 
         if (troupType == TroupType.Enemy && gameManager.isCrownCollected)
         {
@@ -866,6 +903,8 @@ public abstract class Troup : MonoBehaviour
     }
 
     protected abstract IEnumerator Attack(Troup enemy);
+
+    protected abstract void IAEnemy();
 
     protected abstract IEnumerator SpecialAbility();
 
@@ -1206,17 +1245,20 @@ public abstract class Troup : MonoBehaviour
             // Affichage des actions de la queue
             if (troupType == TroupType.Ally)
             {
-                QueueUI.GetComponent<TextMeshProUGUI>().text = "Current action: " + (currentAction.ToString().StartsWith("Troup+") ? currentAction.ToString().Substring("Troup+".Length) : currentAction.ToString());
-
-                string queueText = "";
-
-                foreach (IAction action in actionQueue)
+                if (QueueUI != null)
                 {
-                    Debug.Log("Action " + action + " ajout�e � la liste");
-                    queueText += "\n" + (action.ToString().StartsWith("Troup+") ? action.ToString().Substring("Troup+".Length) : action.ToString());
+                    QueueUI.GetComponent<TextMeshProUGUI>().text = "Current action: " + (currentAction.ToString().StartsWith("Troup+") ? currentAction.ToString().Substring("Troup+".Length) : currentAction.ToString());
+
+                    string queueText = "";
+
+                    foreach (IAction action in actionQueue)
+                    {
+                        Debug.Log("Action " + action + " ajout�e � la liste");
+                        queueText += "\n" + (action.ToString().StartsWith("Troup+") ? action.ToString().Substring("Troup+".Length) : action.ToString());
+                    }
+                    QueueUI.GetComponent<TextMeshProUGUI>().text += "\n Enqueued action: ";
+                    QueueUI.GetComponent<TextMeshProUGUI>().text += queueText;
                 }
-                QueueUI.GetComponent<TextMeshProUGUI>().text += "\n Enqueued action: ";
-                QueueUI.GetComponent<TextMeshProUGUI>().text += queueText;
             }
 
             Debug.Log("Treating action : " + currentAction);

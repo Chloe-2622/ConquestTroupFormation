@@ -27,6 +27,7 @@ public class Catapulte : Troup
     private GameObject boulderPrefab;
     private GameObject boulderSpawnPoint;
     private GameObject boulder;
+    [SerializeField] private bool hasSelected;
 
     IEnumerator moveAnimation;
     IEnumerator attack;
@@ -66,11 +67,15 @@ public class Catapulte : Troup
     {
         base.Update();
 
-        AttackZoneBehaviour();
+        if (gameManager.hasGameStarted()) { AttackZoneBehaviour(); }
+
+        
 
         if (agent.velocity.magnitude > 0 && !isRolling)
         {
             isRolling = true;
+            isShooting = false;
+            hasSelected = false;
             // Debug.Log("Je tourne");
             StartCoroutine(moveAnimation);
         }
@@ -86,10 +91,16 @@ public class Catapulte : Troup
             newBoulder.transform.position = boulderSpawnPoint.transform.position;
         }
 
+        if (troupType == TroupType.Enemy && currentFollowedTroup == null && currentAttackedTroup == null) { IAEnemy(); }
+
     }
+
+    protected override void IAEnemy() { }
 
     protected override IEnumerator Attack(Troup enemy)
     {
+        Debug.Log("BBBBBBB" + (isShooting && agent.velocity.magnitude == 0));
+
         while (isShooting && agent.velocity.magnitude == 0)
         {
             if (!isLauchingBoulder)
@@ -113,6 +124,8 @@ public class Catapulte : Troup
 
     private void AttackZoneBehaviour()
     {
+        Debug.Log("isSelected : " + isSelected);
+
         if (isSelected)
         {
             if (Input.GetKeyDown(KeyCode.Alpha5))
@@ -188,7 +201,8 @@ public class Catapulte : Troup
 
     private IEnumerator ShootPlaceSeletion()
     {
-        bool hasSelected = false;
+
+        Debug.Log("AAAAAAAAAAAAAAAAA");
 
         while (!hasSelected)
         {
@@ -202,8 +216,15 @@ public class Catapulte : Troup
 
                 croix.transform.position = hit.point;
 
-                if (Input.GetMouseButton(0) && Vector3.Distance(transform.position, hit.point) <= maxShootingRange)
+                if (Input.GetMouseButton(0))
                 {
+                    if (Vector3.Distance(transform.position, hit.point) > maxShootingRange)
+                    {
+                        AddAction(new MoveToPosition(agent, hit.point, positionThreshold));
+                        yield return new WaitWhile(() => Vector3.Distance(transform.position, hit.point) > maxShootingRange);
+                        AddAction(new Standby());
+                    }
+
                     Debug.Log("Target position clicked : " + hit.point);
                     // hasSelected = true;
                     SelectionArrow.GetComponent<MeshRenderer>().enabled = false;
@@ -224,6 +245,8 @@ public class Catapulte : Troup
                     {
                         boulder.GetComponent<Boulder>().boulderTroupType = Boulder.BoulderTroupType.Enemy;
                     }
+                    Debug.Log("Starting Attack Coroutine " + attack);
+                    attack = Attack(null);
                     StartCoroutine(attack);
                 }
             }

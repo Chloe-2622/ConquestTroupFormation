@@ -1,3 +1,4 @@
+using Autodesk.Fbx;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -10,12 +11,11 @@ public class Batisseur : Troup
     [Header("Batisseur properties")]
     [SerializeField] private float swingTime;
     [SerializeField] private float wallRechargeTime;
-    [SerializeField] private float wallPlacementRange;
+    [SerializeField] private float constructionRange;
     [SerializeField] private bool isPlacingWall;
 
 
     private LayerMask floorMaskLayer;
-    private LayerMask maxCircleMask;
 
     private GameObject hammer;
     private GameObject wallPrefab;
@@ -23,11 +23,10 @@ public class Batisseur : Troup
     private GameObject preview;
     private Wall previewWallComponent;
 
-    private Vector3 firstPos;
-    private Vector3 secondPos;
+    private Vector3 firstPos = new Vector3(0,0,0);
+    private Vector3 secondPos = new Vector3(0, 0, 0);
 
-    private bool hasSelectedFistPos;
-    private bool hasSelectedSecondPos;
+
 
 
 
@@ -40,10 +39,6 @@ public class Batisseur : Troup
 
         wallPrefab = GameManager.Instance.WallPrefab;
         floorMaskLayer = GameManager.Instance.floorMask;
-        maxCircleMask = GameManager.Instance.wallMaxCircleMask;
-
-        hasSelectedFistPos = false;
-        hasSelectedSecondPos = false;
     }
 
     // Update is called once per frame
@@ -79,10 +74,13 @@ public class Batisseur : Troup
 
     protected IEnumerator WallPlacement()
     {
+        bool hasSelectedFistPos = false;
+        bool hasSelectedSecondPos = false;
+
         Vector3 lastFirstPosition = new Vector3();
         Vector3 lastSecondPosition = new Vector3();
 
-        while (!hasSelectedFistPos && isPlacingWall)
+        while (!hasSelectedFistPos)
         {
             Ray ray_1 = camera1.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit_1;
@@ -114,49 +112,38 @@ public class Batisseur : Troup
             Ray ray_2 = camera1.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit_2;
 
-            if (Physics.Raycast(ray_2, out hit_2, Mathf.Infinity))
+
+            if (Physics.Raycast(ray_2, out hit_2, Mathf.Infinity, floorMaskLayer))
             {
-                Debug.Log("--- Touché");
-                Debug.Log(hit_2.transform.gameObject.layer);
-
-                
-
                 NavMeshHit closestHit_2;
                 if (NavMesh.SamplePosition(hit_2.point, out closestHit_2, 10, 1))
                 {
-                    if (Vector3.Distance(lastFirstPosition, closestHit_2.position) < previewWallComponent.maxLenght)
+                    if (Vector3.Distance(firstPos, closestHit_2.position) < previewWallComponent.maxLenght)
                     {
                         lastSecondPosition = closestHit_2.position;
                         showPreview(firstPos, lastSecondPosition);
                     }
-                    else { Debug.Log("--- Trop loin"); }
                 }
                 else
                 {
                     Debug.Log("Couldn't find near NavMesh");
                 }
-                
             }
 
-            if (Input.GetMouseButtonDown(0) && lastSecondPosition != null && lastSecondPosition != lastFirstPosition)
+            if (Input.GetMouseButtonDown(0) && lastSecondPosition != lastFirstPosition)
             {
                 hasSelectedSecondPos = true;
                 secondPos = lastSecondPosition;
-                Debug.Log("--- Second pos " + lastSecondPosition);
+                Debug.Log("--- Second pos " + secondPos);
             }
             yield return null;
         }
 
-        if (isPlacingWall)
-        {
-            findNearestWall();
-            //GameObject.Destroy(preview);
-            StartCoroutine(BuildBehaviour());
-        }
+        //findNearestWall();
+        GameObject.Destroy(preview);
+        Debug.Log("-- first" + firstPos + "second" + secondPos);
+        StartCoroutine(BuildBehaviour());
     }
-    
-
-
 
     public void showPreview(Vector3 tower_1_Position, Vector3 tower_2_Position)
     {
@@ -199,11 +186,30 @@ public class Batisseur : Troup
         if (nearestTower_2 != null) { secondPos = nearestTower_2; }
     }
 
-
     protected IEnumerator BuildBehaviour()
     {
-        //AddAction(new MoveToPosition(agent, firstPos, positionThreshold));
-        yield return null;
+        Debug.Log("--- first" + firstPos + "second" + secondPos);
+
+
+        Debug.Log("-- go to " + firstPos);
+        AddAction(new MoveToPosition(agent, firstPos, positionThreshold));
+        yield return new WaitWhile(() => Vector3.Distance(transform.position, firstPos) > constructionRange);
+        AddAction(new Standby());
+
+        StartCoroutine(SwingHammer());
+        GameObject newWall = Instantiate(wallPrefab, firstPos, new Quaternion(0, 0, 0, 0));
+        Wall newWallComponent = newWall.GetComponent<Wall>();
+        newWallComponent.setTower_1_Position(firstPos);
+        newWallComponent.setTower_2_Position(firstPos);
+        newWallComponent.addToGroup();
+
+        Debug.Log("-- go to " + secondPos);
+        AddAction(new MoveToPosition(agent, secondPos, positionThreshold));
+        yield return new WaitWhile(() => Vector3.Distance(transform.position, secondPos) > constructionRange);
+        AddAction(new Standby());
+
+        StartCoroutine(SwingHammer());
+        newWallComponent.setTower_2_Position(secondPos);
     }
 
     protected override IEnumerator SpecialAbility()
@@ -258,6 +264,7 @@ public class Batisseur : Troup
             yield return null;
         }
         hammer.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
-        
     }
+
+    protected override void IAEnemy() { }
 }

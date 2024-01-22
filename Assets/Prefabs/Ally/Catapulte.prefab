@@ -986,6 +986,8 @@ MonoBehaviour:
   specialAbilityDelay: 0
   isVisible: 1
   isAddedWhenAwake: 0
+  moveTargetDestination: {x: 0, y: 0, z: 0}
+  timeBeforeNextAction: 0
   wheelRotationSpeed: 20
   croix: {fileID: 0}
   shootPoint: {x: 0, y: 0, z: 0}
@@ -994,9 +996,10 @@ MonoBehaviour:
   isSelectingPlacement: 0
   isShooting: 0
   heightAttenuation: 3
-  timeAttenuation: 10
+  timeAttenuation: 12
   isLauchingBoulder: 0
   newBoulder: {fileID: 0}
+  hasSelected: 0
 --- !u!195 &8085429279557207350
 NavMeshAgent:
   m_ObjectHideFlags: 0

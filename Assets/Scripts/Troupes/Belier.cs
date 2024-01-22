@@ -58,6 +58,8 @@ public class Belier : Troup
         }
     }
 
+    protected override void IAEnemy() { }
+
     protected override IEnumerator Attack(Troup enemy)
     {
         // mAnimator.SetTrigger("Attack");
