@@ -51,7 +51,7 @@ public class PurchaseUI : MonoBehaviour
 
         for (int i = 1; i <= numberOfUnitType; i++)
         {
-            createButton(i - numberOfUnitType / 2f, i, newNav);
+            createButton(i - (numberOfUnitType + 1) / 2f, i, newNav);
         }
     }
 
@@ -130,6 +130,7 @@ public class PurchaseUI : MonoBehaviour
         purchaseUI.SetActive(false);
         inGameUI.timer.SetActive(true);
         inGameUI.startTimer();
+        gameManager.startGame();
     }
 
     // Gold
@@ -169,6 +170,6 @@ public class PurchaseUI : MonoBehaviour
 
 
 
-    public void enterUI() { Debug.Log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! UI Enter");  troupPurchase.set_isOnUI(true); }
-    public void exitUI() { Debug.Log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! UI Exit");  troupPurchase.set_isOnUI(false); }
+    public void enterUI() { troupPurchase.set_isOnUI(true); }
+    public void exitUI() { troupPurchase.set_isOnUI(false); }
 }

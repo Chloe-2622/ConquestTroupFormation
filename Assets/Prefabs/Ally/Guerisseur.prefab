@@ -5499,6 +5499,7 @@ MonoBehaviour:
   specialAbilityDelay: 0
   isVisible: 1
   moveTargetDestination: {x: 0, y: 0, z: 0}
+  isAddedWhenAwake: 0
   healAmount: 10
   healRange: 10
   healRechargeTime: 1

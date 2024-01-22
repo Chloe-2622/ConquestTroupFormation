@@ -26,8 +26,9 @@ public class SelectionManager : MonoBehaviour
 
     [Header("Input System")]
     [SerializeField] private InputActionReference selectionAction;
+    [SerializeField] private InputActionReference selectAllAction;
 
-    [Header("Layer to Intersect")]
+    private GameManager gameManager;
     [SerializeField] private LayerMask troupMask;
     [SerializeField] private LayerMask floorMask;
 
@@ -47,43 +48,62 @@ public class SelectionManager : MonoBehaviour
     {
         if (newSelection == null)
             newSelection = new UnityEvent();
+
+        gameManager = GameManager.Instance;
+        troupMask = gameManager.troupMask;
+        floorMask = gameManager.floorMask;
     }
 
         // On s'abonne aux évènements du Event System
     private void OnEnable()
     {
         selectionAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
+        selectAllAction.action.Enable();
         selectionAction.action.started += OnInputStarted; // S'active à la pression initiale des touches
         selectionAction.action.performed += OnInputPerformed; // S'active lorque la valeur de ReadValue change
         selectionAction.action.canceled += OnInputCanceled; // S'active au relachement des touches
+        selectAllAction.action.started += selectAll;
     }
 
     // On se désabonne aux évènements du Event System
     private void OnDisable()
     {
         selectionAction.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
+        selectAllAction.action.Disable();
         selectionAction.action.started -= OnInputStarted;
         selectionAction.action.performed -= OnInputPerformed;
         selectionAction.action.canceled -= OnInputCanceled;
+        selectAllAction.action.started -= selectAll;
+    }
+
+    public void selectAll(InputAction.CallbackContext context)
+    {
+        Debug.Log("Select All");
+        List<GameObject> nextSelections = new List<GameObject>();
+        foreach (GameObject selectionableObject in selectionableObjects.Keys)
+        {
+            nextSelections.Add(selectionableObject);
+        }
+        select(nextSelections);
     }
 
     public void OnInputStarted(InputAction.CallbackContext context)
     {
-        if (GameManager.Instance.isInPause()) { return; }
+        if (gameManager.isInPause()) { return; }
         position_1 = context.action.ReadValue<Vector2>();
         isHolding = true;      
     }
 
     private void OnInputPerformed(InputAction.CallbackContext context)
     {
-        if (GameManager.Instance.isInPause()) { return; }
+        if (gameManager.isInPause()) { return; }
         lastPosition = context.action.ReadValue<Vector2>();
     }
 
 
     public void OnInputCanceled(InputAction.CallbackContext context)
     {
-        if (GameManager.Instance.isInPause()) { return; }
+        if (gameManager.isInPause()) { return; }
         position_2 = lastPosition;
 
         //Debug.Log("position 1 " + position_1.ToString());

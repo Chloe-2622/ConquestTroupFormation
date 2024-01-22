@@ -985,6 +985,7 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
   wheelRotationSpeed: 20
   croix: {fileID: 0}
   shootPoint: {x: 0, y: 0, z: 0}

@@ -377,6 +377,10 @@ MonoBehaviour:
   armureBoost: 5
   boostTime: 5
   boostRadius: 5
+  isAddedWhenAwake: 0
+  armureBoost: 0
+  boostTime: 0
+  boostRadius: 0
 --- !u!195 &8753042273054374063
 NavMeshAgent:
   m_ObjectHideFlags: 0

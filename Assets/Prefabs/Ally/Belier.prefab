@@ -391,6 +391,7 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
   wheelRotationSpeed: 20
 --- !u!195 &8753042273054374063
 NavMeshAgent:

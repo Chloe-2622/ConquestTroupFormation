@@ -56,6 +56,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] private GameObject currentFollowedTroup;
     [SerializeField] protected float specialAbilityDelay = 0f;
     [SerializeField] protected bool isVisible = true;
+    [SerializeField] protected bool isAddedWhenAwake = false;
     [SerializeField] public Vector3 moveTargetDestination;
     private bool isPlayingCircleAnim;
     private bool isChosingPlacement;
@@ -156,6 +157,11 @@ public abstract class Troup : MonoBehaviour
         {
             gameManager.addEnemy(this);
         }
+        if (isAddedWhenAwake)
+        {
+            Debug.Log("!! Unit added");
+            addToGroup();
+        }
     }
 
     // Ally or Enemy
@@ -206,6 +212,7 @@ public abstract class Troup : MonoBehaviour
     public float getAttackSpeed() { return attackRechargeTime; }
     public float getAttackRange() { return attackRange; }
     public float getAbilityRecharge() { return specialAbilityRechargeTime; }
+    public bool isKing() { return hasCrown; }
 
     // Update
     protected virtual void Update()
@@ -913,6 +920,10 @@ public abstract class Troup : MonoBehaviour
             // if (troupType == TroupType.Enemy) { tombeMort.transform.position += Vector3.up * 3; }
             tombeMort.GetComponent<Tombe>().SetUnitType((Tombe.TombeUnitType)unitType);
             tombeMort.GetComponent<Tombe>().SetTroupType((Tombe.TombeTroupType)troupType);
+            if (hasCrown)
+            {
+                gameManager.kingIsDead();
+            }
             Destroy(SelectionParticleCircle);
             Destroy(BoostParticle);
             Destroy(ArmorBoostParticle);
