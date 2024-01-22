@@ -98,7 +98,7 @@ public class CameraMovement : MonoBehaviour
                 dz--;
             }
 
-            GameManager.Instance.troupPurchase.refreshPreview.Invoke();
+            GameManager.Instance.troupPurchase.refreshPreview();
             cameraObject.transform.Translate(new Vector3(dx * currentSpeed * Time.deltaTime, 0, dz * currentSpeed * Time.deltaTime), Space.World);
         }
     }

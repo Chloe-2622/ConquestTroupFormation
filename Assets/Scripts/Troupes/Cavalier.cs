@@ -84,24 +84,53 @@ public class Cavalier : Troup
                     timer += Time.deltaTime;
                     jambe00.transform.RotateAround(jambe00.transform.position, jambe00.transform.right, angleJambes * Time.deltaTime * jambeRotationSpeed);
                     jambe01.transform.RotateAround(jambe01.transform.position, jambe01.transform.right, angleJambes * Time.deltaTime * jambeRotationSpeed);
-                    Debug.Log("swingR : " + jambe00.transform.localEulerAngles.x);
+                    // Debug.Log("swingR : " + jambe00.transform.localEulerAngles.x);
 
                     yield return null;
                 }
-                jambe00.transform.localEulerAngles = new Vector3(30f, 0f, 0f);
-                jambe01.transform.localEulerAngles = new Vector3(30f, 0f, 0f);
-                Debug.Log("swingRFinal ---------------- : " + jambe00.transform.localEulerAngles.x + " et " + (jambe00.transform.localEulerAngles.x > 0 && jambe00.transform.localEulerAngles.x <= 31f));
-                while (jambe00.transform.localEulerAngles.x > 0 && jambe00.transform.localEulerAngles.x <= 31f)
+                jambe00.transform.localEulerAngles = new Vector3(angleJambes, 0f, 0f);
+                jambe01.transform.localEulerAngles = new Vector3(angleJambes, 0f, 0f);
+                // Debug.Log("swingRFinal ---------------- : " + jambe00.transform.localEulerAngles.x + " et " + (jambe00.transform.localEulerAngles.x > 0 && jambe00.transform.localEulerAngles.x <= 31f));
+                while (jambe00.transform.localEulerAngles.x > 0 && jambe00.transform.localEulerAngles.x <= angleJambes + 1f)
                 {
                     timer += Time.deltaTime;
                     jambe00.transform.RotateAround(jambe00.transform.position, jambe00.transform.right, -angleJambes * Time.deltaTime * jambeRotationSpeed);
                     jambe01.transform.RotateAround(jambe01.transform.position, jambe01.transform.right, -angleJambes * Time.deltaTime * jambeRotationSpeed);
+                    // Debug.Log("swingL : " + jambe00.transform.localEulerAngles.x);
+
+                    yield return null;
+                }
+                jambe00.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+                jambe01.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+
+                jambe00.transform.localEulerAngles = new Vector3(359f, 0f, 0f);
+                jambe01.transform.localEulerAngles = new Vector3(359f, 0f, 0f);
+
+                while (jambe00.transform.localEulerAngles.x > 360f - angleJambes)
+                {
+                    timer += Time.deltaTime;
+                    jambe00.transform.RotateAround(jambe00.transform.position, jambe00.transform.right, -angleJambes * Time.deltaTime * jambeRotationSpeed);
+                    jambe01.transform.RotateAround(jambe01.transform.position, jambe01.transform.right, -angleJambes * Time.deltaTime * jambeRotationSpeed);
+                    Debug.Log("swingR : " + jambe00.transform.localEulerAngles.x);
+
+                    yield return null;
+                }
+                jambe00.transform.localEulerAngles = new Vector3(360f - angleJambes, 0f, 0f);
+                jambe01.transform.localEulerAngles = new Vector3(360f - angleJambes, 0f, 0f);
+                Debug.Log("swingRFinal ---------------- : " + jambe00.transform.localEulerAngles.x + " et " + (jambe00.transform.localEulerAngles.x > 0 && jambe00.transform.localEulerAngles.x <= 31f));
+                while (jambe00.transform.localEulerAngles.x >= 359f - angleJambes && jambe00.transform.localEulerAngles.x < 360f)
+                {
+                    timer += Time.deltaTime;
+                    jambe00.transform.RotateAround(jambe00.transform.position, jambe00.transform.right, angleJambes * Time.deltaTime * jambeRotationSpeed);
+                    jambe01.transform.RotateAround(jambe01.transform.position, jambe01.transform.right, angleJambes * Time.deltaTime * jambeRotationSpeed);
                     Debug.Log("swingL : " + jambe00.transform.localEulerAngles.x);
 
                     yield return null;
                 }
                 jambe00.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
                 jambe01.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+
+
 
                 yield return null;
             }
@@ -129,12 +158,36 @@ public class Cavalier : Troup
                 jambe00.transform.localEulerAngles = new Vector3(360f - angleJambes, 0f, 0f);
                 jambe01.transform.localEulerAngles = new Vector3(360f - angleJambes, 0f, 0f);
                 Debug.Log("swingRFinal ---------------- : " + jambe00.transform.localEulerAngles.x + " et " + (jambe00.transform.localEulerAngles.x > 0 && jambe00.transform.localEulerAngles.x <= 31f));
-                while (jambe00.transform.localEulerAngles.x >= 369f - angleJambes && jambe00.transform.localEulerAngles.x < 0f)
+                while (jambe00.transform.localEulerAngles.x >= 359f - angleJambes && jambe00.transform.localEulerAngles.x < 360f)
                 {
                     timer += Time.deltaTime;
                     jambe00.transform.RotateAround(jambe00.transform.position, jambe00.transform.right, angleJambes * Time.deltaTime * jambeRotationSpeed);
                     jambe01.transform.RotateAround(jambe01.transform.position, jambe01.transform.right, angleJambes * Time.deltaTime * jambeRotationSpeed);
                     Debug.Log("swingL : " + jambe00.transform.localEulerAngles.x);
+
+                    yield return null;
+                }
+                jambe00.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+                jambe01.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+
+                while (jambe00.transform.localEulerAngles.x < angleJambes)
+                {
+                    timer += Time.deltaTime;
+                    jambe00.transform.RotateAround(jambe00.transform.position, jambe00.transform.right, angleJambes * Time.deltaTime * jambeRotationSpeed);
+                    jambe01.transform.RotateAround(jambe01.transform.position, jambe01.transform.right, angleJambes * Time.deltaTime * jambeRotationSpeed);
+                    // Debug.Log("swingR : " + jambe00.transform.localEulerAngles.x);
+
+                    yield return null;
+                }
+                jambe00.transform.localEulerAngles = new Vector3(angleJambes, 0f, 0f);
+                jambe01.transform.localEulerAngles = new Vector3(angleJambes, 0f, 0f);
+                // Debug.Log("swingRFinal ---------------- : " + jambe00.transform.localEulerAngles.x + " et " + (jambe00.transform.localEulerAngles.x > 0 && jambe00.transform.localEulerAngles.x <= 31f));
+                while (jambe00.transform.localEulerAngles.x > 0 && jambe00.transform.localEulerAngles.x <= angleJambes + 1f)
+                {
+                    timer += Time.deltaTime;
+                    jambe00.transform.RotateAround(jambe00.transform.position, jambe00.transform.right, -angleJambes * Time.deltaTime * jambeRotationSpeed);
+                    jambe01.transform.RotateAround(jambe01.transform.position, jambe01.transform.right, -angleJambes * Time.deltaTime * jambeRotationSpeed);
+                    // Debug.Log("swingL : " + jambe00.transform.localEulerAngles.x);
 
                     yield return null;
                 }

@@ -65,7 +65,7 @@ public abstract class Troup : MonoBehaviour
     private bool isChosingFollow;
     protected bool isFollowingOrders;
     private bool hasSpawnedTombe;
-    private bool isMovingToKing;
+    [SerializeField] private bool isMovingToKing;
     private bool isBoosted;
     protected float maxHealth;
     protected IEnumerator currentActionCoroutine;
@@ -175,7 +175,7 @@ public abstract class Troup : MonoBehaviour
         if (troupType == TroupType.Ally)
         {
             gameManager.addAlly(this);
-            selectionManager.completeDictionnary(transform.gameObject);
+            // selectionManager.completeDictionnary(transform.gameObject);
         }
         if (troupType == TroupType.Enemy)
         {
@@ -230,6 +230,8 @@ public abstract class Troup : MonoBehaviour
         {
             isFollowingEnemy = false;
             isAttackingEnemy = false;
+            currentFollowedTroup = null;
+            currentAttackedTroup = null;
         }
 
         if (troupType == TroupType.Ally)
@@ -698,22 +700,11 @@ public abstract class Troup : MonoBehaviour
 
         if (troupType == TroupType.Enemy && gameManager.isCrownCollected)
         {
-            GameObject king = gameManager.king;
-            
-            if (king != null && king.GetComponent<Troup>().isVisible && !isMovingToKing)
-            {
-                isMovingToKing = true;
-
-                actionQueue.Clear();
-                agent.isStopped = true;
-                agent.ResetPath();
-
-                // Debug.Log("Getting closer to enemy : " + king);
-                StopCoroutine(currentActionCoroutine);
-                actionQueue.Enqueue(new MoveToUnit(agent, king, attackRange));
-                StartCoroutine(currentActionCoroutine);
-            }
+            AttackKingBehaviour();
+            return;
         }
+
+        
 
         
         // Find all enemies in detection range
@@ -773,6 +764,7 @@ public abstract class Troup : MonoBehaviour
 
             
         }
+
         if (currentFollowedTroup != null && Vector3.Distance(transform.position, currentFollowedTroup.transform.position) >= detectionRange)
         {
             currentFollowedTroup = null;
@@ -836,6 +828,8 @@ public abstract class Troup : MonoBehaviour
             }
         }
 
+        Debug.Log("Closest enemy in range : " + closestEnemy);
+
         if (currentAttackedTroup == null && !isFollowingOrders)
         {
             isAttackingEnemy = false;
@@ -876,6 +870,7 @@ public abstract class Troup : MonoBehaviour
         } */
         if (closestEnemyInRange == null)
         {
+            Debug.Log("Toi jt'emmerde");
             currentAttackedTroup = null;
             isAttackingEnemy = false;
         }
@@ -888,6 +883,91 @@ public abstract class Troup : MonoBehaviour
             transform.LookAt(targetPosition);
         }
 
+    }
+
+    protected void AttackKingBehaviour()
+    {
+        GameObject king = gameManager.king;
+
+        /*
+        if (king != null && king.GetComponent<Troup>().isVisible && !isMovingToKing)
+        {
+            isMovingToKing = true;
+
+            actionQueue.Clear();
+            agent.isStopped = true;
+            agent.ResetPath();
+
+            // Debug.Log("Getting closer to enemy : " + king);
+            StopCoroutine(currentActionCoroutine);
+            actionQueue.Enqueue(new MoveToUnit(agent, king, attackRange));
+            StartCoroutine(currentActionCoroutine);
+        } */
+
+        if (king != null && king.GetComponent<Troup>().isVisible)
+        {
+            if (Vector3.Distance(transform.position, king.transform.position) > attackRange)
+            {
+                isMovingToKing = false;
+
+
+            }
+            if (Vector3.Distance(transform.position, king.transform.position) > attackRange && !isMovingToKing)
+            {
+                isMovingToKing = true;
+                currentAttackedTroup = null;
+
+                actionQueue.Clear();
+                agent.isStopped = true;
+                agent.ResetPath();
+
+                // Debug.Log("Getting closer to enemy : " + king);
+                StopCoroutine(currentActionCoroutine);
+                actionQueue.Enqueue(new MoveToUnit(agent, king, attackRange));
+                StartCoroutine(currentActionCoroutine);
+            }
+
+            if (currentAttackedTroup == null)
+            {
+                isAttackingEnemy = false;
+                if (attackCoroutine != null)
+                {
+                    StopCoroutine(attackCoroutine);
+                }
+
+                if (Vector3.Distance(transform.position, king.transform.position) <= attackRange)
+                {
+                    currentAttackedTroup = king;
+
+                    actionQueue.Clear();
+                    agent.isStopped = true;
+                    agent.ResetPath();
+                    Debug.Log("Je lance une nouvelle attaque contre + " + currentAttackedTroup);
+
+                    StopCoroutine(currentActionCoroutine);
+                    actionQueue.Enqueue(new Standby());
+                    StartCoroutine(currentActionCoroutine);
+
+                    attackCoroutine = Attack(currentAttackedTroup.GetComponent<Troup>());
+                    StartCoroutine(attackCoroutine);
+                    isAttackingEnemy = true;
+                }
+            }
+
+
+
+
+        }
+    }
+
+    public void BecomesKing()
+    {
+        actionQueue.Clear();
+        agent.isStopped = true;
+        agent.ResetPath();
+        StopCoroutine(currentActionCoroutine);
+        actionQueue.Enqueue(new Standby());
+        StartCoroutine(currentActionCoroutine);
     }
 
     protected abstract IEnumerator Attack(Troup enemy);
@@ -919,6 +999,11 @@ public abstract class Troup : MonoBehaviour
         float beforeHealth = health;
 
         health -= Mathf.Max(damage - armor, 0);
+
+        ParticleSystem damageParticle = Instantiate(gameManager.DamageParticlePrefab.GetComponent<ParticleSystem>(), transform.position, Quaternion.identity);
+        damageParticle.transform.localEulerAngles = new Vector3(-90f, 0f, 0f);
+        damageParticle.Play();
+        Destroy(damageParticle.gameObject, damageParticle.main.duration);
 
         float newHealth = health;
         Debug.Log("J'ai pris dégat : " + damage);
@@ -1150,7 +1235,7 @@ public abstract class Troup : MonoBehaviour
             
             // navMeshAgent.SetDestination(targetPosition);
 
-            while (unitToFollow != null && Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= 1f)
+            while (unitToFollow != null && Vector3.Distance(navMeshAgent.transform.position, targetPosition) >= unitToFollow.transform.GetComponent<Troup>().positionThreshold)
             {
                 // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
                 navMeshAgent.isStopped = false;

@@ -15,6 +15,8 @@ public class Porte_bouclier : Troup
     protected override void Awake()
     {
         base.Awake();
+
+        positionThreshold = 2f;
     }
 
     // Update is called once per frame

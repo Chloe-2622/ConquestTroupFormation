@@ -22,7 +22,7 @@ public class Tombe : MonoBehaviour
 
     public enum TombeUnitType
     {
-        Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
+        Null, Combattant, Archer, Cavalier, Guerisseur, Catapulte, Porte_bouclier, Porte_etendard, Batisseur, Belier
     }
 
     private void Awake()

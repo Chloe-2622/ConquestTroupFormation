@@ -972,7 +972,7 @@ MonoBehaviour:
   health: 200
   armor: 0
   detectionRange: 15
-  positionThreshold: 1
+  positionThreshold: 2
   attackDamage: 0
   attackRechargeTime: 4
   attackRange: 10
@@ -986,6 +986,9 @@ MonoBehaviour:
   specialAbilityDelay: 0
   isVisible: 1
   isAddedWhenAwake: 0
+  moveTargetDestination: {x: 0, y: 0, z: 0}
+  timeBeforeNextAction: 0
+  isMovingToKing: 0
   wheelRotationSpeed: 20
   croix: {fileID: 0}
   shootPoint: {x: 0, y: 0, z: 0}
@@ -997,6 +1000,7 @@ MonoBehaviour:
   timeAttenuation: 10
   isLauchingBoulder: 0
   newBoulder: {fileID: 0}
+  hasSelected: 0
 --- !u!195 &8085429279557207350
 NavMeshAgent:
   m_ObjectHideFlags: 0

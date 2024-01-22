@@ -584,6 +584,7 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
+  isMovingToKing: 0
   invisibleTime: 10
   invisibleMaterial: {fileID: 2100000, guid: b2893209e057c48409a2c339ff33e055, type: 2}
   arrowSpeed: 0.5
