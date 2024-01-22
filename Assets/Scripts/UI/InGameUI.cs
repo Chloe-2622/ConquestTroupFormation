@@ -85,6 +85,12 @@ public class InGameUI : MonoBehaviour
         unitIconsSection.SetActive(false);
     }
 
+    public void OnEnable()
+    {
+        inGameUI.SetActive(true);
+        unitIconsSection.SetActive(true);
+    }
+
 
     // Start is called before the first frame update
     void Start()
