@@ -81,8 +81,8 @@ public class InGameUI : MonoBehaviour
 
     public void OnDisable()
     {
-        inGameUI.SetActive(false);
-        unitIconsSection.SetActive(false);
+        // inGameUI.SetActive(false);
+        // unitIconsSection.SetActive(false);
     }
 
 
