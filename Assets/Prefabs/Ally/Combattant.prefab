@@ -297,6 +297,7 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  moveTargetDestination: {x: 0, y: 0, z: 0}
   enragedTime: 5
   enragedSpeed: 12
   enragedAttackRechargeTime: 0.5
