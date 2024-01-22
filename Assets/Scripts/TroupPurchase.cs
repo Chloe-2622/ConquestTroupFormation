@@ -98,6 +98,8 @@ public class TroupPurchase : MonoBehaviour
         else { usableGold = gameManager.getGoldInArena(SceneManager.GetActiveScene().name); }
         goldUpdate.Invoke();
         unitPrefabs = gameManager.getUnitPrefabs();
+
+        Debug.Log("-- "  + usableGold);
         maxUsableGold = usableGold;
     }
 
