@@ -302,12 +302,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shootingCamera: {fileID: 0}
   areaSelectionLimit: 1
-  unitSelectionDistanceLimit: 1
+  unitSelectionDistanceLimit: 2
   SquareBarTop: {fileID: 7547514104226526977}
   SquareBarRight: {fileID: 4183805625662570802}
   SquareBarBottom: {fileID: 5741143128459954222}
   SquareBarLeft: {fileID: 1850594101698606276}
-  selectionAction: {fileID: 0}
+  selectionAction: {fileID: -4281854284587095307, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
+  selectAllAction: {fileID: -7836929344125224695, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
+  troupMask:
+    serializedVersion: 2
+    m_Bits: 256
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 64
+  newSelection:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6280453828049172383
 GameObject:
   m_ObjectHideFlags: 0

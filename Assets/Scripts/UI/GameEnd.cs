@@ -26,7 +26,6 @@ public class GameEnd : MonoBehaviour
         else
         {
             defeatPanel.completeValues(finalSentence, GetComponent<InGameUI>().getTimerText());
-            defeatPanel.completeValues(finalSentence, GetComponent<InGameUI>().getTimerText());
             defeatPanel.gameObject.SetActive(true);
         }
     }

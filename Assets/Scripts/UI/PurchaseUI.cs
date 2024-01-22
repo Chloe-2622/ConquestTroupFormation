@@ -41,7 +41,7 @@ public class PurchaseUI : MonoBehaviour
         troupPurchase.notEnoughtGold.AddListener(notEnoughtGoldShow);
 
         inGameUI = this.GetComponent<InGameUI>();
-        inGameUI.timer.SetActive(false);
+        //inGameUI.timer.SetActive(false);
 
         //Create a new navigation
         Navigation newNav = new Navigation();
@@ -51,6 +51,7 @@ public class PurchaseUI : MonoBehaviour
 
         for (int i = 1; i <= numberOfUnitType; i++)
         {
+            Debug.Log("!!" + i);
             createButton(i - (numberOfUnitType + 1) / 2f, i, newNav);
         }
     }

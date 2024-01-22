@@ -15,9 +15,12 @@ public class EndPanel : MonoBehaviour
     {
         gameManager = GameManager.Instance;
 
-        gameManager.PauseGame();
-        gameManager.eventSystem.GetComponent<InGameUI>().enabled = false;
-        gameManager.eventSystem.GetComponent<PauseMenu>().enabled = false;
+        if (gameManager.isCrownCollected)
+        {
+            gameManager.PauseGame();
+            gameManager.eventSystem.GetComponent<InGameUI>().enabled = false;
+            gameManager.eventSystem.GetComponent<PauseMenu>().enabled = false;
+        }
     }
 
     public void OnDisable()
