@@ -81,8 +81,8 @@ public class GameManager : MonoBehaviour
 
     private bool pause;
     private bool gameHasStarted;
-    public bool isCrownCollected;
-    public GameObject king;
+    [HideInInspector] public bool isCrownCollected;
+    [HideInInspector] public GameObject king;
 
     // Allies and Enemis dictionnary -----------------------------------------------------------------------------
     private static HashSet<Troup> Allies = new HashSet<Troup>();

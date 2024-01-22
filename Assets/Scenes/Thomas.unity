@@ -649,6 +649,7 @@ GameObject:
   m_Component:
   - component: {fileID: 626349288}
   - component: {fileID: 626349287}
+  - component: {fileID: 626349289}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -733,6 +734,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &626349289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 626349286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!114 &750130860 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8943166259926611020, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
@@ -941,6 +965,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
+      propertyPath: Batisseur
+      value: 
+      objectReference: {fileID: 3630770809780813079, guid: 39e2cfba802b14840a634f7414c98a91, type: 3}
     - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
       propertyPath: mainCamera
       value: 
