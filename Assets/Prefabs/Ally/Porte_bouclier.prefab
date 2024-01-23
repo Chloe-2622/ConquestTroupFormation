@@ -360,10 +360,10 @@ MonoBehaviour:
   health: 400
   armor: 15
   detectionRange: 15
-  positionThreshold: 1
-  attackDamage: 0
-  attackRechargeTime: 0
-  attackRange: 0
+  positionThreshold: 2
+  attackDamage: 10
+  attackRechargeTime: 2
+  attackRange: 2
   specialAbilityRechargeTime: 20
   isChosingPatrol: 0
   isFollowingEnemy: 0
@@ -373,14 +373,13 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
+  timeBeforeNextAction: 0
+  isMovingToKing: 0
   armureBoost: 5
   boostTime: 5
   boostRadius: 5
-  isAddedWhenAwake: 0
-  armureBoost: 0
-  boostTime: 0
-  boostRadius: 0
 --- !u!195 &8753042273054374063
 NavMeshAgent:
   m_ObjectHideFlags: 0

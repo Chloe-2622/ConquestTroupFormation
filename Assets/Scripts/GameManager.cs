@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     public GameObject SelectionParticleCirclePrefab;
     public GameObject BoostParticleEffectPrefab;
     public GameObject ArmorBoostParticleEffectPrefab;
+    public GameObject DamageParticlePrefab;
 
     [Header("Catapulte")]
     public GameObject CatapulteCroixPrefab;
@@ -85,8 +86,8 @@ public class GameManager : MonoBehaviour
 
     private bool pause;
     private bool gameHasStarted;
-    [HideInInspector] public bool isCrownCollected;
-    [HideInInspector] public GameObject king;
+    public bool isCrownCollected;
+    public GameObject king;
 
     // Allies and Enemis dictionnary -----------------------------------------------------------------------------
     private static HashSet<Troup> Allies = new HashSet<Troup>();
@@ -236,5 +237,11 @@ public class GameManager : MonoBehaviour
             goldenBook.Add("Arene_" + (i+1).ToString(), goldPerArena[i]);
         }
         Debug.Log("Golden Book Completed");
+    }
+
+    private void OnDestroy()
+    {
+        Enemies = new HashSet<Troup>();
+        Allies = new HashSet<Troup>();
     }
 }

@@ -972,7 +972,7 @@ MonoBehaviour:
   health: 200
   armor: 0
   detectionRange: 15
-  positionThreshold: 1
+  positionThreshold: 2
   attackDamage: 0
   attackRechargeTime: 4
   attackRange: 10

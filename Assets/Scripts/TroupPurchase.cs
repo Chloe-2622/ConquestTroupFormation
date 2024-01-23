@@ -41,15 +41,12 @@ public class TroupPurchase : MonoBehaviour
     private int usableGold;
     private int maxUsableGold;
 
-    [HideInInspector] public UnityEvent refreshPreview;
     [HideInInspector] public UnityEvent goldUpdate;
     [HideInInspector] public UnityEvent notEnoughtGold;
 
 
     private void OnEnable()
     {
-        refreshPreview.AddListener(callShowPlacement);
-
         placeUnitAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
         showPlacementAction.action.Enable();
         rotateUnitAction.action.Enable();
@@ -69,8 +66,6 @@ public class TroupPurchase : MonoBehaviour
     {
         Debug.Log("Troup Purchase Disabled");
         GameObject.Destroy(preview);
-
-        refreshPreview.RemoveAllListeners();
 
         placeUnitAction.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
         showPlacementAction.action.Disable();
@@ -103,13 +98,17 @@ public class TroupPurchase : MonoBehaviour
     }
 
 
-    public void callShowPlacement()
+    public void refreshPreview()
     {
-        showPlacement(lastContext);
+        if (!lastContext.Equals(null))
+        {
+            showPlacement(lastContext);
+        }
     }
 
     private void showPlacement(InputAction.CallbackContext context)
     {
+
         // Si la souris est sur l'UI, on ne fait rien
         if (isOnUI) { return; }
 
@@ -124,6 +123,8 @@ public class TroupPurchase : MonoBehaviour
         {
             // On cherche le point le plus proche sur le NavMesh
             NavMeshHit closestHit;
+
+            Debug.Log("context2");
 
             if (NavMesh.SamplePosition(hit.point, out closestHit, 10, 1))
             {
@@ -147,6 +148,7 @@ public class TroupPurchase : MonoBehaviour
                 // On sauvegarde la dernière position valide
                 lastPosition = closestHit.position;
                 lastContext = context;
+                Debug.Log("context : " + lastContext);
             }
             else
             {
@@ -270,7 +272,7 @@ public class TroupPurchase : MonoBehaviour
         {
             setCurrentSelectedTroupType((Troup.UnitType)unitIndex);
         }
-        refreshPreview.Invoke();
+        refreshPreview();
     }
 
     // is Cursor on UI

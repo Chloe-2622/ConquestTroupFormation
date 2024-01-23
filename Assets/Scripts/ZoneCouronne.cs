@@ -31,6 +31,9 @@ public class ZoneCouronne : MonoBehaviour
                 {
                     unit.transform.Find("Crown").gameObject.SetActive(true);
                     crownCollected = true;
+
+                    unit.transform.GetComponent<Troup>().BecomesKing();
+
                     Destroy(crown);
                     Debug.Log("!! Crown Get");
                 }

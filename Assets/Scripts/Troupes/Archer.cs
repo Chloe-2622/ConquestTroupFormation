@@ -35,7 +35,7 @@ public class Archer : Troup
 
     protected override IEnumerator Attack(Troup enemy)
     {
-        while (enemy != null)
+        while (enemy != null && currentAttackedTroup != null)
         {
             StartCoroutine(BowAnimation());
             StartCoroutine(ShootArrow(enemy));

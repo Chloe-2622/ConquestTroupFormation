@@ -2727,7 +2727,7 @@ MonoBehaviour:
   health: 75
   armor: 10
   detectionRange: 15
-  positionThreshold: 1
+  positionThreshold: 2
   attackDamage: 30
   attackRechargeTime: 1.5
   attackRange: 2
@@ -2743,11 +2743,12 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
+  isMovingToKing: 0
   chargeTime: 3
   chargeSpeed: 20
   baseJambeRotationSpeed: 0.75
   jambeRotationSpeed: 0
-  angleJambes: 30
+  angleJambes: 60
 --- !u!195 &8753042273054374063
 NavMeshAgent:
   m_ObjectHideFlags: 0
