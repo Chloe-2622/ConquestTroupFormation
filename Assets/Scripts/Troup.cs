@@ -124,8 +124,12 @@ public abstract class Troup : MonoBehaviour
         maxHealth = health;
 
         // Agent setup
-        agent = GetComponent<NavMeshAgent>();
-        agent.speed = movingSpeed;
+        if (unitType != UnitType.Mur)
+        {
+            agent = GetComponent<NavMeshAgent>();
+            agent.speed = movingSpeed;
+        }
+        
 
         // GameManager variable setup
         gameManager = GameManager.Instance;
@@ -318,7 +322,7 @@ public abstract class Troup : MonoBehaviour
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Alpha4))
+            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.F))
             {
                 StopCoroutine(PlaceSelection());
                 StopCoroutine(PatrolSelection());
@@ -997,6 +1001,7 @@ public abstract class Troup : MonoBehaviour
 
     protected void AddAction(IAction action)
     {
+        if (unitType == Troup.UnitType.Mur) { return; }
 
         if (Input.GetKey(KeyCode.LeftShift))
         {

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using static Troup;
 
@@ -15,10 +16,10 @@ public class Wall : Troup
     [SerializeField] private GameObject junctionWall;
     [SerializeField] private GameObject maxLenghtCircle;
 
-
     protected override void Awake()
     {
         maxLenghtCircle.transform.localScale = new Vector3(maxLenght*2, maxLenght*2, maxLenghtCircle.transform.localScale.z);
+
         base.Awake();
     }
 
@@ -41,7 +42,7 @@ public class Wall : Troup
         HealthBarControl();
     }
 
-    public HashSet<Vector3> getTowersPosition() { return new HashSet<Vector3>() { tower_1.transform.position, tower_2.transform.position }; }
+    public List<Vector3> getTowersPosition() { return new List<Vector3>() { tower_1.transform.position, tower_2.transform.position }; }
     public Vector3 getCentralPosition() {  return junctionWall.transform.position; }
     public void setTower_1_Position(Vector3 position) { tower_1.transform.position = position; updateJunctionWall(); }
     public void setTower_2_Position(Vector3 position) { tower_2.transform.position = position; updateJunctionWall(); }
@@ -54,12 +55,6 @@ public class Wall : Troup
         junctionWall.transform.localScale = new Vector3(1, 1, Vector3.Distance(tower_1Pos, tower_2Pos) / 10f);
         junctionWall.transform.LookAt(tower_1.transform);
     }
-
-
-
-
-
-
 
     // Les murs n'attaquent pas
     protected override void IAEnemy() { }

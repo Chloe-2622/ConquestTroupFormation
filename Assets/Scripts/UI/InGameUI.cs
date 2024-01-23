@@ -14,13 +14,14 @@ public class InGameUI : MonoBehaviour
     /* 
     TODO
 
-    Batisseur et murs
+    Attaque des murs par les unités si pas de chemein possible
     
     Revoir l'esthétisme de l'UI
             - Agrandir l'UI en haut (noms + or)
             - Trouver de jolis fonds
+            - Ajouter les choix des options en jeu
    
-    Changer la qualité
+    
     Cherche comment changer la résolution
     
     Bugs à fix :
@@ -29,6 +30,9 @@ public class InGameUI : MonoBehaviour
     Bonus: Faire l'indication des dégats        
 
 
+
+    Changer la qualité                                  DONE
+    Batisseur et murs                                   DONE
     Ecrans de victoire/défaite                          DONE
     Debug le fait de pouvoir jouer en purchase phase    DONE
     Ctrl + A = sélectionne tout les unités              DONE

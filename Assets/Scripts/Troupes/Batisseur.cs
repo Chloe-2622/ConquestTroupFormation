@@ -1,8 +1,7 @@
 using Autodesk.Fbx;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using Unity.Burst.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -20,6 +19,9 @@ public class Batisseur : Troup
     private GameObject hammer;
     private GameObject wallPrefab;
 
+    private Wall previousWall;
+    private Wall nextWall;
+
     private GameObject preview;
     private Wall previewWallComponent;
 
@@ -27,7 +29,7 @@ public class Batisseur : Troup
     private Vector3 secondPos = new Vector3(0, 0, 0);
 
 
-
+    private IEnumerator wallPlacement;
 
 
 
@@ -39,6 +41,8 @@ public class Batisseur : Troup
 
         wallPrefab = GameManager.Instance.WallPrefab;
         floorMaskLayer = GameManager.Instance.floorMask;
+
+        wallPlacement = WallPlacement();
     }
 
     // Update is called once per frame
@@ -48,6 +52,7 @@ public class Batisseur : Troup
 
         swingTime = attackRechargeTime / 2;
 
+        if (!GameManager.Instance.hasGameStarted()) { return; }
         AttackBehaviour();
         WallPlacementBehaviour();
     }
@@ -60,14 +65,21 @@ public class Batisseur : Troup
             {
                 if (!isPlacingWall)
                 {
-                    StartCoroutine(WallPlacement());
+                    StartCoroutine(wallPlacement);
                 }
                 else
                 {
-                    StopCoroutine(WallPlacement());
+                    StopCoroutine(wallPlacement);
                 }
 
                 isPlacingWall = !isPlacingWall;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                StopCoroutine(wallPlacement);
+                isPlacingWall = false;
+                GameObject.Destroy(preview);
             }
         }
     }      
@@ -139,7 +151,6 @@ public class Batisseur : Troup
             yield return null;
         }
 
-        //findNearestWall();
         GameObject.Destroy(preview);
         Debug.Log("-- first" + firstPos + "second" + secondPos);
         StartCoroutine(BuildBehaviour());
@@ -160,36 +171,43 @@ public class Batisseur : Troup
     {
         HashSet<Wall> allyWalls = GameManager.Instance.getAllyWalls();
 
-        Vector3 nearestTower_1 = new Vector3();
-        float distanceTower_1 = previewWallComponent.wallFusionMaxDistance;
-        Vector3 nearestTower_2 = new Vector3();
-        float distanceTower_2 = previewWallComponent.wallFusionMaxDistance;
+        float minDistanceTower_1 = previewWallComponent.wallFusionMaxDistance;
+        Vector3 nearestPosition_1 = new Vector3();
+
+        float minDistanceTower_2 = previewWallComponent.wallFusionMaxDistance;
+        Vector3 nearestPosition_2 = new Vector3();
+
 
         foreach (Wall allyWall in allyWalls)
         {
-            HashSet<Vector3> towersPos = allyWall.getTowersPosition();
-            foreach (Vector3 pos in towersPos)
+            List<Vector3> towersPositions = allyWall.getTowersPosition();
+            for (int i = 0; i < towersPositions.Count; i++)
             {
-                if (Vector3.Distance(firstPos, pos) < distanceTower_1)
+                if (Vector3.Distance(firstPos, towersPositions[i]) < minDistanceTower_1)
                 {
-                    nearestTower_1 = pos;
-                    distanceTower_1 = Vector3.Distance(firstPos, pos);
+                    minDistanceTower_1 = Vector3.Distance(firstPos, towersPositions[i]);
+                    nearestPosition_1 = towersPositions[i];
+
+                    Debug.Log("---- previous " + allyWall + " " + nearestPosition_1);
                 }
-                if (Vector3.Distance(secondPos, pos) < distanceTower_2)
+
+                if (Vector3.Distance(secondPos, towersPositions[i]) < minDistanceTower_2)
                 {
-                    nearestTower_2 = pos;
-                    distanceTower_2 = Vector3.Distance(secondPos, pos);
+                    minDistanceTower_2 = Vector3.Distance(firstPos, towersPositions[i]);
+                    nearestPosition_2 = towersPositions[i];
+
+                    Debug.Log("---- next " + allyWall + " " + nearestPosition_2);
                 }
             }
         }
-        if (nearestTower_1 != null) { firstPos = nearestTower_1; }
-        if (nearestTower_2 != null) { secondPos = nearestTower_2; }
+        if (minDistanceTower_1 != previewWallComponent.wallFusionMaxDistance) { Debug.Log("---- nearestPosition_1"); firstPos = nearestPosition_1; }
+        if (minDistanceTower_2 != previewWallComponent.wallFusionMaxDistance) { Debug.Log("---- nearestPosition_2"); secondPos = nearestPosition_2; }
+
     }
 
     protected IEnumerator BuildBehaviour()
     {
-        Debug.Log("--- first" + firstPos + "second" + secondPos);
-
+        findNearestWall();
 
         Debug.Log("-- go to " + firstPos);
         AddAction(new MoveToPosition(agent, firstPos, positionThreshold));
