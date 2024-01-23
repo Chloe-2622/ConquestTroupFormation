@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Properties;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -24,41 +25,51 @@ public class TroupPurchase : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool debugMode;
 
+    private GameManager gameManager;
+
+
+    // LayerMasks
     private LayerMask allyZoneLayerMask;
     private LayerMask troupMask;   
 
-    private List<GameObject> unitPrefabs;
-    private Troup.UnitType currentSelectedUnitType;
-
-    private GameManager gameManager;
-    private bool isOnUI;
+    // Show Preview
     private Vector3 lastPosition;
-    private InputAction.CallbackContext lastContext;
-
+    private bool isOnUI;
     private GameObject preview;
     private Troup previewTroupComponent;
+    private Troup.UnitType currentSelectedUnitType;
+    private InputAction.CallbackContext lastContext;
+
+    // Place Troup
+    private List<GameObject> unitPrefabs;
     private int unitGoldCost;
     private int usableGold;
-    private int maxUsableGold;
-
     [HideInInspector] public UnityEvent goldUpdate;
     [HideInInspector] public UnityEvent notEnoughtGold;
+
+    // Remove Unit
+    private Troup previousRemovedTroup;
 
 
     private void OnEnable()
     {
+        gameManager = GameManager.Instance;
+
         placeUnitAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
         showPlacementAction.action.Enable();
         rotateUnitAction.action.Enable();
         removeUnitAction.action.Enable();
         removeSelectionAction.action.Enable();
         chooseUnitAction.action.Enable();
+
         placeUnitAction.action.performed += placeUnit; // S'active lorque la valeur de ReadValue change
         showPlacementAction.action.performed += showPlacement;
         rotateUnitAction.action.started += rotateUnit;
         removeUnitAction.action.performed += removeUnit;
         removeSelectionAction.action.started += removeSelection;
         chooseUnitAction.action.started += chooseUnit;
+
+        gameManager.mainCamera.GetComponent<CameraMovement>().cameraMoving.AddListener(refreshPreview);
     }
 
     // On se désabonne aux évènements du Event System
@@ -73,18 +84,19 @@ public class TroupPurchase : MonoBehaviour
         removeUnitAction.action.Disable();
         removeSelectionAction.action.Disable();
         chooseUnitAction.action.Disable();
+
         placeUnitAction.action.performed -= placeUnit;
         showPlacementAction.action.performed -= showPlacement;
         rotateUnitAction.action.started -= rotateUnit;
         removeUnitAction.action.performed -= removeUnit;
         removeSelectionAction.action.started -= removeSelection;
         chooseUnitAction.action.started -= chooseUnit;
+
+        gameManager.mainCamera.GetComponent<CameraMovement>().cameraMoving.RemoveAllListeners();
     }
 
     public void Start()
     {
-        gameManager = GameManager.Instance;
-
         // Layers
         allyZoneLayerMask = gameManager.allyZoneMask;
         troupMask = gameManager.troupMask;
@@ -93,10 +105,7 @@ public class TroupPurchase : MonoBehaviour
         else { usableGold = gameManager.getGoldInArena(SceneManager.GetActiveScene().name); }
         goldUpdate.Invoke();
         unitPrefabs = gameManager.getUnitPrefabs();
-
-        maxUsableGold = usableGold;
     }
-
 
     public void refreshPreview()
     {
@@ -124,8 +133,6 @@ public class TroupPurchase : MonoBehaviour
             // On cherche le point le plus proche sur le NavMesh
             NavMeshHit closestHit;
 
-            Debug.Log("context2");
-
             if (NavMesh.SamplePosition(hit.point, out closestHit, 10, 1))
             {
                 // Si la preview existe et est du bon type, on la déplace vers la position pointée
@@ -142,6 +149,7 @@ public class TroupPurchase : MonoBehaviour
                     previewTroupComponent = preview.GetComponent<Troup>();
                     previewTroupComponent.enabled = false;
                     unitGoldCost = previewTroupComponent.getCost();
+                    preview.GetComponent<Collider>().enabled = false;
                     preview.GetComponent<NavMeshAgent>().enabled = false;
                 }
 
@@ -229,8 +237,11 @@ public class TroupPurchase : MonoBehaviour
                 }
             }
         }
-        if (troupToRemove != null && troupToRemove != previewTroupComponent)
+
+        if (troupToRemove != null && troupToRemove != previousRemovedTroup)
         {
+            previousRemovedTroup = troupToRemove;
+
             usableGold += troupToRemove.getCost();
             goldUpdate.Invoke();
 
@@ -252,8 +263,8 @@ public class TroupPurchase : MonoBehaviour
             usableGold += troupToRemove.getCost();
             goldUpdate.Invoke();
 
-            GameObject.Destroy(troupToRemove.gameObject);
             gameManager.removeAlly(troupToRemove);
+            GameObject.Destroy(troupToRemove.gameObject);
         }
     }
 

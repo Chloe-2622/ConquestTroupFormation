@@ -190,6 +190,7 @@ public class GameManager : MonoBehaviour
     }
 
     public HashSet<Troup> getAllies() { return Allies; }
+    public bool isAllyIn(Troup troup) { return Allies.Contains(troup); }
     public int alliesCount() { return Allies.Count; }
 
     // Enemies

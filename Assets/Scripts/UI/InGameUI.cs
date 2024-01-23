@@ -14,28 +14,24 @@ public class InGameUI : MonoBehaviour
     /* 
     TODO
 
-    
+    Catapulte
     
     Revoir l'esthétisme de l'UI
             - Agrandir l'UI en haut (noms + or)
             - Trouver de jolis fonds
             - Ajouter les choix des options en jeu
    
-    
     Cherche comment changer la résolution
-    
-    Bugs à fix :
-        Bug des golds qui reapparaissent
-        Bug Camera quand on tiens troupe
-        Mur prends pas dégat au centre
-
+        
     Bonus: Faire l'indication des dégats        
 
+    Refresh la sélection des troupes lors de la supression
 
 
-
-
-
+    
+    Bug des golds qui reapparaissent                                DONE
+    Bug Camera quand on tiens troupe                                DONE      
+    Mur prends pas dégat au centre                                  DONE
     Collision preview mur                                           DONE
     Attaque des murs par les unités si pas de chemin possible       DONE
     Changer la qualité                                              DONE
@@ -89,12 +85,6 @@ public class InGameUI : MonoBehaviour
 
     private List<Color> unitColorList;
     private GameManager gameManager;
-
-    public void OnDisable()
-    {
-        // inGameUI.SetActive(false);
-        // unitIconsSection.SetActive(false);
-    }
 
     public void OnEnable()
     {
@@ -157,6 +147,11 @@ public class InGameUI : MonoBehaviour
             }
         }
     }
+
+
+
+
+
 
     public void resetUnitIcon()
         {

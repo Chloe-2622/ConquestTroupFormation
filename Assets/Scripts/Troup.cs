@@ -1220,7 +1220,6 @@ public abstract class Troup : MonoBehaviour
                     navMeshAgent.SetDestination(wallPosition);
                     Troup troup = navMeshAgent.GetComponent<Troup>();
 
-                    Debug.Log("--- " + wallPosition);
                     yield return new WaitWhile(() => !navMeshAgent.isStopped && Vector3.Distance(navMeshAgent.transform.position, wallPosition) > troup.attackRange);
                     
 
@@ -1254,7 +1253,7 @@ public abstract class Troup : MonoBehaviour
             
             IsActionComplete = true;
 
-            Debug.Log("--- Movement complete");
+            Debug.Log("Movement complete");
         }
     }
 
