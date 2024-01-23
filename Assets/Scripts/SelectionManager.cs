@@ -283,13 +283,14 @@ public class SelectionManager : MonoBehaviour
     }
 
     // Désélectionne tous les éléments précédements sélectionnés
-    private void resetSelection()
+    public void resetSelection()
     {
         foreach (GameObject currentSelection in currentSelections)
         {
             if (currentSelection != null) { selectionableObjects[currentSelection] = false; }
         }
         currentSelections = new List<GameObject>();
+        newSelection.Invoke();
     }
 
     public Dictionary<GameObject, bool> getDictionnary()
@@ -324,6 +325,13 @@ public class SelectionManager : MonoBehaviour
     {
         selectionableObjects[obj] = false;
         selectionableObjects.Remove(obj);
+    }
+
+    public void removeSelectedObject(GameObject obj)
+    {
+        currentSelections.Remove(obj);
+        newSelection.Invoke();
+        
     }
 
     static void RemoveNullKeys<TKey, TValue>(Dictionary<TKey, TValue> dictionary)

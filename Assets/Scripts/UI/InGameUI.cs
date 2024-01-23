@@ -107,6 +107,7 @@ public class InGameUI : MonoBehaviour
 
         gameManager.updateTroupCounter.AddListener(updateCounter);
         selectionManager.newSelection.AddListener(updateSelectedTroups);
+        gameManager.troupPurchase.resetSelection.AddListener(resetUnitIcon);
 
         unitColorList = new List<Color> { combatantColor, archerColor, cavalierColor,
                                             guerisseurColor, catapulteColor, porte_bouclierColor,
@@ -147,11 +148,6 @@ public class InGameUI : MonoBehaviour
             }
         }
     }
-
-
-
-
-
 
     public void resetUnitIcon()
         {

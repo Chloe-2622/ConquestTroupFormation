@@ -46,6 +46,7 @@ public class TroupPurchase : MonoBehaviour
     private int usableGold;
     [HideInInspector] public UnityEvent goldUpdate;
     [HideInInspector] public UnityEvent notEnoughtGold;
+    [HideInInspector] public UnityEvent resetSelection;
 
     // Remove Unit
     private Troup previousRemovedTroup;
@@ -245,8 +246,8 @@ public class TroupPurchase : MonoBehaviour
             usableGold += troupToRemove.getCost();
             goldUpdate.Invoke();
 
-            GameObject.Destroy(troupToRemove.gameObject);
             gameManager.removeAlly(troupToRemove);
+            GameObject.Destroy(troupToRemove.gameObject);
         }
         else
         {
@@ -266,6 +267,7 @@ public class TroupPurchase : MonoBehaviour
             gameManager.removeAlly(troupToRemove);
             GameObject.Destroy(troupToRemove.gameObject);
         }
+        resetSelection.Invoke();
     }
 
     public void chooseUnit(InputAction.CallbackContext context)
