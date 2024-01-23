@@ -14,7 +14,7 @@ public class InGameUI : MonoBehaviour
     /* 
     TODO
 
-    Attaque des murs par les unités si pas de chemein possible
+    
     
     Revoir l'esthétisme de l'UI
             - Agrandir l'UI en haut (noms + or)
@@ -26,18 +26,25 @@ public class InGameUI : MonoBehaviour
     
     Bugs à fix :
         Bug des golds qui reapparaissent
+        Bug Camera quand on tiens troupe
+        Mur prends pas dégat au centre
 
     Bonus: Faire l'indication des dégats        
 
 
 
-    Changer la qualité                                  DONE
-    Batisseur et murs                                   DONE
-    Ecrans de victoire/défaite                          DONE
-    Debug le fait de pouvoir jouer en purchase phase    DONE
-    Ctrl + A = sélectionne tout les unités              DONE
-    1,2,3,4 ... pour choisir les unités                 DONE
-    R pour rotate les unités                            DONE
+
+
+
+    Collision preview mur                                           DONE
+    Attaque des murs par les unités si pas de chemin possible       DONE
+    Changer la qualité                                              DONE
+    Batisseur et murs                                               DONE
+    Ecrans de victoire/défaite                                      DONE
+    Debug le fait de pouvoir jouer en purchase phase                DONE
+    Ctrl + A = sélectionne tout les unités                          DONE
+    1,2,3,4 ... pour choisir les unités                             DONE
+    R pour rotate les unités                                        DONE
     */
 
 

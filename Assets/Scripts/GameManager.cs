@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Batisseur")]
     public GameObject WallPrefab;
+    public GameObject EnemieWallPrefab;
 
     [Header("Scene Dependant Objects")]
     public Camera mainCamera;
@@ -57,6 +58,7 @@ public class GameManager : MonoBehaviour
     public LayerMask floorMask;
     public LayerMask troupMask;
     public LayerMask allyZoneMask;
+    public LayerMask wallMask;
 
     [Header("Other")]    
     public Transform selectionArrow;

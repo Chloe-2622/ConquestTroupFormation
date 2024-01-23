@@ -18,6 +18,7 @@ public class Batisseur : Troup
 
     private GameObject hammer;
     private GameObject wallPrefab;
+    private GameObject enemieWallPrefab;
 
     private Wall previousWall;
     private Wall nextWall;
@@ -40,6 +41,7 @@ public class Batisseur : Troup
         hammer = transform.Find("Hammer").gameObject;
 
         wallPrefab = GameManager.Instance.WallPrefab;
+        enemieWallPrefab = GameManager.Instance.EnemieWallPrefab;
         floorMaskLayer = GameManager.Instance.floorMask;
 
         wallPlacement = WallPlacement();
@@ -114,7 +116,7 @@ public class Batisseur : Troup
             {
                 hasSelectedFistPos = true;
                 firstPos = lastFirstPosition;
-                Debug.Log("--- First pos " + firstPos);
+                Debug.Log("First pos " + firstPos);
             }
             yield return null;
         }
@@ -146,13 +148,12 @@ public class Batisseur : Troup
             {
                 hasSelectedSecondPos = true;
                 secondPos = lastSecondPosition;
-                Debug.Log("--- Second pos " + secondPos);
+                Debug.Log("Second pos " + secondPos);
             }
             yield return null;
         }
 
         GameObject.Destroy(preview);
-        Debug.Log("-- first" + firstPos + "second" + secondPos);
         StartCoroutine(BuildBehaviour());
     }
 
@@ -162,6 +163,13 @@ public class Batisseur : Troup
         {
             preview = Instantiate(wallPrefab, tower_1_Position, new Quaternion(0, 0, 0, 0));
             previewWallComponent = preview.GetComponent<Wall>();
+            // On désactive toutes les collisions possibles avec la preview
+            //preview.transform.GetChild(0).GetComponent<Collider>().enabled = false;
+            preview.transform.GetChild(0).GetComponent<NavMeshObstacle>().enabled = false;
+            //preview.transform.GetChild(1).GetComponent<Collider>().enabled = false;
+            preview.transform.GetChild(1).GetComponent<NavMeshObstacle>().enabled = false;
+            //preview.transform.GetChild(2).GetComponent<Collider>().enabled = false;
+            preview.transform.GetChild(2).GetComponent<NavMeshObstacle>().enabled = false;
         }
         previewWallComponent.setTower_1_Position(tower_1_Position);
         previewWallComponent.setTower_2_Position(tower_2_Position);
@@ -188,7 +196,7 @@ public class Batisseur : Troup
                     minDistanceTower_1 = Vector3.Distance(firstPos, towersPositions[i]);
                     nearestPosition_1 = towersPositions[i];
 
-                    Debug.Log("---- previous " + allyWall + " " + nearestPosition_1);
+                    Debug.Log("Previous " + allyWall + " " + nearestPosition_1);
                 }
 
                 if (Vector3.Distance(secondPos, towersPositions[i]) < minDistanceTower_2)
@@ -196,12 +204,12 @@ public class Batisseur : Troup
                     minDistanceTower_2 = Vector3.Distance(firstPos, towersPositions[i]);
                     nearestPosition_2 = towersPositions[i];
 
-                    Debug.Log("---- next " + allyWall + " " + nearestPosition_2);
+                    Debug.Log("Next " + allyWall + " " + nearestPosition_2);
                 }
             }
         }
-        if (minDistanceTower_1 != previewWallComponent.wallFusionMaxDistance) { Debug.Log("---- nearestPosition_1"); firstPos = nearestPosition_1; }
-        if (minDistanceTower_2 != previewWallComponent.wallFusionMaxDistance) { Debug.Log("---- nearestPosition_2"); secondPos = nearestPosition_2; }
+        if (minDistanceTower_1 != previewWallComponent.wallFusionMaxDistance) { firstPos = nearestPosition_1; }
+        if (minDistanceTower_2 != previewWallComponent.wallFusionMaxDistance) { secondPos = nearestPosition_2; }
 
     }
 
@@ -209,19 +217,27 @@ public class Batisseur : Troup
     {
         findNearestWall();
 
-        Debug.Log("-- go to " + firstPos);
+        Debug.Log("Go to " + firstPos);
         AddAction(new MoveToPosition(agent, firstPos, positionThreshold));
         yield return new WaitWhile(() => Vector3.Distance(transform.position, firstPos) > constructionRange);
         AddAction(new Standby());
 
+        GameObject newWall;
         StartCoroutine(SwingHammer());
-        GameObject newWall = Instantiate(wallPrefab, firstPos, new Quaternion(0, 0, 0, 0));
+        if (troupType == Troup.TroupType.Ally)
+        {
+            newWall = Instantiate(wallPrefab, firstPos, new Quaternion(0, 0, 0, 0));
+        }
+        else
+        {
+            newWall = Instantiate(enemieWallPrefab, firstPos, new Quaternion(0, 0, 0, 0));
+        }
         Wall newWallComponent = newWall.GetComponent<Wall>();
         newWallComponent.setTower_1_Position(firstPos);
         newWallComponent.setTower_2_Position(firstPos);
         newWallComponent.addToGroup();
 
-        Debug.Log("-- go to " + secondPos);
+        Debug.Log("Go to " + secondPos);
         AddAction(new MoveToPosition(agent, secondPos, positionThreshold));
         yield return new WaitWhile(() => Vector3.Distance(transform.position, secondPos) > constructionRange);
         AddAction(new Standby());
