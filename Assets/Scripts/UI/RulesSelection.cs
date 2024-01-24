@@ -12,8 +12,6 @@ public class RulesSelection : MonoBehaviour
     [SerializeField] TMP_Dropdown arenaSelection;
     [SerializeField] TMP_InputField playerNameInput;
 
-    [Header("Input System")]
-    [SerializeField] private InputActionReference returnAction;
 
     public void Start()
     {
@@ -41,20 +39,4 @@ public class RulesSelection : MonoBehaviour
     {
         SceneManager.LoadScene("Arene_" + OptionsManager.Instance.chosenArena.ToString());
     }
-
-
-    // Return Action
-    private void OnEnable()
-    {
-        returnAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
-        returnAction.action.started += OnInputStarted; // S'active à la pression initiale des touches
-    }
-
-    private void OnDisable()
-    {
-        returnAction.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
-        returnAction.action.started -= OnInputStarted;
-    }
-    public void OnInputStarted(InputAction.CallbackContext context) { SceneManager.LoadScene("Title Screen"); }
-
 }

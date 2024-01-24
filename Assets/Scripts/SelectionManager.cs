@@ -266,7 +266,7 @@ public class SelectionManager : MonoBehaviour
                 }
             }
         }
-        if (currentSelections.Count > 0) { Debug.Log("--- " + thereIsCatapulte);  showControls.showUnitControls(thereIsCatapulte); }
+        if (currentSelections.Count > 0) { showControls.showUnitControls(thereIsCatapulte); }
         else { showControls.hideUnitControls(); }
         newSelection.Invoke();
     }

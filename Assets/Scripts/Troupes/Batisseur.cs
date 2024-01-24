@@ -11,17 +11,12 @@ public class Batisseur : Troup
     [SerializeField] private float swingTime;
     [SerializeField] private float wallRechargeTime;
     [SerializeField] private float constructionRange;
-    [SerializeField] private bool isPlacingWall;
-
 
     private LayerMask floorMaskLayer;
 
     private GameObject hammer;
     private GameObject wallPrefab;
     private GameObject enemieWallPrefab;
-
-    private Wall previousWall;
-    private Wall nextWall;
 
     private GameObject preview;
     private Wall previewWallComponent;
@@ -30,21 +25,15 @@ public class Batisseur : Troup
     private Vector3 secondPos = new Vector3(0, 0, 0);
 
 
-    private IEnumerator wallPlacement;
-
-
-
     protected override void Awake()
     {
         base.Awake();
 
         hammer = transform.Find("Hammer").gameObject;
 
-        wallPrefab = GameManager.Instance.WallPrefab;
-        enemieWallPrefab = GameManager.Instance.EnemieWallPrefab;
-        floorMaskLayer = GameManager.Instance.floorMask;
-
-        wallPlacement = WallPlacement();
+        wallPrefab = gameManager.WallPrefab;
+        enemieWallPrefab = gameManager.EnemieWallPrefab;
+        floorMaskLayer = gameManager.floorMask;
     }
 
     // Update is called once per frame
@@ -56,45 +45,20 @@ public class Batisseur : Troup
 
         if (!GameManager.Instance.hasGameStarted()) { return; }
         AttackBehaviour();
-        WallPlacementBehaviour();
     }
 
-    public void WallPlacementBehaviour()
+    protected override IEnumerator SpecialAbility()
     {
-        if (isSelected)
-        {
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                if (!isPlacingWall)
-                {
-                    StartCoroutine(wallPlacement);
-                }
-                else
-                {
-                    StopCoroutine(wallPlacement);
-                }
-
-                isPlacingWall = !isPlacingWall;
-            }
-
-            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                StopCoroutine(wallPlacement);
-                isPlacingWall = false;
-                GameObject.Destroy(preview);
-            }
-        }
-    }      
-
-    protected IEnumerator WallPlacement()
-    {
-        bool hasSelectedFistPos = false;
+        bool hasSelectedFirstPos = false;
         bool hasSelectedSecondPos = false;
 
         Vector3 lastFirstPosition = new Vector3();
         Vector3 lastSecondPosition = new Vector3();
 
-        while (!hasSelectedFistPos)
+        yield return new WaitWhile(() => Input.GetKeyDown(KeyCode.F));
+
+        // On montre la pose du premier mur, que on annule
+        while (!hasSelectedFirstPos && !Input.GetKeyDown(KeyCode.Alpha1) && !Input.GetKeyDown(KeyCode.Alpha2) && !Input.GetKeyDown(KeyCode.Alpha3) && !Input.GetKeyDown(KeyCode.Alpha4) && !Input.GetKeyDown(KeyCode.F) && !Input.GetKeyDown(KeyCode.LeftControl))
         {
             Ray ray_1 = camera1.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit_1;
@@ -114,12 +78,14 @@ public class Batisseur : Troup
             }
             if (Input.GetMouseButtonUp(0))
             {
-                hasSelectedFistPos = true;
+                hasSelectedFirstPos = true;
                 firstPos = lastFirstPosition;
                 Debug.Log("First pos " + firstPos);
             }
             yield return null;
         }
+
+        if (hasSelectedFirstPos) { isPlacingWall = true;  StartCoroutine(DecreaseAbilityBar()); }
 
         while (!hasSelectedSecondPos && isPlacingWall)
         {
@@ -143,7 +109,6 @@ public class Batisseur : Troup
                     Debug.Log("Couldn't find near NavMesh");
                 }
             }
-
             if (Input.GetMouseButtonDown(0) && lastSecondPosition != lastFirstPosition)
             {
                 hasSelectedSecondPos = true;
@@ -154,7 +119,8 @@ public class Batisseur : Troup
         }
 
         GameObject.Destroy(preview);
-        StartCoroutine(BuildBehaviour());
+        if (hasSelectedSecondPos) { StartCoroutine(BuildWall()); }
+        else { specialAbilityDelay = 0f; }
     }
 
     public void showPreview(Vector3 tower_1_Position, Vector3 tower_2_Position)
@@ -173,6 +139,21 @@ public class Batisseur : Troup
         }
         previewWallComponent.setTower_1_Position(tower_1_Position);
         previewWallComponent.setTower_2_Position(tower_2_Position);
+    }
+
+    public IEnumerator DecreaseAbilityBar()
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < wallRechargeTime)
+        {
+            abilityBar.fillAmount = 1 - elapsedTime / wallRechargeTime;
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+        abilityBar.fillAmount = 0;
+
+        specialAbilityDelay = specialAbilityRechargeTime;
     }
 
     public void findNearestWall()
@@ -210,10 +191,9 @@ public class Batisseur : Troup
         }
         if (minDistanceTower_1 != previewWallComponent.wallFusionMaxDistance) { firstPos = nearestPosition_1; }
         if (minDistanceTower_2 != previewWallComponent.wallFusionMaxDistance) { secondPos = nearestPosition_2; }
-
     }
 
-    protected IEnumerator BuildBehaviour()
+    protected IEnumerator BuildWall()
     {
         findNearestWall();
 
@@ -242,32 +222,13 @@ public class Batisseur : Troup
         yield return new WaitWhile(() => Vector3.Distance(transform.position, secondPos) > constructionRange);
         AddAction(new Standby());
 
-        StartCoroutine(SwingHammer());
-        isPlacingWall = false;
-        preview = null;
-        previewWallComponent = null;
         newWallComponent.setTower_2_Position(secondPos);
+        isPlacingWall = false;
+
+        StartCoroutine(SpecialAbilityCountdown());
     }
 
-    protected override IEnumerator SpecialAbility()
-    {
-        /* Debug.Log("Batisseur special ability activated");
-
-        float elapsedTime = 0f;
-        while (elapsedTime < wallRechargeTime)
-        {
-            abilityBar.fillAmount = 1 - elapsedTime / wallRechargeTime;
-            elapsedTime += Time.deltaTime;
-
-            yield return null;
-        }
-        abilityBar.fillAmount = 0;
-
-        specialAbilityDelay = specialAbilityRechargeTime;
-        StartCoroutine(SpecialAbilityCountdown()); */
-        yield return null;
-    }
-
+    // Attack
     protected override IEnumerator Attack(Troup enemy)
     {
         while (enemy != null)

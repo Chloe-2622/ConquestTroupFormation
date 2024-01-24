@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -12,6 +13,9 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private InputActionReference pauseAction;
     [SerializeField] private Button pauseButton;
+
+    [Header("Purchase UI")]
+    [SerializeField] private GameObject purchaseUI;
 
     [Header("Options")]
     [SerializeField] private GameObject optionsPanel;
@@ -63,11 +67,19 @@ public class PauseMenu : MonoBehaviour
     // Pause / Resume
     public void pauseGame()
     {
+        purchaseUI.SetActive(false);
+        gameManager.troupPurchase.gameObject.SetActive(false);
+
         pausePanel.SetActive(true);
         gameManager.PauseGame();
     }
     public void resumeGame()
     {
+        if (!gameManager.hasGameStarted())
+        {
+            purchaseUI.SetActive(true);
+            gameManager.troupPurchase.gameObject.SetActive(true);
+        } 
         pausePanel.SetActive(false);
         gameManager.ResumeGame();
     }

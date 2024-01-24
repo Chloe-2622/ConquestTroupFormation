@@ -876,12 +876,12 @@ GameObject:
   - component: {fileID: 1896501491574426742}
   - component: {fileID: 8943166259926611020}
   - component: {fileID: 952912426620106848}
+  - component: {fileID: 9011748387695377219}
   - component: {fileID: 4226910005943062028}
   - component: {fileID: 2422361567366102289}
+  - component: {fileID: 2744909732416102768}
   - component: {fileID: 3439163667423336414}
   - component: {fileID: 5466576109736878900}
-  - component: {fileID: 9011748387695377219}
-  - component: {fileID: 2744909732416102768}
   m_Layer: 5
   m_Name: EventSystem
   m_TagString: Untagged
@@ -939,6 +939,18 @@ MonoBehaviour:
   m_InputActionsPerSecond: 10
   m_RepeatDelay: 0.5
   m_ForceModuleActive: 0
+--- !u!114 &9011748387695377219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2234711246118503527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb750ab473c8bcf4ead8f9077ce01ea6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4226910005943062028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -954,7 +966,8 @@ MonoBehaviour:
   pausePanel: {fileID: 4066121893012053524}
   pauseAction: {fileID: -8522509757387999719, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
   pauseButton: {fileID: 6133153615064416660}
-  optionsPanel: {fileID: 0}
+  purchaseUI: {fileID: 4296423322823349167}
+  optionsPanel: {fileID: 1513215238442677848}
 --- !u!114 &2422361567366102289
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -991,6 +1004,26 @@ MonoBehaviour:
   bars: {fileID: 4235820849400654248}
   checkBox: {fileID: 875159769646233960}
   forcePersistentFormationAction: {fileID: 8291691667327827382, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
+--- !u!114 &2744909732416102768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2234711246118503527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19fbc3abadf7604c8a95394a079600d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controlsSection: {fileID: 6573254251936512584}
+  firstPosition: {x: 0, y: -50, z: 0}
+  secondPosition: {x: 0, y: -300, z: 0}
+  thirdPosition: {x: 0, y: -530, z: 0}
+  defaultControlsPrefab: {fileID: 8378336943373406369, guid: ac28f7f10c81ac041a418bb5ae1526a0, type: 3}
+  purchaseControlsPrefab: {fileID: 8740234714249122467, guid: f86e50b206c7c5b49a509e645e522686, type: 3}
+  unitControlsPrefab: {fileID: 7322169065950479101, guid: adc95d7dc9a2df246b5a543482ee25f1, type: 3}
+  catapulteControlPrefab: {fileID: 7758033059717955531, guid: db5a4155c80ab21488d77c215de6aedd, type: 3}
 --- !u!114 &3439163667423336414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1027,38 +1060,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   victoryPanel: {fileID: 6637076632492823942}
   defeatPanel: {fileID: 4477952928426738324}
---- !u!114 &9011748387695377219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2234711246118503527}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb750ab473c8bcf4ead8f9077ce01ea6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2744909732416102768
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2234711246118503527}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19fbc3abadf7604c8a95394a079600d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controlsSection: {fileID: 6573254251936512584}
-  firstPosition: {x: 0, y: -50, z: 0}
-  secondPosition: {x: 0, y: -300, z: 0}
-  thirdPosition: {x: 0, y: -530, z: 0}
-  defaultControlsPrefab: {fileID: 8378336943373406369, guid: ac28f7f10c81ac041a418bb5ae1526a0, type: 3}
-  purchaseControlsPrefab: {fileID: 8740234714249122467, guid: f86e50b206c7c5b49a509e645e522686, type: 3}
-  unitControlsPrefab: {fileID: 7322169065950479101, guid: adc95d7dc9a2df246b5a543482ee25f1, type: 3}
-  catapulteControlPrefab: {fileID: 7758033059717955531, guid: db5a4155c80ab21488d77c215de6aedd, type: 3}
 --- !u!1 &2245771043277094672
 GameObject:
   m_ObjectHideFlags: 0
@@ -2305,7 +2306,7 @@ RectTransform:
   m_GameObject: {fileID: 7058210149009874039}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8296861801144836435}

@@ -93,10 +93,10 @@ public class GameManager : MonoBehaviour
     public GameObject king;
 
     // Allies and Enemis dictionnary -----------------------------------------------------------------------------
-    private static HashSet<Troup> Allies = new HashSet<Troup>();
-    private static HashSet<Wall> AllyWalls = new HashSet<Wall>();
-    private static HashSet<Troup> Enemies = new HashSet<Troup>();
-    private static HashSet<Wall> EnemiyWalls = new HashSet<Wall>();
+    private HashSet<Troup> Allies = new HashSet<Troup>();
+    private HashSet<Wall> AllyWalls = new HashSet<Wall>();
+    private HashSet<Troup> Enemies = new HashSet<Troup>();
+    private HashSet<Wall> EnemiyWalls = new HashSet<Wall>();
 
     private List<GameObject> UnitPrefabs = new List<GameObject>();
 

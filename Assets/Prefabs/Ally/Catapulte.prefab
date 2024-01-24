@@ -920,9 +920,9 @@ GameObject:
   - component: {fileID: 2081391671169810418}
   - component: {fileID: 8085429279557207350}
   - component: {fileID: 7133949426430743617}
-  - component: {fileID: 9219500073165828899}
+  - component: {fileID: 2275966440490571499}
   m_Layer: 8
-  m_Name: CatapulteEnemy
+  m_Name: Catapulte
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1045,7 +1045,7 @@ CapsuleCollider:
   m_Height: 5.21
   m_Direction: 1
   m_Center: {x: 0, y: 0.52, z: 0}
---- !u!114 &9219500073165828899
+--- !u!114 &2275966440490571499
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

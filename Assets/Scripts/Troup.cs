@@ -9,28 +9,6 @@ using Unity.VisualScripting;
 
 public abstract class Troup : MonoBehaviour
 {
-
-    /* 
-     TODO : 
-
-        -DONE-  Carte avec terrain mieux, plus belle
-        -DONE-  Couronne (modèle + récupérable + qui flotte)
-        -DONE-  Roi (comportement des unités si Roi)
-        -DONE-  Modèle des unités
-        -DONE-  Animation basique des unités
-                Ecran menu principal (blender avec mise en scène non contractuelle des modèles)
-        -DONE-  Finir les unités : 
-	    -DONE-      - Catapulte
-	    -DONE-      - Porte-étendard
-	    -DONE-      - Porte-bouclier
-                Capa spécial bélier
-                Catapulte avec queue (si le temps)   
-                SFX basiques
-                IA des ennemis
-
-    */
-
-
     [Header("General stats")]
     [SerializeField] public TroupType troupType;
     [SerializeField] public UnitType unitType;
@@ -67,6 +45,7 @@ public abstract class Troup : MonoBehaviour
     private bool isPlayingCircleAnim;
     private bool isChosingPlacement;
     private bool isChosingFollow;
+    public bool isPlacingWall;
     protected bool isFollowingOrders;
     private bool hasSpawnedTombe;
     [SerializeField] private bool isMovingToKing;
@@ -176,6 +155,7 @@ public abstract class Troup : MonoBehaviour
         wallMask = gameManager.wallMask;
         floorMask = gameManager.floorMask;
 
+        isPlacingWall = false;
         if (unitType == Troup.UnitType.Mur)
         {
             wallComponent = GetComponent<Wall>();
@@ -195,7 +175,7 @@ public abstract class Troup : MonoBehaviour
         }
         if (isAddedWhenAwake)
         {
-            // Debug.Log("!! Unit added");
+            Debug.Log("--- Unit added");
             addToGroup();
         }
     }
@@ -391,27 +371,27 @@ public abstract class Troup : MonoBehaviour
             }
 
             // Placement input
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            if (Input.GetKeyDown(KeyCode.Alpha1) && !isPlacingWall)
             {
                 isChosingPlacement = true;
                 StartCoroutine(PlaceSelection());
             }
 
             // Patrol input
-            if (Input.GetKeyDown(KeyCode.Alpha2))
+            if (Input.GetKeyDown(KeyCode.Alpha2) && !isPlacingWall)
             {
                 isChosingPatrol = true;
                 StartCoroutine(PatrolSelection());
             }
 
             // Follow input
-            if (Input.GetKeyDown(KeyCode.Alpha3))
+            if (Input.GetKeyDown(KeyCode.Alpha3) && !isPlacingWall)
             {
                 isChosingFollow = true;
                 StartCoroutine(FollowSelection());
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha4))
+            if (Input.GetKeyDown(KeyCode.Alpha4) && !isPlacingWall)
             {
                 AddAction(new Standby());
             }
@@ -419,6 +399,7 @@ public abstract class Troup : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.F) && specialAbilityDelay == 0)
             {
                 // Debug.Log("-- Activate Ability");
+                Debug.Log("--- Start Ability");
                 StartCoroutine(SpecialAbility());
                 specialAbilityDelay = -1f;
             }
