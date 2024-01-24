@@ -200,7 +200,8 @@ public class Guerisseur : Troup
                 StopCoroutine(currentActionCoroutine);
                 actionQueue.Enqueue(new Standby());
                 StartCoroutine(currentActionCoroutine);
-                
+
+                StartCoroutine(TurnTo(currentHealedAlly.transform.position));
                 healCoroutine = Heal(currentHealedAlly.GetComponent<Troup>());
                 StartCoroutine(healCoroutine);
                 isHealing = true;
@@ -218,7 +219,7 @@ public class Guerisseur : Troup
             Vector3 targetPosition = currentHealedAlly.transform.position;
             targetPosition.y = transform.position.y;  // Keep the same y position as the object you are rotating
 
-            transform.LookAt(targetPosition);
+            // transform.LookAt(targetPosition);
         }
 
         if (currentHealedAlly != null && !currentHealedAlly.GetComponent<Troup>().IsInjured())

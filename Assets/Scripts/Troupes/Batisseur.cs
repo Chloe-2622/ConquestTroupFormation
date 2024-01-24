@@ -243,12 +243,15 @@ public class Batisseur : Troup
         AddAction(new Standby());
 
         StartCoroutine(SwingHammer());
+        isPlacingWall = false;
+        preview = null;
+        previewWallComponent = null;
         newWallComponent.setTower_2_Position(secondPos);
     }
 
     protected override IEnumerator SpecialAbility()
     {
-        Debug.Log("Batisseur special ability activated");
+        /* Debug.Log("Batisseur special ability activated");
 
         float elapsedTime = 0f;
         while (elapsedTime < wallRechargeTime)
@@ -261,7 +264,8 @@ public class Batisseur : Troup
         abilityBar.fillAmount = 0;
 
         specialAbilityDelay = specialAbilityRechargeTime;
-        StartCoroutine(SpecialAbilityCountdown());
+        StartCoroutine(SpecialAbilityCountdown()); */
+        yield return null;
     }
 
     protected override IEnumerator Attack(Troup enemy)

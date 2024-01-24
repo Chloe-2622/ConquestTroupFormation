@@ -919,8 +919,8 @@ GameObject:
   - component: {fileID: 7935898198155487177}
   - component: {fileID: 2081391671169810418}
   - component: {fileID: 8085429279557207350}
-  - component: {fileID: 8349985202907488932}
   - component: {fileID: 3410021225126253725}
+  - component: {fileID: 7133949426430743617}
   m_Layer: 8
   m_Name: CatapulteEnemy
   m_TagString: Untagged
@@ -975,7 +975,7 @@ MonoBehaviour:
   positionThreshold: 2
   attackDamage: 0
   attackRechargeTime: 4
-  attackRange: 10
+  defaultAttackRange: 0
   specialAbilityRechargeTime: 30
   isChosingPatrol: 0
   isFollowingEnemy: 0
@@ -1023,27 +1023,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!65 &8349985202907488932
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7307699464318762355}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.63, y: 1.1, z: 3}
-  m_Center: {x: 0, y: 0.55, z: 0}
 --- !u!114 &3410021225126253725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1062,6 +1041,29 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!136 &7133949426430743617
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7307699464318762355}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.5
+  m_Height: 5.21
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.52, z: 0}
 --- !u!1001 &481634011723226043
 PrefabInstance:
   m_ObjectHideFlags: 0
