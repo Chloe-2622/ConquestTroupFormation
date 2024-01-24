@@ -391,7 +391,7 @@ MonoBehaviour:
   positionThreshold: 1
   attackDamage: 20
   attackRechargeTime: 1
-  attackRange: 2
+  defaultAttackRange: 1
   specialAbilityRechargeTime: 20
   isChosingPatrol: 0
   isFollowingEnemy: 0
@@ -404,6 +404,7 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
+  isMovingToKing: 0
   enragedTime: 5
   enragedSpeed: 12
   enragedAttackRechargeTime: 0.5
@@ -466,7 +467,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   outlineMode: 0
-  outlineColor: {r: 1, g: 0, b: 0.009674549, a: 1}
+  outlineColor: {r: 1, g: 0, b: 0.007843138, a: 1}
   outlineWidth: 2
   precomputeOutline: 0
   bakeKeys: []
@@ -482,7 +483,7 @@ GameObject:
   - component: {fileID: 6543397113101709337}
   - component: {fileID: 2099782041174475288}
   - component: {fileID: 115290934367887084}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Queue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -617,7 +618,7 @@ GameObject:
   - component: {fileID: 4974362100929920319}
   - component: {fileID: 7359633883054783070}
   - component: {fileID: 772894659549734388}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}

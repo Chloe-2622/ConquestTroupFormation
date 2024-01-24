@@ -71,6 +71,7 @@ public class PauseMenu : MonoBehaviour
     public void goToOptions()
     {
         OptionsManager.Instance.setPreviousScene(SceneManager.GetActiveScene().name);
+
         SceneManager.LoadScene("Options");
     }
 

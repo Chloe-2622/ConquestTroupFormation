@@ -10,7 +10,7 @@ Material:
   m_Name: Crown
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 2100000, guid: 0b2a7fdfdeacfe24f84777927afdc660, type: 2}
-  m_ModifiedSerializedProperties: 0
+  m_ModifiedSerializedProperties: 16
   m_ValidKeywords:
   - _ALPHAPREMULTIPLY_ON
   - _SURFACE_TYPE_TRANSPARENT
@@ -18,7 +18,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses:
@@ -29,8 +29,16 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Ints: []
-    m_Floats: []
-    m_Colors: []
+    m_Floats:
+    - _DstBlend: 10
+    - _DstBlendAlpha: 10
+    - _Metallic: 0.666
+    - _Smoothness: 0.577
+    - _Surface: 1
+    - _ZWrite: 0
+    m_Colors:
+    - _BaseColor: {r: 0.654088, g: 0.5744642, b: 0, a: 0.85882354}
+    - _Color: {r: 0.654088, g: 0.5744642, b: 0, a: 0.85882354}
   m_BuildTextureStacks: []
 --- !u!114 &5564757207928849475
 MonoBehaviour:

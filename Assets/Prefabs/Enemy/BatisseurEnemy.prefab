@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 1778354546023595924}
   - component: {fileID: 7581597199855796756}
   - component: {fileID: 52536149080439173}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -404,10 +404,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7738217919041393844}
+  - component: {fileID: 4079244137504048603}
   - component: {fileID: 8753042273054374063}
   - component: {fileID: 3232482504679713669}
   - component: {fileID: 2608831643895292793}
-  - component: {fileID: 4079244137504048603}
   m_Layer: 8
   m_Name: BatisseurEnemy
   m_TagString: Untagged
@@ -442,6 +442,48 @@ Transform:
   - {fileID: 4279533104183387857}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4079244137504048603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3630770809780813079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5d755ac9a0d3024893395fd455822c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  troupType: 1
+  unitType: 8
+  isSelected: 0
+  hasCrown: 0
+  goldCost: 5
+  movingSpeed: 7
+  health: 75
+  armor: 0
+  detectionRange: 15
+  positionThreshold: 1
+  attackDamage: 10
+  attackRechargeTime: 2
+  defaultAttackRange: 1
+  specialAbilityRechargeTime: 30
+  isChosingPatrol: 0
+  isFollowingEnemy: 0
+  isAttackingEnemy: 0
+  isPatroling: 0
+  currentAttackedTroup: {fileID: 0}
+  currentFollowedTroup: {fileID: 0}
+  specialAbilityDelay: 0
+  isVisible: 1
+  isAddedWhenAwake: 0
+  moveTargetDestination: {x: 0, y: 0, z: 0}
+  timeBeforeNextAction: 0
+  isMovingToKing: 0
+  swingTime: 0
+  wallRechargeTime: 0
+  constructionRange: 0
+  isPlacingWall: 0
 --- !u!195 &8753042273054374063
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -505,43 +547,6 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
---- !u!114 &4079244137504048603
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3630770809780813079}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5d755ac9a0d3024893395fd455822c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  troupType: 1
-  unitType: 8
-  isSelected: 0
-  hasCrown: 0
-  goldCost: 5
-  movingSpeed: 7
-  health: 75
-  armor: 0
-  detectionRange: 15
-  positionThreshold: 1
-  attackDamage: 10
-  attackRechargeTime: 2
-  attackRange: 1
-  specialAbilityRechargeTime: 30
-  isChosingPatrol: 0
-  isFollowingEnemy: 0
-  isAttackingEnemy: 0
-  isPatroling: 0
-  currentAttackedTroup: {fileID: 0}
-  currentFollowedTroup: {fileID: 0}
-  specialAbilityDelay: 0
-  isVisible: 1
-  moveTargetDestination: {x: 0, y: 0, z: 0}
-  swingTime: 0
-  wallRechargeTime: 0
 --- !u!1 &4034192431365901071
 GameObject:
   m_ObjectHideFlags: 0
@@ -902,7 +907,7 @@ GameObject:
   - component: {fileID: 5091052684006441951}
   - component: {fileID: 4993543708043690822}
   - component: {fileID: 6225839147965591696}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Queue
   m_TagString: Untagged
   m_Icon: {fileID: 0}

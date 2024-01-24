@@ -171,7 +171,7 @@ public class Catapulte : Troup
     private IEnumerator MoveToRange()
     {
         AddAction(new MoveToPosition(agent, croix.transform.position, positionThreshold));
-        yield return new WaitWhile(() => Vector3.Distance(transform.position, croix.transform.position) > attackRange);
+        yield return new WaitWhile(() => Vector3.Distance(transform.position, croix.transform.position) > getAttackRange());
         Debug.Log("--- Arrivé à destination");
         AddAction(new Standby());
 

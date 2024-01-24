@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using static Troup;
-using System.ComponentModel;
+using Unity.Collections.LowLevel.Unsafe;
+using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class InGameUI : MonoBehaviour
 {
@@ -84,6 +84,13 @@ public class InGameUI : MonoBehaviour
     [Header("Health and Ability Display")]
     [SerializeField] public GameObject bars;
 
+    [Header("Is Unit's formation persistent")]
+    [SerializeField] public GameObject checkBox;
+    [SerializeField] private InputActionReference forcePersistentFormationAction;
+    private bool isCheckBoxAvailable;
+    private Toggle toggle;
+
+
     private List<Color> unitColorList;
     private GameManager gameManager;
 
@@ -91,6 +98,14 @@ public class InGameUI : MonoBehaviour
     {
         inGameUI.SetActive(true);
         unitIconsSection.SetActive(true);
+        forcePersistentFormationAction.action.Enable();
+        forcePersistentFormationAction.action.started += checkBoxKeyBoardUpdate;
+    }
+
+    public void OnDisable()
+    {
+        forcePersistentFormationAction.action.Disable();
+        forcePersistentFormationAction.action.started -= checkBoxKeyBoardUpdate;
     }
 
 
@@ -102,6 +117,9 @@ public class InGameUI : MonoBehaviour
 
         AIName_UI.text = AIName;
         playerName_UI.text = OptionsManager.Instance.getPlayerName();
+
+        checkBox.SetActive(false);
+        toggle = checkBox.GetComponent<Toggle>();
 
         AIUnitCounter.text = gameManager.enemiesCount().ToString();
         playerUnitCounter.text = gameManager.alliesCount().ToString();
@@ -148,6 +166,9 @@ public class InGameUI : MonoBehaviour
                 unitIcon.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = selectionCount[i].ToString();
             }
         }
+
+        if (currentSelections.Count > 1) { showCheckBox(); }
+        else { hideCheckBox(); }
     }
 
     public void resetUnitIcon()
@@ -169,6 +190,31 @@ public class InGameUI : MonoBehaviour
             else if (gameManager.alliesCount() == 0) { gameManager.allUnitsAreDead(); }
         }
     }    
+
+
+    // CheckBox
+    public void hideCheckBox() { isCheckBoxAvailable = false;  checkBox.SetActive(false); }
+    public void showCheckBox()
+    { 
+        if (gameManager.hasGameStarted())
+        {
+            isCheckBoxAvailable = true;
+            toggle.SetIsOnWithoutNotify(gameManager.isFormationShapeForced);
+            checkBox.SetActive(true);
+        } 
+    }
+    public void checkBoxUpadte() { gameManager.isFormationShapeForced = toggle.isOn; showCheckBox(); }
+
+    public void checkBoxKeyBoardUpdate(InputAction.CallbackContext context) 
+    { 
+        if (!isCheckBoxAvailable) { return; }
+        gameManager.isFormationShapeForced = !gameManager.isFormationShapeForced;
+        showCheckBox(); 
+    }
+
+
+
+
 
     public void startTimer()
     {

@@ -14,8 +14,7 @@ public class Guerisseur : Troup
     [SerializeField] private GameObject healEffectSpawnPoint;
     [SerializeField] float healEffectSpeed;
 
-    
-    
+    [SerializeField] private int IAminimumTroupToRevive;
 
     private IEnumerator healCoroutine;
 
@@ -32,6 +31,8 @@ public class Guerisseur : Troup
     protected override void Awake()
     {
         base.Awake();
+
+        IAminimumTroupToRevive = troupType == TroupType.Ally ? 1 : 3;
     }
 
     // Update is called once per frame
@@ -39,9 +40,28 @@ public class Guerisseur : Troup
     {
         base.Update();
         HealBehaviour();
+
+        if (troupType == TroupType.Enemy && currentFollowedTroup == null && currentAttackedTroup == null) { IAEnemy(); }
     }
 
-    protected override void IAEnemy() { }
+    protected override void IAEnemy() 
+    {
+
+        StartCoroutine(SpecialAbility());
+
+        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
+        {
+            IAminimumTroupToRevive = 1;
+        }
+
+        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
+        {
+            actionQueue.Enqueue(new FollowUnit(agent, RandomTroupInTeam(gameManager.getEnemies()).gameObject));
+
+            timeBeforeNextAction = Random.Range(5f, 10f);
+            StartCoroutine(IAactionCountdown());
+        }
+    }
 
     protected override IEnumerator Attack(Troup enemy)
     {
@@ -251,7 +271,8 @@ public class Guerisseur : Troup
         Debug.Log("Guerisseur ability activated");
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, resurrectionRadius, tombeMask);
-        
+
+        HashSet<Tombe> troupToRevive = new HashSet<Tombe>();
 
         foreach(Collider collider in colliders)
         {
@@ -259,16 +280,21 @@ public class Guerisseur : Troup
             
             if (troupType == TroupType.Ally && collider.GetComponent<Tombe>().tombeTroupType == Tombe.TombeTroupType.Ally)
             {
-                collider.GetComponent<Tombe>().Revive();
+                troupToRevive.Add(collider.GetComponent<Tombe>());
             }
             if (troupType == TroupType.Enemy && collider.GetComponent<Tombe>().tombeTroupType == Tombe.TombeTroupType.Enemy)
             {
-                collider.GetComponent<Tombe>().Revive();
+                troupToRevive.Add(collider.GetComponent<Tombe>());
             }
         }
 
-        if (colliders.Length != 0)
+        if (troupToRevive.Count >= IAminimumTroupToRevive)
         {
+            foreach (Tombe tombe in troupToRevive)
+            {
+                if (!tombe.HasRevived()) { tombe.Revive(); }
+            }
+
             abilityBar.fillAmount = 0f;
             specialAbilityDelay = -1;
         }

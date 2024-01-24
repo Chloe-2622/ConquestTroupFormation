@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
     public Transform selectionArrow;
     public GameObject tombe;
     public GameObject BoostParticles;
+    public bool isFormationShapeForced;
     public float defaultHeight;
     public float outlineWidth;
 

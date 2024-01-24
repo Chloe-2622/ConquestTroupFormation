@@ -571,7 +571,7 @@ MonoBehaviour:
   positionThreshold: 1
   attackDamage: 20
   attackRechargeTime: 1
-  attackRange: 10
+  defaultAttackRange: 5
   specialAbilityRechargeTime: 30
   isChosingPatrol: 0
   isFollowingEnemy: 0
@@ -804,7 +804,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6416547706742605564
 Transform:
   m_ObjectHideFlags: 0
@@ -1125,7 +1125,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8115572483779820803
 Transform:
   m_ObjectHideFlags: 0

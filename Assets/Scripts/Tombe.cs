@@ -11,6 +11,7 @@ public class Tombe : MonoBehaviour
     [SerializeField] private float lifeTime = 5f;
     [SerializeField] private float reviveTime;
     private float lifeTimeLeft;
+    private bool hasRevived;
 
     [Header("Scene objects")]
     [SerializeField] private Image lifeCircle;
@@ -46,6 +47,8 @@ public class Tombe : MonoBehaviour
         
     }
 
+    public bool HasRevived() { return hasRevived; }
+
     // Update is called once per frame
     void Update()
     {
@@ -73,6 +76,8 @@ public class Tombe : MonoBehaviour
     public void Revive()
     {
         GameObject model;
+
+        hasRevived = true;
 
         Vector3 positionModel = new Vector3(transform.position.x, transform.position.y - 1, transform.position.z);
 
@@ -167,6 +172,11 @@ public class Tombe : MonoBehaviour
             GameObject spawnedUnit = Instantiate(gameManager.Archer, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
             spawnedUnit.GetComponent<Troup>().addToGroup();
+            Color color = new Color();
+            if (ColorUtility.TryParseHtmlString("#FF5733", out color))
+            {
+                spawnedUnit.GetComponent<Outline>().OutlineColor = color;
+            }
         }
         if (tombeUnitType == TombeUnitType.Cavalier)
         {
@@ -209,7 +219,13 @@ public class Tombe : MonoBehaviour
             GameObject spawnedUnit = Instantiate(gameManager.Belier, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
             spawnedUnit.GetComponent<Troup>().addToGroup();
+            Color color;
+            if (ColorUtility.TryParseHtmlString("FF5733", out color))
+            {
+                spawnedUnit.GetComponent<Outline>().OutlineColor = color;
+            }
         }
+        
 
         StopCoroutine(Timer());
         Destroy(gameObject);

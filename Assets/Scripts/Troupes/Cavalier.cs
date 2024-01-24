@@ -11,10 +11,13 @@ public class Cavalier : Troup
     [SerializeField] private float baseJambeRotationSpeed;
     [SerializeField] private float jambeRotationSpeed;
     [SerializeField] private float angleJambes;
+    [SerializeField] private float swingTime;
+    [SerializeField] private float swingAngle;
 
     private bool isRunning;
     private GameObject[] jambes1 = new GameObject[2];
     private GameObject[] jambes2 = new GameObject[2];
+    private GameObject head;
 
     IEnumerator animJambe1;
     IEnumerator animJambe2;
@@ -28,7 +31,7 @@ public class Cavalier : Troup
         jambes2[0] = (transform.Find("PateArDP").gameObject);
         jambes2[1] = (transform.Find("PateAvGP").gameObject);
 
-
+        head = transform.Find("Horse").Find("Head").gameObject;
 
         animJambe1 = MoveAnimation(true);
         animJambe2 = MoveAnimation(false);
@@ -59,10 +62,34 @@ public class Cavalier : Troup
             StopCoroutine(animJambe2);
         }
 
-        if (troupType == TroupType.Enemy && currentFollowedTroup == null && currentAttackedTroup == null) { IAEnemy(); }
+        if (troupType == TroupType.Enemy) { IAEnemy(); }
     }
 
-    protected override void IAEnemy() { }
+    protected override void IAEnemy() 
+    {
+        if (gameManager.isCrownCollected && specialAbilityDelay == 0)
+        {
+            StartCoroutine(SpecialAbility());
+            specialAbilityDelay = -1f;
+        }
+
+        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
+        {
+            int nextActionIndex = Random.Range(0, 2);
+
+            if (nextActionIndex == 0)
+            {
+                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(GameManager.Instance.CrownPosition.transform.position, 20f), positionThreshold));
+            }
+            else
+            {
+                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(GameManager.Instance.CrownPosition.transform.position, 20f), RandomVectorInFlatCircle(GameManager.Instance.CrownPosition.transform.position, 20f)));
+            }
+
+            timeBeforeNextAction = Random.Range(5f, 10f);
+            StartCoroutine(IAactionCountdown());
+        }
+    }
 
     private IEnumerator MoveAnimation(bool isRight)
     {
@@ -204,6 +231,7 @@ public class Cavalier : Troup
     {
         while (enemy != null)
         {
+            StartCoroutine(SwingHead());
             if (enemy.unitType == UnitType.Combattant)
             {
                 enemy.TakeDamage(2 * attackDamage);
@@ -236,5 +264,32 @@ public class Cavalier : Troup
 
         specialAbilityDelay = specialAbilityRechargeTime;
         StartCoroutine(SpecialAbilityCountdown());
+    }
+
+    private IEnumerator SwingHead()
+    {
+        float timer = 0f;
+        Debug.Log("I am swinging sword");
+
+        while (timer < swingTime / 2)
+        {
+            timer += Time.deltaTime;
+            head.transform.RotateAround(head.transform.position, head.transform.right, -swingAngle * (Time.deltaTime / (swingTime / 2)));
+            Debug.Log("swingR : " + head.transform.localEulerAngles.x);
+
+            yield return null;
+        }
+        head.transform.localEulerAngles = new Vector3(-swingAngle, 0f, 0f);
+        Debug.Log("swingRL");
+        while (timer < swingTime)
+        {
+            timer += Time.deltaTime;
+            head.transform.RotateAround(head.transform.position, head.transform.right, +swingAngle * (Time.deltaTime / (swingTime / 2)));
+            Debug.Log("swingL : " + head.transform.localEulerAngles.x);
+
+            yield return null;
+        }
+        head.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+
     }
 }

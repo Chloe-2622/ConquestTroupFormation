@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using TMPro;
 using UnityEngine.UIElements;
 
 public class Options : MonoBehaviour
 {
+    [SerializeField] TMP_Dropdown QualitySelection;
+
     [Header("Input System")]
     [SerializeField] private InputActionReference returnAction;
+
+    private void Start()
+    {
+        QualitySelection.value = OptionsManager.Instance.currentQualitySelection;
+    }
 
     private void OnEnable()
     {
@@ -38,5 +46,10 @@ public class Options : MonoBehaviour
             Debug.Log("There is no precedent scene");
         }
         
+    }
+    public void SetQuality()
+    {
+        OptionsManager.Instance.ChangeQuality(QualitySelection.value);
+
     }
 }

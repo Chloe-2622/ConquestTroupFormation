@@ -975,7 +975,11 @@ MonoBehaviour:
   positionThreshold: 2
   attackDamage: 0
   attackRechargeTime: 4
+<<<<<<< HEAD
   attackRange: 20
+=======
+  defaultAttackRange: 20
+>>>>>>> b15c895609fe3b8dd43af3f9247a58b37101e0b9
   specialAbilityRechargeTime: 30
   isChosingPatrol: 0
   isFollowingEnemy: 0

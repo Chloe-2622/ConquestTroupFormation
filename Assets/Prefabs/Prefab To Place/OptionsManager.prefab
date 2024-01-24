@@ -44,10 +44,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60484eda3ee525d48a43a82c6ad1de0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerName: 
-  chosenArena: 0
-  generalVolume: 0.5
-  musicVolume: 0.5
-  effectsVolume: 0.5
-  graphismQuality: 1
-  resolution: 0
+  urpAsset: {fileID: 11400000, guid: c174d56ca51485a4088f4c05848e7f1f, type: 2}
+  currentQualitySelection: 2
+  chosenArena: 1
+  generalVolume: 1
+  isGeneralOn: 1
+  musicVolume: 0
+  isMusicOn: 1
+  effectsVolume: 0.3
+  isEffectsOn: 0
