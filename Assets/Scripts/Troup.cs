@@ -401,8 +401,6 @@ public abstract class Troup : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.F) && specialAbilityDelay == 0)
             {
-                // Debug.Log("-- Activate Ability");
-                Debug.Log("--- Start Ability");
                 StartCoroutine(SpecialAbility());
                 specialAbilityDelay = -1f;
             }

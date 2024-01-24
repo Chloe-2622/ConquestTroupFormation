@@ -28,6 +28,7 @@ public class PauseMenu : MonoBehaviour
     void Start()
     {
         gameManager = GameManager.Instance;
+        optionsPanel.SetActive(false);
         resumeGame();
     }
 
