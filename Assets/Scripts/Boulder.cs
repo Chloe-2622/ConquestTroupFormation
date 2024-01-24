@@ -9,17 +9,9 @@ public class Boulder : MonoBehaviour
     [SerializeField] private bool oneShot;
     [SerializeField] private float damage;
     [SerializeField] private float hitRadius;
-    public BoulderTroupType boulderTroupType;
+    public Troup.TroupType boulderType;
 
     HashSet<GameObject> hitObjects = new HashSet<GameObject>();
-
-    public enum BoulderTroupType { Ally, Enemy }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()
@@ -29,48 +21,22 @@ public class Boulder : MonoBehaviour
         foreach (Collider collider in colliders)
         {
             Troup troup = collider.GetComponent<Troup>();
-
-            // Debug.Log("Touchéééé : " + collider.gameObject);
-
-            if (boulderTroupType == BoulderTroupType.Ally)
+            if (troup != null && troup.troupType != boulderType)
             {
-                if (troup != null && troup.troupType == Troup.TroupType.Enemy)
+                if (oneShot)
                 {
-                    if (oneShot)
-                    {
-                        troup.TakeDamage(Mathf.Infinity);
-                    }
-                    else
-                    {
-                        if (!hitObjects.Contains(collider.gameObject))
-                        {
-                            hitObjects.Add(collider.gameObject);
-                            Debug.Log("Touchéééé : " + collider.gameObject);
-                            troup.TakeDamage(damage);
-                        }
-                    }
+                    troup.TakeDamage(Mathf.Infinity);
                 }
-            } else
-            {
-                if (troup != null && troup.troupType == Troup.TroupType.Ally)
+                else
                 {
-                    if (oneShot)
+                    if (!hitObjects.Contains(collider.gameObject))
                     {
-                        troup.TakeDamage(Mathf.Infinity);
-                    }
-                    else
-                    {
-                        if (!hitObjects.Contains(collider.gameObject))
-                        {
-                            hitObjects.Add(collider.gameObject);
-                            Debug.Log("Touchéééé : " + collider.gameObject);
-                            troup.TakeDamage(damage);
-                        }
+                        hitObjects.Add(collider.gameObject);
+                        Debug.Log("Touchéééé : " + collider.gameObject);
+                        troup.TakeDamage(damage);
                     }
                 }
             }
-
-            
         }
     }
 

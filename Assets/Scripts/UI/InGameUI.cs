@@ -15,6 +15,7 @@ public class InGameUI : MonoBehaviour
     TODO
 
     Catapulte
+    Belier
     
     Revoir l'esthétisme de l'UI
             - Agrandir l'UI en haut (noms + or)
@@ -25,10 +26,10 @@ public class InGameUI : MonoBehaviour
         
     Bonus: Faire l'indication des dégats        
 
-    Refresh la sélection des troupes lors de la supression
-
-
     
+
+
+    Refresh la sélection des troupes lors de la supression          DONE
     Bug des golds qui reapparaissent                                DONE
     Bug Camera quand on tiens troupe                                DONE      
     Mur prends pas dégat au centre                                  DONE

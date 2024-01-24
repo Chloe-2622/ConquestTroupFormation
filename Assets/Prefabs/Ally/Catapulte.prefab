@@ -346,7 +346,7 @@ Transform:
   m_GameObject: {fileID: 4105621512608567636}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -841.85, y: -40.714996, z: -961.9}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 7.917, y: 0.00005, z: 7.917}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -971,11 +971,11 @@ MonoBehaviour:
   movingSpeed: 2
   health: 200
   armor: 0
-  detectionRange: 15
+  detectionRange: 30
   positionThreshold: 2
   attackDamage: 0
   attackRechargeTime: 4
-  attackRange: 10
+  attackRange: 20
   specialAbilityRechargeTime: 30
   isChosingPatrol: 0
   isFollowingEnemy: 0
@@ -988,10 +988,10 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
+  isMovingToKing: 0
   wheelRotationSpeed: 20
   croix: {fileID: 0}
   shootPoint: {x: 0, y: 0, z: 0}
-  maxShootingRange: 50
   oneShotTime: 12
   isSelectingPlacement: 0
   isShooting: 0
@@ -999,7 +999,6 @@ MonoBehaviour:
   timeAttenuation: 12
   isLauchingBoulder: 0
   newBoulder: {fileID: 0}
-  hasSelected: 0
 --- !u!195 &8085429279557207350
 NavMeshAgent:
   m_ObjectHideFlags: 0

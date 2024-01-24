@@ -9,7 +9,6 @@ public class Catapulte : Troup
     [SerializeField] private float wheelRotationSpeed;
     [SerializeField] private GameObject croix;
     [SerializeField] private Vector3 shootPoint;
-    [SerializeField] private float maxShootingRange;
     [SerializeField] private float oneShotTime;
 
 
@@ -27,10 +26,16 @@ public class Catapulte : Troup
     private GameObject boulderPrefab;
     private GameObject boulderSpawnPoint;
     private GameObject boulder;
-    [SerializeField] private bool hasSelected;
 
-    IEnumerator moveAnimation;
-    IEnumerator attack;
+    private Vector3 lastCrossPosition;
+
+    private IEnumerator moveAnimation;
+    private IEnumerator attack;
+    private IEnumerator shootPlaceSeletion;
+    private IEnumerator shootBoulder;
+    private IEnumerator reloadBoulder;
+    private IEnumerator loadBoulder;
+    private IEnumerator launchBoulder;
 
     protected override void Awake()
     {
@@ -43,10 +48,10 @@ public class Catapulte : Troup
         boulder = Instantiate(boulderPrefab, transform.Find("Model").Find("Lance").Find("BoulderSpawnPoint").position, Quaternion.identity, transform);
         if (troupType == TroupType.Ally)
         {
-            boulder.GetComponent<Boulder>().boulderTroupType = Boulder.BoulderTroupType.Ally;
+            boulder.GetComponent<Boulder>().boulderType = TroupType.Ally;
         } else
         {
-            boulder.GetComponent<Boulder>().boulderTroupType = Boulder.BoulderTroupType.Enemy;
+            boulder.GetComponent<Boulder>().boulderType = TroupType.Enemy;
         }
 
         croix = Instantiate(GameManager.Instance.CatapulteCroixPrefab, GameManager.Instance.CatapulteCroix.transform);
@@ -68,14 +73,11 @@ public class Catapulte : Troup
         base.Update();
 
         if (gameManager.hasGameStarted()) { AttackZoneBehaviour(); }
-
         
-
         if (agent.velocity.magnitude > 0 && !isRolling)
         {
             isRolling = true;
             isShooting = false;
-            hasSelected = false;
             // Debug.Log("Je tourne");
             StartCoroutine(moveAnimation);
         }
@@ -97,31 +99,6 @@ public class Catapulte : Troup
 
     protected override void IAEnemy() { }
 
-    protected override IEnumerator Attack(Troup enemy)
-    {
-        Debug.Log("BBBBBBB" + (isShooting && agent.velocity.magnitude == 0));
-
-        while (isShooting && agent.velocity.magnitude == 0)
-        {
-            if (!isLauchingBoulder)
-            {
-                isLauchingBoulder = true;
-                Debug.Log("Catapulte attack !!");
-                newBoulder = null;
-                StartCoroutine(LaunchBoulder());
-                mAnimator.SetBool("Attack", true);
-                yield return null;
-                mAnimator.SetBool("Attack", false);
-                yield return new WaitForSeconds(2f - Time.deltaTime);
-                mAnimator.SetBool("Attack", false);
-                yield return new WaitForSeconds(attackRechargeTime - 2f);
-                isLauchingBoulder = false;
-            }
-            
-            
-        }
-    }
-
     private void AttackZoneBehaviour()
     {
         Debug.Log("isSelected : " + isSelected);
@@ -132,45 +109,166 @@ public class Catapulte : Troup
             {
                 if (!isSelectingPlacement)
                 {
-                    StartCoroutine(ShootPlaceSeletion());
-                } else
-                {
-                    StopCoroutine(ShootPlaceSeletion());
+                    Debug.Log("catapulte Start Placement");
+                    shootPlaceSeletion = ShootPlaceSeletion();
+                    StartCoroutine(shootPlaceSeletion);
                 }
-
+                else
+                {
+                    Debug.Log("catapulte Stop Placement");
+                    StopCoroutine(shootPlaceSeletion);
+                }
                 isSelectingPlacement = !isSelectingPlacement;
             }
-        }
 
-        croix.SetActive((isSelectingPlacement || isShooting) && isSelected);
+            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                Debug.Log("catapulte Stop Placement");
+                StopCoroutine(shootPlaceSeletion);
+                isSelectingPlacement = false;
+            }
+            croix.SetActive(true);
+        }
+        else { croix.SetActive(false); }        
+    }
+
+    private IEnumerator ShootPlaceSeletion()
+    {
+        bool hasSelected = false;
+        AddAction(new Standby());
+
+        while (!hasSelected)
+        {
+            Ray ray = camera1.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, floorMask))
+            {
+                NavMeshHit closestHit;
+                if (NavMesh.SamplePosition(hit.point, out closestHit, 10, 1))
+                {
+                    lastCrossPosition = closestHit.position;
+                    croix.transform.position = lastCrossPosition;
+                }
+                else
+                {
+                    Debug.Log("Couldn't find near NavMesh");
+                }
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                hasSelected = true;
+                isSelectingPlacement = false;
+                shootPoint = lastCrossPosition;
+                croix.transform.position = lastCrossPosition;
+                Debug.Log("--- Pos choisie " + shootPoint);
+            }
+            yield return null;
+        }
+        StartCoroutine(MoveToRange());
+    }
+
+    private IEnumerator MoveToRange()
+    {
+        AddAction(new MoveToPosition(agent, croix.transform.position, positionThreshold));
+        yield return new WaitWhile(() => Vector3.Distance(transform.position, croix.transform.position) > attackRange);
+        Debug.Log("--- Arrivé à destination");
+        AddAction(new Standby());
+
+
+        loadBoulder = LoadBoulder();
+        StartCoroutine(loadBoulder);
+    }
+
+    /*
+    private IEnumerator ReloadBoulder()
+    {
+        float t = 0f;
+        Debug.Log("--- Start reload");
+
+
+
+
+        while (isShooting && agent.velocity.magnitude == 0 && t < attackRechargeTime)
+        {
+            mAnimator.SetBool("Attack", false);
+            t += Time.deltaTime;
+            yield return null;
+        }
+    }*/
+
+    private IEnumerator LoadBoulder()
+    {
+        Debug.Log("--- Load boulder");
+
+        boulder = Instantiate(boulderPrefab, transform.Find("Model").Find("Lance").Find("BoulderSpawnPoint").position, Quaternion.identity, transform);
+        boulder.GetComponent<Boulder>().boulderType = troupType;
+
+        launchBoulder = LaunchBoulder();
+        StartCoroutine(launchBoulder);
+
+        yield return null;
     }
 
     private IEnumerator LaunchBoulder()
     {
         Vector3 spawnPoint = boulderSpawnPoint.transform.position;
-        Vector3 endPoint = shootPoint;
 
         bool spawnedNewBoulder = false;
 
-        float hauteur = Vector3.Distance(spawnPoint, endPoint) / heightAttenuation;
-        float travelTime = Vector3.Distance(spawnPoint, endPoint) / timeAttenuation;
+        float hauteur = Vector3.Distance(spawnPoint, shootPoint) / heightAttenuation;
+        float travelTime = Vector3.Distance(spawnPoint, shootPoint) / timeAttenuation;
 
-        yield return new WaitForSeconds(10/24);
+        isLauchingBoulder = true;
+        isShooting = true;
+        while (isShooting)
+        {
+            if (!isLauchingBoulder)
+            {
+                isLauchingBoulder = true;
+                Debug.Log("--- Catapulte attack !!");
+                newBoulder = null;
+                //StartCoroutine(LaunchBoulder());
+                mAnimator.SetBool("Attack", true);
+                yield return null;
+                mAnimator.SetBool("Attack", false);
+                yield return new WaitForSeconds(2f - Time.deltaTime);
+                mAnimator.SetBool("Attack", false);
+                yield return new WaitForSeconds(attackRechargeTime - 2f);
+                isLauchingBoulder = false;
+            }
+        }
 
-        float t = 10/24;
+
+
+
+
+
+
+
+
+
+
+
+
+        mAnimator.SetBool("Attack", true);
+        yield return new WaitForSeconds(10 / 24);
+        Debug.Log("--- Boulder Launch");
+
+        /*
+        float t = 10 / 24;
         while (t < travelTime)
         {
             t += Time.deltaTime;
 
             float height = Mathf.Sin(Mathf.PI * (t / travelTime)) * hauteur;
 
-            Vector3 newPosition = Vector3.Lerp(spawnPoint, endPoint, t / travelTime) + Vector3.up * height;
+            Vector3 newPosition = Vector3.Lerp(spawnPoint, shootPoint, t / travelTime) + Vector3.up * height;
             if (boulder != null)
             {
                 boulder.transform.Rotate(new Vector3(0, 1, 1));
                 boulder.transform.position = newPosition;
             }
-            
 
             if (t > .9f * travelTime && !spawnedNewBoulder)
             {
@@ -178,84 +276,104 @@ public class Catapulte : Troup
                 newBoulder = Instantiate(boulderPrefab, boulderSpawnPoint.transform.position, Quaternion.identity, transform);
                 if (troupType == TroupType.Ally)
                 {
-                    newBoulder.GetComponent<Boulder>().boulderTroupType = Boulder.BoulderTroupType.Ally;
+                    newBoulder.GetComponent<Boulder>().boulderType = Troup.TroupType.Ally;
                 }
                 else
                 {
-                    newBoulder.GetComponent<Boulder>().boulderTroupType = Boulder.BoulderTroupType.Enemy;
+                    newBoulder.GetComponent<Boulder>().boulderType = Troup.TroupType.Enemy;
                 }
             }
-
-            
-
             yield return null;
         }
-
-        
+        */
         Destroy(boulder);
-        
-
         boulder = newBoulder;
-        
     }
 
-    private IEnumerator ShootPlaceSeletion()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    protected override IEnumerator Attack(Troup enemy)
     {
+        Debug.Log("BBBBBBB" + (isShooting && agent.velocity.magnitude == 0));
 
-        Debug.Log("AAAAAAAAAAAAAAAAA");
-
-        while (!hasSelected)
+        while (isShooting && agent.velocity.magnitude == 0)
         {
-            Ray ray = camera1.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            if (!isLauchingBoulder)
             {
-                Debug.Log("Debug hit : " + hit.point + " et " + hit.transform.gameObject);
-                Debug.DrawLine(transform.position, hit.point);
-
-                croix.transform.position = hit.point;
-
-                if (Input.GetMouseButton(0))
-                {
-                    if (Vector3.Distance(transform.position, hit.point) > maxShootingRange)
-                    {
-                        AddAction(new MoveToPosition(agent, hit.point, positionThreshold));
-                        yield return new WaitWhile(() => Vector3.Distance(transform.position, hit.point) > maxShootingRange);
-                        AddAction(new Standby());
-                    }
-
-                    Debug.Log("Target position clicked : " + hit.point);
-                    // hasSelected = true;
-                    SelectionArrow.GetComponent<MeshRenderer>().enabled = false;
-                    PlaceSelectionPopUp.enabled = false;
-                    isSelectingPlacement = false;
-                    isShooting = true;
-                    hasSelected = true;
-                    shootPoint = hit.point;
-                    StopCoroutine(attack);
-                    StopCoroutine(LaunchBoulder());
-                    Destroy(boulder);
-                    boulder = Instantiate(boulderPrefab, transform.Find("Model").Find("Lance").Find("BoulderSpawnPoint").position, Quaternion.identity, transform);
-                    if (troupType == TroupType.Ally)
-                    {
-                        boulder.GetComponent<Boulder>().boulderTroupType = Boulder.BoulderTroupType.Ally;
-                    }
-                    else
-                    {
-                        boulder.GetComponent<Boulder>().boulderTroupType = Boulder.BoulderTroupType.Enemy;
-                    }
-                    Debug.Log("Starting Attack Coroutine " + attack);
-                    attack = Attack(null);
-                    StartCoroutine(attack);
-                }
+                isLauchingBoulder = true;
+                Debug.Log("--- Catapulte attack !!");
+                newBoulder = null;
+                StartCoroutine(LaunchBoulder());
+                mAnimator.SetBool("Attack", true);
+                yield return null;
+                mAnimator.SetBool("Attack", false);
+                yield return new WaitForSeconds(2f - Time.deltaTime);
+                mAnimator.SetBool("Attack", false);
+                yield return new WaitForSeconds(attackRechargeTime - 2f);
+                isLauchingBoulder = false;
             }
-
-            yield return null;
         }
-
-        transform.LookAt(shootPoint);
     }
+    /*
+
+
+
+
+
+
+
+    private IEnumerator ShootBoulder()
+    {
+        Debug.Log("catapulte begin shooting");
+
+        isShooting = true;
+        shootPoint = croix.transform.position;
+
+        StopCoroutine(attack);
+        StopCoroutine(LaunchBoulder());
+        Destroy(boulder);
+
+        boulder = Instantiate(boulderPrefab, transform.Find("Model").Find("Lance").Find("BoulderSpawnPoint").position, Quaternion.identity, transform);
+        if (troupType == TroupType.Ally)
+        {
+            boulder.GetComponent<Boulder>().troup = Boulder.BoulderTroupType.Ally;
+        }
+        else
+        {
+            boulder.GetComponent<Boulder>().boulderTroupType = Boulder.BoulderTroupType.Enemy;
+        }
+        Debug.Log("Starting Attack Coroutine " + attack);
+        attack = Attack(null);
+        StartCoroutine(attack);
+
+        yield return null;
+    }
+
+    */
+
+
+
+
+
+    
 
     protected override IEnumerator SpecialAbility()
     {

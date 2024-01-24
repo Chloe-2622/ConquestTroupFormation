@@ -51,7 +51,6 @@ public class PurchaseUI : MonoBehaviour
 
         for (int i = 1; i <= numberOfUnitType; i++)
         {
-            Debug.Log("!!" + i);
             createButton(i - (numberOfUnitType + 1) / 2f, i, newNav);
         }
     }
