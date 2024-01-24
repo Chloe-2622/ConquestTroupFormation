@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.AI;
+using static UnityEngine.UI.Image;
+using Unity.VisualScripting;
 
 public abstract class Troup : MonoBehaviour
 {
@@ -72,6 +74,8 @@ public abstract class Troup : MonoBehaviour
     private float attackRange;
     protected IEnumerator currentActionCoroutine;
     private IEnumerator attackCoroutine;
+    private IEnumerator goToPosition;
+
 
     HashSet<GameObject> detectedEnemies = new HashSet<GameObject>();
     HashSet<GameObject> inRangeEnemies = new HashSet<GameObject>();
@@ -91,6 +95,7 @@ public abstract class Troup : MonoBehaviour
     protected GameObject QueueUI;
     protected NavMeshAgent agent;
     protected LayerMask troupMask;
+    protected LayerMask wallMask;
 
     // UI elements
     protected TextMeshProUGUI PlaceSelectionPopUp;
@@ -128,8 +133,12 @@ public abstract class Troup : MonoBehaviour
         maxHealth = health;
 
         // Agent setup
-        agent = GetComponent<NavMeshAgent>();
-        agent.speed = movingSpeed;
+        if (unitType != UnitType.Mur)
+        {
+            agent = GetComponent<NavMeshAgent>();
+            agent.speed = movingSpeed;
+        }
+        
 
         // Setup range
         
@@ -159,6 +168,7 @@ public abstract class Troup : MonoBehaviour
         abilityBar = unitBar.transform.GetChild(1).GetComponent<Image>();
 
         troupMask = gameManager.troupMask;
+        wallMask = gameManager.wallMask;
 
         if (unitType == Troup.UnitType.Mur)
         {
@@ -175,7 +185,7 @@ public abstract class Troup : MonoBehaviour
 
         if (troupType == TroupType.Enemy)
         {
-            gameManager.addEnemy(this);
+            addToGroup();
         }
         if (isAddedWhenAwake)
         {
@@ -351,7 +361,7 @@ public abstract class Troup : MonoBehaviour
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Alpha4))
+            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.F))
             {
                 StopCoroutine(PlaceSelection());
                 StopCoroutine(PatrolSelection());
@@ -655,7 +665,7 @@ public abstract class Troup : MonoBehaviour
 
         if (unitType == UnitType.Mur)
         {
-            Vector3 healthBarPosition = camera1.WorldToScreenPoint(wallComponent.getCentralPosition());
+            Vector3 healthBarPosition = camera1.WorldToScreenPoint(wallComponent.getHealthPosition());
             healthBar.transform.position = healthBarPosition;
         }
         else
@@ -982,7 +992,7 @@ public abstract class Troup : MonoBehaviour
             StartCoroutine(Attack(currentAttackedTroup.GetComponent<Troup>()));
             isAttackingEnemy = true;
         } */
-        if (closestEnemyInRange == null)
+        if (closestEnemyInRange == null && currentAttackedTroup != null && currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur)
         {
             // Debug.Log("Toi jt'emmerde");
             currentAttackedTroup = null;
@@ -1399,6 +1409,9 @@ public abstract class Troup : MonoBehaviour
         {
             if (troupType == TroupType.Ally) { gameManager.removeAlly(this); }
             if (troupType == TroupType.Enemy) { gameManager.removeEnemy(this);  }
+
+
+
             GameObject tombeMort = Instantiate(tombe, transform.position, transform.rotation, null);
             hasSpawnedTombe = true;
             // if (troupType == TroupType.Enemy) { tombeMort.transform.position += Vector3.up * 3; }
@@ -1456,6 +1469,7 @@ public abstract class Troup : MonoBehaviour
 
     protected void AddAction(IAction action)
     {
+        if (unitType == Troup.UnitType.Mur) { return; }
 
         if (Input.GetKey(KeyCode.LeftShift))
         {
@@ -1569,23 +1583,47 @@ public abstract class Troup : MonoBehaviour
 
             navMeshAgent.transform.GetComponent<Troup>().moveTargetDestination = targetPosition;
 
-            while (!navMeshAgent.isStopped && Vector2.Distance(new Vector2(navMeshAgent.transform.position.x, navMeshAgent.transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) >= positionThreshold)
+            yield return new WaitWhile(() => navMeshAgent.path.status == NavMeshPathStatus.PathComplete && !navMeshAgent.isStopped && Vector3.Distance(navMeshAgent.transform.position, targetPosition) > positionThreshold);
+
+            if (navMeshAgent.path.status != NavMeshPathStatus.PathComplete)
             {
-                // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
-                // Debug.Log("Moving to destination : " + targetPosition + " and current Position : " + navMeshAgent.transform.position);
-                yield return null;
+                NavMeshHit navMeshHit;
+                if (NavMesh.Raycast(navMeshAgent.transform.position, targetPosition, out navMeshHit, NavMesh.AllAreas))
+                {
+                    Vector3 wallPosition = navMeshHit.position;
+                    navMeshAgent.SetDestination(wallPosition);
+                    Troup troup = navMeshAgent.GetComponent<Troup>();
+
+                    yield return new WaitWhile(() => !navMeshAgent.isStopped && Vector3.Distance(navMeshAgent.transform.position, wallPosition) > troup.attackRange);
+                    
+
+                    //Debug.DrawRay(navMeshAgent.transform.position, navMeshAgent.transform.forward, Color.red, 10f);
+                    RaycastHit hit_wall;
+                    if (Physics.Raycast(navMeshAgent.transform.position, navMeshAgent.transform.forward, out hit_wall, Mathf.Infinity))
+                    {
+                        Wall wallToAttack = hit_wall.transform.parent.GetComponent<Wall>();
+
+                        if (troup.troupType != wallToAttack.troupType)
+                        {
+                            troup.attackCoroutine = troup.Attack(wallToAttack);
+                            troup.AddAction(new Standby());
+                            troup.currentAttackedTroup = wallToAttack.gameObject;
+                            troup.StartCoroutine(troup.attackCoroutine);
+
+                            yield return new WaitWhile(() => wallToAttack != null);
+
+                            troup.actionQueue.Enqueue(new MoveToPosition(navMeshAgent, targetPosition, positionThreshold));
+                        }
+                    }
+                }
             }
-
-
-
-            // Debug.Log("I arrived at destination ! My position is " + navMeshAgent.transform.position + " and destination is " + targetPosition);
+            
+            Debug.Log("I arrived at destination ! My position is " + navMeshAgent.transform.position + " and destination is " + targetPosition);
 
             if (Vector2.Distance(new Vector2(navMeshAgent.transform.position.x, navMeshAgent.transform.position.z), new Vector2(navMeshAgent.transform.GetComponent<Troup>().moveTargetDestination.x, navMeshAgent.transform.GetComponent<Troup>().moveTargetDestination.z)) <= positionThreshold)
             {
                 navMeshAgent.isStopped = true;
             }
-
-
             
             IsActionComplete = true;
 

@@ -54,21 +54,21 @@ public class SelectionManager : MonoBehaviour
         floorMask = gameManager.floorMask;
     }
 
-        // On s'abonne aux évènements du Event System
+        // On s'abonne aux ï¿½vï¿½nements du Event System
     private void OnEnable()
     {
-        selectionAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
+        selectionAction.action.Enable(); // Activer l'action d'entrï¿½e lorsque le script est dï¿½sactivï¿½
         selectAllAction.action.Enable();
-        selectionAction.action.started += OnInputStarted; // S'active à la pression initiale des touches
+        selectionAction.action.started += OnInputStarted; // S'active ï¿½ la pression initiale des touches
         selectionAction.action.performed += OnInputPerformed; // S'active lorque la valeur de ReadValue change
         selectionAction.action.canceled += OnInputCanceled; // S'active au relachement des touches
         selectAllAction.action.started += selectAll;
     }
 
-    // On se désabonne aux évènements du Event System
+    // On se dï¿½sabonne aux ï¿½vï¿½nements du Event System
     private void OnDisable()
     {
-        selectionAction.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
+        selectionAction.action.Disable(); // Dï¿½sactiver l'action d'entrï¿½e lorsque le script est dï¿½sactivï¿½
         selectAllAction.action.Disable();
         selectionAction.action.started -= OnInputStarted;
         selectionAction.action.performed -= OnInputPerformed;
@@ -121,7 +121,7 @@ public class SelectionManager : MonoBehaviour
         isHolding = false;
     }
 
-    // Sactive en permanence, pour afficher la zone sélectionner
+    // Sactive en permanence, pour afficher la zone sï¿½lectionner
     private void Update()
     {
         SquareBarTop.enabled = isHolding;
@@ -135,11 +135,11 @@ public class SelectionManager : MonoBehaviour
         }
     }
 
-    // Sélectionne l'unité la plus proche 
+    // Sï¿½lectionne l'unitï¿½ la plus proche 
     public void selectUnit()
     {
         RemoveNullKeys(selectionableObjects);
-        Debug.Log("?? Clé Unit Selection");
+        Debug.Log("?? Clï¿½ Unit Selection");
         /* foreach (GameObject selectionableObject in selectionableObjects.Keys)
         {
             if (selectionableObject == null)
@@ -151,7 +151,7 @@ public class SelectionManager : MonoBehaviour
         foreach (GameObject selectionableObject in selectionableObjects.Keys)
         {
 
-            Debug.Log("clé : " + selectionableObject + " et value : " + selectionableObjects[selectionableObject]);
+            Debug.Log("clï¿½ : " + selectionableObject + " et value : " + selectionableObjects[selectionableObject]);
 
         }
         Ray ray = shootingCamera.ScreenPointToRay(position_1);
@@ -193,7 +193,7 @@ public class SelectionManager : MonoBehaviour
 
     }
 
-    // Détermine les unités qui se situent dans la zone sélectionnée
+    // Dï¿½termine les unitï¿½s qui se situent dans la zone sï¿½lectionnï¿½e
     public void selectArea()
     {
         Debug.Log("Area Selection");
@@ -222,7 +222,7 @@ public class SelectionManager : MonoBehaviour
         select(nextSelections);
     }
 
-    // Vérifie si l'unité en position unitPosition est dans le carré délimité par point_1 et point_2
+    // Vï¿½rifie si l'unitï¿½ en position unitPosition est dans le carrï¿½ dï¿½limitï¿½ par point_1 et point_2
     public bool isInArea(Vector3[] polygon, Vector3 unitPosition)
     {
         bool isIn = false;
@@ -241,7 +241,7 @@ public class SelectionManager : MonoBehaviour
         return isIn;
     }
     
-    // Sélectionne une liste d'éléments voulus
+    // Sï¿½lectionne une liste d'ï¿½lï¿½ments voulus
     public void select(List<GameObject> nextSelections)
     {
         resetSelection();
@@ -253,18 +253,18 @@ public class SelectionManager : MonoBehaviour
                 {
                     selectionableObjects[nextSelection] = true;
                     currentSelections.Add(nextSelection);
-                    Debug.Log(nextSelection.ToString() + " a été sélectionné");
+                    Debug.Log(nextSelection.ToString() + " a ï¿½tï¿½ sï¿½lectionnï¿½");
                 }
                 else
                 {
-                    Debug.LogWarning("L'objet n'est pas présent dans le dictionnaire de sélection.");
+                    Debug.LogWarning("L'objet n'est pas prï¿½sent dans le dictionnaire de sï¿½lection.");
                 }
             }
         }
         newSelection.Invoke();
     }
 
-    // Dessine la zone de sélection lorsque le click est maintenue
+    // Dessine la zone de sï¿½lection lorsque le click est maintenue
     public void drawSquare()
     {
         Vector2 currentPosition = selectionAction.action.ReadValue<Vector2>();
@@ -282,14 +282,15 @@ public class SelectionManager : MonoBehaviour
         SquareBarLeft.transform.localScale = new Vector3((currentPosition.y - position_1.y) / 20, SquareBarLeft.transform.localScale.y, SquareBarLeft.transform.localScale.z);
     }
 
-    // Désélectionne tous les éléments précédements sélectionnés
-    private void resetSelection()
+    // Dï¿½sï¿½lectionne tous les ï¿½lï¿½ments prï¿½cï¿½dements sï¿½lectionnï¿½s
+    public void resetSelection()
     {
         foreach (GameObject currentSelection in currentSelections)
         {
             if (currentSelection != null) { selectionableObjects[currentSelection] = false; }
         }
         currentSelections = new List<GameObject>();
+        newSelection.Invoke();
     }
 
     public Dictionary<GameObject, bool> getDictionnary()
@@ -315,7 +316,7 @@ public class SelectionManager : MonoBehaviour
         }
         else
         {
-            // Debug.LogWarning("L'objet n'est pas présent dans le dictionnaire de sélection.");
+            // Debug.LogWarning("L'objet n'est pas prï¿½sent dans le dictionnaire de sï¿½lection.");
             return false;
         }
     }
@@ -326,12 +327,11 @@ public class SelectionManager : MonoBehaviour
         selectionableObjects.Remove(obj);
     }
 
-    public void removeFromSelection(GameObject gameObject)
+    public void removeSelectedObject(GameObject obj)
     {
-        if (getCurrentSelection().Contains(gameObject))
-        {
-            currentSelections.Remove(gameObject);
-        }
+        currentSelections.Remove(obj);
+        newSelection.Invoke();
+        
     }
 
     static void RemoveNullKeys<TKey, TValue>(Dictionary<TKey, TValue> dictionary)

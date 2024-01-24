@@ -188,7 +188,7 @@ GameObject:
   - component: {fileID: 2757303381824644538}
   - component: {fileID: 15836204694129039}
   m_Layer: 9
-  m_Name: Wall
+  m_Name: WallEnemie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a59129ed1b45519458b33d19047054b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  troupType: 0
+  troupType: 1
   unitType: 10
   isSelected: 0
   hasCrown: 0
@@ -246,13 +246,13 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
-  isAddedWhenAwake: 0
+  isAddedWhenAwake: 1
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
   isMovingToKing: 0
   maxLenght: 30
   wallFusionMaxDistance: 10
-  hideCircle: 0
+  hideCircle: 1
   healthOffset: {x: 0, y: 5, z: 0}
   tower_1: {fileID: 3489748518764414695}
   tower_2: {fileID: 1945381645577146443}

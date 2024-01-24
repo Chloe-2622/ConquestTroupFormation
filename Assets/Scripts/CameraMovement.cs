@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
@@ -20,12 +21,16 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private InputActionReference zoom;
 
     private Camera cameraObject;
+    private GameManager gameManager;
     private bool isMoving;
+
+    [HideInInspector] public UnityEvent cameraMoving;
 
     // Start is called before the first frame update
     void Start()
     {
         cameraObject = GetComponent<Camera>();
+        gameManager = GameManager.Instance;
     }
 
     private void OnEnable()
@@ -53,7 +58,7 @@ public class CameraMovement : MonoBehaviour
 
     public void startCameraMove(InputAction.CallbackContext context)
     {
-        if (GameManager.Instance.isInPause()) { return; }
+        if (gameManager.isInPause()) { return; }
         isMoving = true;
     }
 
@@ -98,14 +103,14 @@ public class CameraMovement : MonoBehaviour
                 dz--;
             }
 
-            GameManager.Instance.troupPurchase.refreshPreview();
+            cameraMoving.Invoke();
             cameraObject.transform.Translate(new Vector3(dx * currentSpeed * Time.deltaTime, 0, dz * currentSpeed * Time.deltaTime), Space.World);
         }
     }
 
     public void zoomCamera(InputAction.CallbackContext context)
     {
-        if (GameManager.Instance.isInPause() ) { return; }
+        if (gameManager.isInPause() ) { return; }
 
         Vector2 zoomVector = zoom.action.ReadValue<Vector2>();
         zoomVector.Normalize();
