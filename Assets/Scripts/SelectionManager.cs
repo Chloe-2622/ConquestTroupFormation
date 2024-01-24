@@ -327,13 +327,6 @@ public class SelectionManager : MonoBehaviour
         selectionableObjects.Remove(obj);
     }
 
-    public void removeSelectedObject(GameObject obj)
-    {
-        currentSelections.Remove(obj);
-        newSelection.Invoke();
-        
-    }
-
     static void RemoveNullKeys<TKey, TValue>(Dictionary<TKey, TValue> dictionary)
     {
         // Create a list to store keys with null values
