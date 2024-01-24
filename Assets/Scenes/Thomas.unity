@@ -826,14 +826,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 762531920}
     - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
-      propertyPath: wallMask.m_Bits
-      value: 512
-      objectReference: {fileID: 0}
-    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
-      propertyPath: EnemieWallPrefab
-      value: 
-      objectReference: {fileID: 2114470120617509491, guid: 0f97d50385c2d3f4eb8c3c2fdee0385e, type: 3}
-    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
       propertyPath: selectionManager
       value: 
       objectReference: {fileID: 2107619706}
@@ -846,10 +838,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 557443961}
     - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
-      propertyPath: DamageParticlePrefab
-      value: 
-      objectReference: {fileID: 8993320619122043417, guid: 27aa3520f51d3f84facda02b93db4a7d, type: 3}
-    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
       propertyPath: FollowSelectionPopUp
       value: 
       objectReference: {fileID: 817974414}
@@ -861,38 +849,6 @@ PrefabInstance:
       propertyPath: PatrolSelectionPopUp2
       value: 
       objectReference: {fileID: 28562676}
-    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
-      propertyPath: wallCircleMask.m_Bits
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
-      propertyPath: wallMaxCircleMask.m_Bits
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
-      propertyPath: wallMaxLenghtMask.m_Bits
-      value: 2048
-      objectReference: {fileID: 0}
-    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
-      propertyPath: goldPerArena.Array.data[0]
-      value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
-      propertyPath: goldPerArena.Array.data[1]
-      value: 110
-      objectReference: {fileID: 0}
-    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
-      propertyPath: goldPerArena.Array.data[2]
-      value: 120
-      objectReference: {fileID: 0}
-    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
-      propertyPath: goldPerArena.Array.data[3]
-      value: 130
-      objectReference: {fileID: 0}
-    - target: {fileID: 4233542398472279475, guid: 01484fe3373627847853f6347de842e0, type: 3}
-      propertyPath: goldPerArena.Array.data[4]
-      value: 140
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1573,9 +1529,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 36242810930026497, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2727510425558259434, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4732253124512211705, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5094269116640738502, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
       propertyPath: m_Name
       value: UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 6252562074457219489, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7275149341608520722, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8331451465418436426, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8721923983003830204, guid: 7d472d2cbb820234792f0703de3dbf56, type: 3}
       propertyPath: m_LocalPosition.x

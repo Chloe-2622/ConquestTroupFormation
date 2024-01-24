@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4616964251615887702}
   - component: {fileID: 1821390095832089072}
   - component: {fileID: 989785766418118841}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 7072155742089913996}
   - component: {fileID: 95221067795861656}
   - component: {fileID: 5275919298653793610}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Queue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -346,7 +346,7 @@ Transform:
   m_GameObject: {fileID: 4105621512608567636}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -841.85, y: -40.714996, z: -961.9}
   m_LocalScale: {x: 7.917, y: 0.00005, z: 7.917}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -577,7 +577,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 655269618097624654}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: BoulderSpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -919,10 +919,10 @@ GameObject:
   - component: {fileID: 7935898198155487177}
   - component: {fileID: 2081391671169810418}
   - component: {fileID: 8085429279557207350}
-  - component: {fileID: 3410021225126253725}
-  - component: {fileID: -6726525598932804001}
+  - component: {fileID: 7133949426430743617}
+  - component: {fileID: 9219500073165828899}
   m_Layer: 8
-  m_Name: Catapulte
+  m_Name: CatapulteEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -967,19 +967,15 @@ MonoBehaviour:
   unitType: 5
   isSelected: 0
   hasCrown: 0
-  goldCost: 15
+  goldCost: 0
   movingSpeed: 2
   health: 200
   armor: 0
-  detectionRange: 30
+  detectionRange: 15
   positionThreshold: 2
   attackDamage: 0
   attackRechargeTime: 4
-<<<<<<< HEAD
-  attackRange: 20
-=======
-  defaultAttackRange: 20
->>>>>>> b15c895609fe3b8dd43af3f9247a58b37101e0b9
+  defaultAttackRange: 0
   specialAbilityRechargeTime: 30
   isChosingPatrol: 0
   isFollowingEnemy: 0
@@ -992,6 +988,7 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
+  turnTime: 0
   isMovingToKing: 0
   wheelRotationSpeed: 20
   croix: {fileID: 0}
@@ -1000,7 +997,7 @@ MonoBehaviour:
   isSelectingPlacement: 0
   isShooting: 0
   heightAttenuation: 3
-  timeAttenuation: 12
+  timeAttenuation: 10
   isLauchingBoulder: 0
   newBoulder: {fileID: 0}
 --- !u!195 &8085429279557207350
@@ -1025,25 +1022,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &3410021225126253725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7307699464318762355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineMode: 0
-  outlineColor: {r: 0, g: 0.9054296, b: 1, a: 1}
-  outlineWidth: 4
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
---- !u!136 &-6726525598932804001
+--- !u!136 &7133949426430743617
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1066,6 +1045,24 @@ CapsuleCollider:
   m_Height: 5.21
   m_Direction: 1
   m_Center: {x: 0, y: 0.52, z: 0}
+--- !u!114 &9219500073165828899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7307699464318762355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 0, g: 0.9054296, b: 1, a: 1}
+  outlineWidth: 4
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &481634011723226043
 PrefabInstance:
   m_ObjectHideFlags: 0

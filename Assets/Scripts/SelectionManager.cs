@@ -42,6 +42,8 @@ public class SelectionManager : MonoBehaviour
     private Vector2 position_1;
     private Vector2 position_2;
 
+    private ShowControls showControls;
+
     [HideInInspector] public UnityEvent newSelection;
 
     private void Awake()
@@ -52,6 +54,8 @@ public class SelectionManager : MonoBehaviour
         gameManager = GameManager.Instance;
         troupMask = gameManager.troupMask;
         floorMask = gameManager.floorMask;
+
+        showControls = gameManager.eventSystem.GetComponent<ShowControls>();
     }
 
         // On s'abonne aux �v�nements du Event System
@@ -99,7 +103,6 @@ public class SelectionManager : MonoBehaviour
         if (gameManager.isInPause()) { return; }
         lastPosition = context.action.ReadValue<Vector2>();
     }
-
 
     public void OnInputCanceled(InputAction.CallbackContext context)
     {
@@ -245,6 +248,7 @@ public class SelectionManager : MonoBehaviour
     public void select(List<GameObject> nextSelections)
     {
         resetSelection();
+        bool thereIsCatapulte = false;
         foreach (GameObject nextSelection in nextSelections)
         {
             if (nextSelection != null)
@@ -253,14 +257,17 @@ public class SelectionManager : MonoBehaviour
                 {
                     selectionableObjects[nextSelection] = true;
                     currentSelections.Add(nextSelection);
-                    Debug.Log(nextSelection.ToString() + " a �t� s�lectionn�");
+                    if (gameManager.hasGameStarted() && nextSelection.GetComponent<Troup>().unitType == Troup.UnitType.Catapulte) { thereIsCatapulte =  true; }
+                    Debug.Log(nextSelection.ToString() + " a été sélectionné");
                 }
                 else
                 {
-                    Debug.LogWarning("L'objet n'est pas pr�sent dans le dictionnaire de s�lection.");
+                    Debug.LogWarning("L'objet n'est pas présent dans le dictionnaire de sélection.");
                 }
             }
         }
+        if (currentSelections.Count > 0) { Debug.Log("--- " + thereIsCatapulte);  showControls.showUnitControls(thereIsCatapulte); }
+        else { showControls.hideUnitControls(); }
         newSelection.Invoke();
     }
 

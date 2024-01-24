@@ -160,7 +160,7 @@ public class GameManager : MonoBehaviour
 
     // Game has started
     public bool hasGameStarted() { return gameHasStarted; }
-    public void startGame() { gameHasStarted = true;  }
+    public void startGame() { eventSystem.GetComponent<ShowControls>().hidePurchaseControls(); gameHasStarted = true; }
 
     // Pause
     public bool isInPause() { return pause; }
