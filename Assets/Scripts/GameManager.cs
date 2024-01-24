@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
     public Transform selectionArrow;
     public GameObject tombe;
     public GameObject BoostParticles;
+    public bool isFormationShapeForced;
     public float defaultHeight;
     public float outlineWidth;
 
@@ -186,7 +187,7 @@ public class GameManager : MonoBehaviour
     {
         Allies.Remove(troup);
         selectionManager.removeObject(troup.gameObject);
-        selectionManager.removeFromSelection(gameObject);
+        selectionManager.removeSelectedObject(gameObject);
         updateTroupCounter.Invoke();
     }
 

@@ -243,6 +243,7 @@ public abstract class Troup : MonoBehaviour
     public float getAttackRange() { return attackRange; }
     public float getAbilityRecharge() { return specialAbilityRechargeTime; }
     public float getMaxHealth() { return maxHealth; }
+    public float getMaxSpeed() { return movingSpeed; }
     public bool isKing() { return hasCrown; }
     public bool IsInjured() { return health < maxHealth; }
     public bool IsBoosted() { return isBoosted; }
@@ -316,6 +317,14 @@ public abstract class Troup : MonoBehaviour
             SelectionParticleCircle.SetActive(false);
             SelectionParticleCircle.GetComponent<ParticleSystem>().Stop();
             isPlayingCircleAnim = false;
+        }
+
+        if (selectionManager.getCurrentSelection().Count > 1 && gameManager.isFormationShapeForced)
+        {
+            agent.speed = FormationSpeed();
+        } else
+        {
+            agent.speed = movingSpeed;
         }
 
         SelectionParticleCircle.transform.position = new Vector3(transform.position.x, transform.position.y + 0.3f, transform.position.z);
@@ -759,6 +768,24 @@ public abstract class Troup : MonoBehaviour
         timeBeforeNextAction = 0f;
     }
 
+    public float FormationSpeed()
+    {
+        float maxSpeed = Mathf.Infinity;
+
+        List<GameObject> selection = selectionManager.getCurrentSelection();
+
+        foreach (GameObject troup in selection)
+        {
+            float troupSpeed = troup.GetComponent<Troup>().getMaxSpeed();
+            if (troupSpeed < maxSpeed)
+            {
+                maxSpeed = troupSpeed;
+            }
+        }
+
+        return maxSpeed;
+    }
+
     private void OnDrawGizmos()
     {
         if (selectionManager != null && selectionManager.isSelected(this.gameObject))
@@ -773,242 +800,6 @@ public abstract class Troup : MonoBehaviour
     }
 
     // Attack and ability -----------------------------------------------------------------------------------------
-    protected void AttackBehaviour2()
-    {
-        if (hasCrown) { return; }
-
-        // Debug.Log(this + " doesn't have crown");
-
-        if (troupType == TroupType.Enemy && gameManager.isCrownCollected)
-        {
-            AttackKingBehaviour();
-            return;
-        }
-
-        
-
-        
-        // Find all enemies in detection range
-        Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRange, troupMask);
-        foreach(Collider collider in colliders)
-        {
-            if (!detectedEnemies.Contains(collider.gameObject))
-            {
-                Troup detectedTroup = collider.GetComponent<Troup>();
-                if (detectedTroup.troupType != troupType && detectedTroup.isVisible) { detectedEnemies.Add(detectedTroup.gameObject); }
-            }
-            
-        }
-
-        /*    CODE NON OPTI
-        if (troupType == TroupType.Ally)
-        {
-            HashSet<Troup> enemies = gameManager.getEnemies();
-            foreach (Troup enemie in enemies)
-            {
-                if (enemie != null && enemie.isVisible && Vector3.Distance(transform.position, enemie.transform.position) <= detectionRange)
-                {
-                    detectedEnemies.Add(enemie.gameObject);
-                }
-            }
-        } else
-        {
-            HashSet<Troup> allies = gameManager.getAllies();
-            foreach (Troup ally in allies)
-            {
-                if (ally != null && ally.isVisible && Vector3.Distance(transform.position, ally.transform.position) <= detectionRange)
-                {
-                    detectedEnemies.Add(ally.gameObject);
-                }
-            }
-        } */
-
-
-        // Find the closest enemy
-        float closestDistance = Mathf.Infinity;
-        GameObject closestEnemy = null;
-        HashSet<GameObject> excludedDetectedEnemies = new HashSet<GameObject>();
-        foreach (GameObject enemy in detectedEnemies)
-        {
-            if (enemy != null && Vector3.Distance(transform.position, enemy.transform.position) > detectionRange)
-            {
-                excludedDetectedEnemies.Add(enemy);
-                continue;
-            }
-            if (enemy != null)
-            {
-                float distance = Vector3.Distance(transform.position, enemy.transform.position);
-
-                if (distance <= closestDistance)
-                {
-                    closestDistance = distance;
-                    closestEnemy = enemy;
-                }
-            }
-        }
-        detectedEnemies.ExceptWith(excludedDetectedEnemies);
-
-
-        // Follow closestEnemy until it's in range
-
-        if (closestEnemy != null && !isFollowingEnemy && !isFollowingOrders)
-        {
-            isFollowingEnemy = true;
-            currentFollowedTroup = closestEnemy.gameObject;
-            actionQueue.Clear();
-            agent.isStopped = true;
-            agent.ResetPath();
-
-            // Debug.Log("Getting closer to enemy : " + closestEnemy);
-            StopCoroutine(currentActionCoroutine);
-            actionQueue.Enqueue(new MoveToUnit(agent, closestEnemy, attackRange));
-            StartCoroutine(currentActionCoroutine);
-
-            
-        }
-
-        if (currentFollowedTroup != null && Vector3.Distance(transform.position, currentFollowedTroup.transform.position) >= detectionRange)
-        {
-            currentFollowedTroup = null;
-        }
-        if (currentFollowedTroup == null)
-        {
-            isFollowingEnemy = false;
-        }
-        if ((currentFollowedTroup != null && !currentFollowedTroup.GetComponent<Troup>().isVisible) || (currentAttackedTroup != null && !currentAttackedTroup.GetComponent<Troup>().isVisible))
-        {
-            isFollowingEnemy = false;
-            isAttackingEnemy = false;
-            currentAttackedTroup = null;
-            currentFollowedTroup = null;
-            actionQueue.Clear();
-            agent.isStopped = true;
-            agent.ResetPath();
-            StopCoroutine(currentActionCoroutine);
-            actionQueue.Enqueue(new Standby());
-            StartCoroutine(currentActionCoroutine);
-        }
-
-        colliders = Physics.OverlapSphere(transform.position, attackRange, troupMask);
-        foreach (Collider collider in colliders)
-        {
-            if (!inRangeEnemies.Contains(collider.gameObject))
-            {
-                Troup detectedTroup = collider.GetComponent<Troup>();
-                if (detectedTroup.troupType != troupType && detectedTroup.isVisible) { inRangeEnemies.Add(detectedTroup.gameObject); }
-            }
-        }
-
-        /*   CODE NON OPTI
-        HashSet<GameObject> inRangeEnemies = new HashSet<GameObject>();
-        if (troupType == TroupType.Ally)
-        {
-            HashSet<Troup> enemies = gameManager.getEnemies();
-            foreach (var enemy in enemies)
-            {
-                // Debug.Log(enemy + " ,toi ta range c'est : " + Vector3.Distance(transform.position, enemy.transform.position));
-                if (enemy.isVisible && Vector3.Distance(transform.position, enemy.transform.position) <= attackRange)
-                {
-                    inRangeEnemies.Add(enemy.gameObject);
-                }
-            }
-        }
-        else
-        {
-            HashSet<Troup>  allies = gameManager.getAllies();
-            foreach (var ally in allies)
-            {
-                if (ally.isVisible && Vector3.Distance(transform.position, ally.transform.position) <= attackRange)
-                {
-                    inRangeEnemies.Add(ally.gameObject);
-                }
-            }
-        } */
-
-        float closestDistanceInRange = Mathf.Infinity;
-        GameObject closestEnemyInRange = null;
-        HashSet<GameObject> excludedInRangeEnemies = new HashSet<GameObject>();
-        // Debug.Log("Enemis in range ------------ " );
-        foreach (GameObject enemy in inRangeEnemies)
-        {
-            // Debug.Log("Enemis in range : " + enemy);
-
-            if (enemy != null && Vector3.Distance(transform.position, enemy.transform.position) > attackRange + enemy.GetComponent<NavMeshAgent>().radius +.3f)
-            {
-                // Debug.Log("Excluded enemy because distance = " + Vector3.Distance(transform.position, enemy.transform.position) + " and distance to check = " + (attackRange + enemy.GetComponent<NavMeshAgent>().radius + .2f));
-                excludedInRangeEnemies.Add(enemy);
-                continue;
-            }
-            if (enemy != null)
-            {
-                float distance = Vector3.Distance(transform.position, enemy.transform.position);
-
-                if (distance <= closestDistanceInRange)
-                {
-                    closestDistanceInRange = distance;
-                    closestEnemyInRange = enemy;
-                }
-            }
-        }
-        inRangeEnemies.ExceptWith(excludedInRangeEnemies);
-
-        // Debug.Log("Closest enemy in range : " + closestEnemyInRange + " and distance to it : " + Vector3.Distance(transform.position, closestEnemyInRange.transform.position) + " and range = " + attackRange);
-
-        if (currentAttackedTroup == null && !isFollowingOrders)
-        {
-            isAttackingEnemy = false;
-            if (attackCoroutine != null)
-            {
-                StopCoroutine(attackCoroutine);
-            }
-            
-            if (closestEnemyInRange != null) 
-            {
-                currentAttackedTroup = closestEnemyInRange;
-
-                actionQueue.Clear();
-                agent.isStopped = true;
-                agent.ResetPath();
-                // Debug.Log("Je lance une nouvelle attaque contre + " + currentAttackedTroup);
-
-                StopCoroutine(currentActionCoroutine);
-                actionQueue.Enqueue(new Standby());
-                StartCoroutine(currentActionCoroutine);
-
-                attackCoroutine = Attack(currentAttackedTroup.GetComponent<Troup>());
-                StartCoroutine(attackCoroutine);
-                isAttackingEnemy = true;
-            }
-        }
-
-        if (troupType == TroupType.Enemy && currentAttackedTroup == null && currentFollowedTroup != null)
-        {
-            isFollowingEnemy = false;
-        }
-
-        /* if (currentAttackedTroup == null && closestEnemyInRange != null && !isAttackingEnemy)
-        {
-            currentAttackedTroup = closestEemyInRange;
-            StartCoroutine(Attack(currentAttackedTroup.GetComponent<Troup>()));
-            isAttackingEnemy = true;
-        } */
-        if (closestEnemyInRange == null && currentAttackedTroup != null && currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur)
-        {
-            // Debug.Log("Toi jt'emmerde");
-            currentAttackedTroup = null;
-            isAttackingEnemy = false;
-        }
-
-        if (currentAttackedTroup != null)
-        {
-            Vector3 targetPosition = currentAttackedTroup.transform.position;
-            targetPosition.y = transform.position.y;  // Keep the same y position as the object you are rotating
-
-            transform.LookAt(targetPosition);
-        }
-
-    }
-
     protected void AttackBehaviour()
     {
 
@@ -1176,10 +967,10 @@ public abstract class Troup : MonoBehaviour
         }
 
         // Look at current attacked troup
-        if (currentAttackedTroup != null)
+        if (currentAttackedTroup != null && currentAttackedTroup != null && currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur)
         {
             Vector3 targetPosition = currentAttackedTroup.transform.position;
-            targetPosition.y = transform.position.y;  // Keep the same y position as the object you are rotating
+            targetPosition.y = transform.position.y;
 
             transform.LookAt(targetPosition);
         }
@@ -1279,81 +1070,10 @@ public abstract class Troup : MonoBehaviour
         if (currentAttackedTroup != null)
         {
             Vector3 targetPosition = currentAttackedTroup.transform.position;
-            targetPosition.y = transform.position.y;  // Keep the same y position as the object you are rotating
+            targetPosition.y = transform.position.y;
 
             transform.LookAt(targetPosition);
         }
-
-        /* 
-        if (king != null && king.GetComponent<Troup>().isVisible)
-        {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            // 
-            if (currentFollowedTroup != null && Vector3.Distance(transform.position, currentFollowedTroup.transform.position) >= detectionRange)
-            {
-                currentFollowedTroup = null;
-            }
-            if (currentFollowedTroup == null)
-            {
-                isFollowingEnemy = false;
-            }
-
-            if (!isFollowingEnemy && Vector3.Distance(transform.position, king.transform.position) - attackRange - king.GetComponent<NavMeshAgent>().radius > 0)
-            {
-                isFollowingEnemy = true;
-                currentAttackedTroup = null;
-
-                actionQueue.Clear();
-                agent.isStopped = true;
-                agent.ResetPath();
-
-                // Debug.Log("Getting closer to enemy : " + king);
-                StopCoroutine(currentActionCoroutine);
-                actionQueue.Enqueue(new MoveToUnit(agent, king, attackRange));
-                StartCoroutine(currentActionCoroutine);
-            }
-
-            if (currentAttackedTroup == null)
-            {
-                isAttackingEnemy = false;
-                if (attackCoroutine != null)
-                {
-                    StopCoroutine(attackCoroutine);
-                }
-
-                if (Vector3.Distance(transform.position, king.transform.position) <= attackRange + king.GetComponent<NavMeshAgent>().radius + .3f)
-                {
-                    currentAttackedTroup = king;
-
-                    actionQueue.Clear();
-                    agent.isStopped = true;
-                    agent.ResetPath();
-                    // Debug.Log("Je lance une nouvelle attaque contre + " + currentAttackedTroup);
-
-                    StopCoroutine(currentActionCoroutine);
-                    actionQueue.Enqueue(new Standby());
-                    StartCoroutine(currentActionCoroutine);
-
-                    attackCoroutine = Attack(currentAttackedTroup.GetComponent<Troup>());
-                    StartCoroutine(attackCoroutine);
-                    isAttackingEnemy = true;
-                }
-            }
-        } */
     }
 
     public void BecomesKing()
