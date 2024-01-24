@@ -234,7 +234,7 @@ GameObject:
   - component: {fileID: 3238220473811210062}
   - component: {fileID: 4845618206694604135}
   - component: {fileID: 6390538929453016424}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -335,7 +335,7 @@ GameObject:
   - component: {fileID: 272285250865274124}
   - component: {fileID: 5161645063816716351}
   - component: {fileID: 4377518380765209647}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Queue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -535,7 +535,10 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
+  timeBeforeNextAction: 0
+  isMovingToKing: 0
   healAmount: 10
   healRange: 10
   healRechargeTime: 1
@@ -546,6 +549,7 @@ MonoBehaviour:
   healEffect: {fileID: 866451567971719953, guid: ad990d9b14317854a9e81dc21dbe059c, type: 3}
   healEffectSpawnPoint: {fileID: 98119589824181803}
   healEffectSpeed: 0.5
+  IAminimumTroupToRevive: 0
   closestInjuredAllyDetected: {fileID: 0}
   isFollowingAlly: 0
   isHealing: 0

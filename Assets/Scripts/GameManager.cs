@@ -184,6 +184,7 @@ public class GameManager : MonoBehaviour
     {
         Allies.Remove(troup);
         selectionManager.removeObject(troup.gameObject);
+        selectionManager.removeFromSelection(gameObject);
         updateTroupCounter.Invoke();
     }
 

@@ -571,7 +571,7 @@ MonoBehaviour:
   positionThreshold: 1
   attackDamage: 10
   attackRechargeTime: 1
-  attackRange: 10
+  defaultAttackRange: 5
   specialAbilityRechargeTime: 30
   isChosingPatrol: 0
   isFollowingEnemy: 0
@@ -581,7 +581,10 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
+  timeBeforeNextAction: 0
+  isMovingToKing: 0
   invisibleTime: 10
   invisibleMaterial: {fileID: 2100000, guid: b2893209e057c48409a2c339ff33e055, type: 2}
   arrowSpeed: 0.5
@@ -660,7 +663,7 @@ GameObject:
   - component: {fileID: 4269330234374815889}
   - component: {fileID: 7568941946763252587}
   - component: {fileID: 8696565199337118711}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Queue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -795,7 +798,7 @@ GameObject:
   - component: {fileID: 1251126645951112888}
   - component: {fileID: 5814332700822916254}
   - component: {fileID: 5800119320301732251}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1400,6 +1403,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FirstPatrolPos
       objectReference: {fileID: 0}
+    - target: {fileID: 1957205012629558366, guid: 2b8610a4404d6634fb0bc9c1d8d1ccd3, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1421,6 +1428,10 @@ PrefabInstance:
     - target: {fileID: 1589398223469028240, guid: dbcd4bf24d5f74a4fac2148479f1c8c4, type: 3}
       propertyPath: m_Name
       value: Crown
+      objectReference: {fileID: 0}
+    - target: {fileID: 1589398223469028240, guid: dbcd4bf24d5f74a4fac2148479f1c8c4, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1589398223469028240, guid: dbcd4bf24d5f74a4fac2148479f1c8c4, type: 3}
       propertyPath: m_IsActive
@@ -1496,6 +1507,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Corde
       objectReference: {fileID: 0}
+    - target: {fileID: 464998616260137197, guid: 1410f98c9747e4848899f41a8aaf0c14, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4821780205401849822, guid: 1410f98c9747e4848899f41a8aaf0c14, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8636203590895719989, guid: 1410f98c9747e4848899f41a8aaf0c14, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.618
@@ -1539,6 +1558,10 @@ PrefabInstance:
     - target: {fileID: 8976278532422012047, guid: 1410f98c9747e4848899f41a8aaf0c14, type: 3}
       propertyPath: m_Name
       value: Bow
+      objectReference: {fileID: 0}
+    - target: {fileID: 8976278532422012047, guid: 1410f98c9747e4848899f41a8aaf0c14, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1615,10 +1638,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8391222552659086748, guid: 67a52a74d6bc75a49a87da66906f969d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -4683669308469848369, guid: 67a52a74d6bc75a49a87da66906f969d, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 9f22933f0cf938f43af4b292b9304246, type: 2}
+    - target: {fileID: -3756473180518285571, guid: 67a52a74d6bc75a49a87da66906f969d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -1823322365421230674, guid: 67a52a74d6bc75a49a87da66906f969d, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -1631,9 +1662,25 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 9f22933f0cf938f43af4b292b9304246, type: 2}
+    - target: {fileID: -516098083770646512, guid: 67a52a74d6bc75a49a87da66906f969d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 67a52a74d6bc75a49a87da66906f969d, type: 3}
       propertyPath: m_Name
       value: glasses
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 67a52a74d6bc75a49a87da66906f969d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5233112405309087440, guid: 67a52a74d6bc75a49a87da66906f969d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416272007918961125, guid: 67a52a74d6bc75a49a87da66906f969d, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8442510506162454399, guid: 67a52a74d6bc75a49a87da66906f969d, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1727,6 +1774,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FollowingArrow
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 00a85a373062c63479e4b487e7d50b2e, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1748,6 +1799,10 @@ PrefabInstance:
     - target: {fileID: 4101480151872354233, guid: 1322ffed0cb3c7e438d16e3f0a1076a4, type: 3}
       propertyPath: m_Name
       value: SecondPatrolPos
+      objectReference: {fileID: 0}
+    - target: {fileID: 4101480151872354233, guid: 1322ffed0cb3c7e438d16e3f0a1076a4, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5983519393249458176, guid: 1322ffed0cb3c7e438d16e3f0a1076a4, type: 3}
       propertyPath: m_LocalPosition.x

@@ -28,10 +28,34 @@ public class Archer : Troup
         base.Update();
 
         AttackBehaviour();
-        if (troupType == TroupType.Enemy && currentFollowedTroup == null && currentAttackedTroup == null) { IAEnemy(); }
+        if (troupType == TroupType.Enemy) { IAEnemy(); }
     }
 
-    protected override void IAEnemy() { }
+    protected override void IAEnemy()
+    {
+        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
+        {
+            StartCoroutine(SpecialAbility());
+            specialAbilityDelay = -1f;
+        }
+
+        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
+        {
+            int nextActionIndex = Random.Range(0, 2);
+
+            if (nextActionIndex == 0)
+            {
+                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(GameManager.Instance.CrownPosition.transform.position, 20f), positionThreshold));
+            }
+            else
+            {
+                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(GameManager.Instance.CrownPosition.transform.position, 20f), RandomVectorInFlatCircle(GameManager.Instance.CrownPosition.transform.position, 20f)));
+            }
+
+            timeBeforeNextAction = Random.Range(5f, 10f);
+            StartCoroutine(IAactionCountdown());
+        }
+    }
 
     protected override IEnumerator Attack(Troup enemy)
     {

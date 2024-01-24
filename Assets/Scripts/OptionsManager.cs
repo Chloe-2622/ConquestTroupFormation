@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
+using TMPro;
+using UnityEngine.UI;
 using static VolumeManager;
 
 public class OptionsManager : MonoBehaviour
 {
     public static OptionsManager Instance;
+    public UniversalRenderPipelineAsset urpAsset;
+    public int currentQualitySelection;
 
     private string playerName;
     [HideInInspector] public int chosenArena;
@@ -23,12 +28,15 @@ public class OptionsManager : MonoBehaviour
     [SerializeField] float effectsVolume = 0.5f;
     [SerializeField] bool isEffectsOn = true;
 
-    
+
     public enum GraphismQuality
     {
-        Low = 0,
-        Medium = 1,
-        High = 2
+        ExtraLow = 0,
+        Low = 1,
+        Medium = 2,
+        High = 3,
+        Pcnasa = 4
+
     }
     public enum Resolution
     {
@@ -45,6 +53,9 @@ public class OptionsManager : MonoBehaviour
 
     private void Awake()
     {
+        currentQualitySelection = 2;
+        
+
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -53,6 +64,11 @@ public class OptionsManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        ChangeQuality(currentQualitySelection);
     }
 
 
@@ -114,4 +130,30 @@ public class OptionsManager : MonoBehaviour
         }
         return false;
     }
+
+    public void ChangeQuality(int qualityValue)
+    {
+        currentQualitySelection = qualityValue;
+
+        switch (qualityValue)
+        {
+            case 0:
+                urpAsset.renderScale = 0.1f;
+                break;
+            case 1:
+                urpAsset.renderScale = 0.5f;
+                break;
+            case 2:
+                urpAsset.renderScale = 1f;
+                break;
+            case 3:
+                urpAsset.renderScale = 1.5f;
+                break;
+            case 4:
+                urpAsset.renderScale = 2f;
+                break;
+        }
+    }
+
+
 }

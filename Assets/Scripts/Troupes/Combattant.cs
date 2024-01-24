@@ -31,7 +31,7 @@ public class Combattant : Troup
         AttackBehaviour();
 
 
-        if (troupType == TroupType.Enemy && !gameManager.isCrownCollected) { IAEnemy(); }
+        // if (troupType == TroupType.Enemy && !gameManager.isCrownCollected) { IAEnemy(); }
     }
 
     protected override IEnumerator Attack(Troup enemy)

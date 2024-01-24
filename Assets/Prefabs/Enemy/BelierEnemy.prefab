@@ -378,9 +378,9 @@ MonoBehaviour:
   armor: 0
   detectionRange: 10
   positionThreshold: 2
-  attackDamage: 0
+  attackDamage: 10
   attackRechargeTime: 2
-  attackRange: 5
+  defaultAttackRange: 2
   specialAbilityRechargeTime: 0
   isChosingPatrol: 0
   isFollowingEnemy: 0
@@ -390,6 +390,10 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
+  isAddedWhenAwake: 0
+  moveTargetDestination: {x: 0, y: 0, z: 0}
+  timeBeforeNextAction: 0
+  isMovingToKing: 0
   wheelRotationSpeed: 10
 --- !u!195 &8753042273054374063
 NavMeshAgent:
@@ -546,7 +550,7 @@ GameObject:
   - component: {fileID: 6543397113101709337}
   - component: {fileID: 2099782041174475288}
   - component: {fileID: 115290934367887084}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Queue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -940,7 +944,7 @@ GameObject:
   - component: {fileID: 4974362100929920319}
   - component: {fileID: 7359633883054783070}
   - component: {fileID: 772894659549734388}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
