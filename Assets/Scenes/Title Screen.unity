@@ -138,14 +138,14 @@ PrefabInstance:
     - target: {fileID: 1688222025582380238, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1995184554}
+      objectReference: {fileID: 1995184552}
     - target: {fileID: 1688222025582380238, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: goToRules
       objectReference: {fileID: 0}
     - target: {fileID: 1688222025582380238, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: TitleScreen, Assembly-CSharp
+      value: CommonButtonFunctions, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 1750019723215444181, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_text
@@ -154,11 +154,11 @@ PrefabInstance:
     - target: {fileID: 3330123596894547257, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1995184553}
+      objectReference: {fileID: 0}
     - target: {fileID: 3330123596894547257, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1995184553}
+      objectReference: {fileID: 0}
     - target: {fileID: 3330123596894547257, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: resizeUp
@@ -288,14 +288,14 @@ PrefabInstance:
     - target: {fileID: 1688222025582380238, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1995184554}
+      objectReference: {fileID: 1995184552}
     - target: {fileID: 1688222025582380238, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: quit
       objectReference: {fileID: 0}
     - target: {fileID: 1688222025582380238, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: TitleScreen, Assembly-CSharp
+      value: CommonButtonFunctions, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 1750019723215444181, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_text
@@ -304,11 +304,11 @@ PrefabInstance:
     - target: {fileID: 3330123596894547257, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1995184553}
+      objectReference: {fileID: 0}
     - target: {fileID: 3330123596894547257, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1995184553}
+      objectReference: {fileID: 0}
     - target: {fileID: 3330123596894547257, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: resizeUp
@@ -603,6 +603,7 @@ GameObject:
   m_Component:
   - component: {fileID: 926600000}
   - component: {fileID: 926599999}
+  - component: {fileID: 926600001}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -687,6 +688,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &926600001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 926599998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
 --- !u!1001 &1288408601
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -702,14 +726,14 @@ PrefabInstance:
     - target: {fileID: 1688222025582380238, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1995184554}
+      objectReference: {fileID: 1995184552}
     - target: {fileID: 1688222025582380238, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: goToOptions
       objectReference: {fileID: 0}
     - target: {fileID: 1688222025582380238, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: TitleScreen, Assembly-CSharp
+      value: CommonButtonFunctions, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 1750019723215444181, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_text
@@ -718,11 +742,11 @@ PrefabInstance:
     - target: {fileID: 3330123596894547257, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1995184553}
+      objectReference: {fileID: 0}
     - target: {fileID: 3330123596894547257, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_Delegates.Array.data[1].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1995184553}
+      objectReference: {fileID: 0}
     - target: {fileID: 3330123596894547257, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: resizeUp
@@ -1043,8 +1067,7 @@ GameObject:
   - component: {fileID: 1995184551}
   - component: {fileID: 1995184550}
   - component: {fileID: 1995184549}
-  - component: {fileID: 1995184553}
-  - component: {fileID: 1995184554}
+  - component: {fileID: 1995184552}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -1102,7 +1125,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1995184553
+--- !u!114 &1995184552
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1111,21 +1134,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1995184548}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 867b3b83dd261f14cad6e94d67900074, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animationDuration: 0.1
-  endScale: 2
---- !u!114 &1995184554
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1995184548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53886fcb58343cb42a353770600cc417, type: 3}
+  m_Script: {fileID: 11500000, guid: eb750ab473c8bcf4ead8f9077ce01ea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807

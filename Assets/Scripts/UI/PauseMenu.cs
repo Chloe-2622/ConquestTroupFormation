@@ -13,50 +13,54 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private InputActionReference pauseAction;
     [SerializeField] private Button pauseButton;
 
+    [Header("Options")]
+    [SerializeField] private GameObject optionsPanel;
+
+
     private GameManager gameManager;
+    private bool isOptionsOpened;
 
     // Start is called before the first frame update
     void Start()
     {
         gameManager = GameManager.Instance;
         resumeGame();
-
-        if (OptionsManager.Instance.getPreviousScene() == SceneManager.GetActiveScene().name)
-        {
-            pauseGame();
-        }
     }
 
     // On s'abonne aux évènements du Event System
     private void OnEnable()
     {
         pauseAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
-        pauseAction.action.started += OnInputStarted; // S'active à la pression initiale des touches
+        pauseAction.action.started += escapePress; // S'active à la pression initiale des touches
     }
 
     // On se désabonne aux évènements du Event System
     private void OnDisable()
     {
         pauseAction.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
-        pauseAction.action.started -= OnInputStarted;
+        pauseAction.action.started -= escapePress;
 
         pausePanel.SetActive(false);
         pauseButton.gameObject.SetActive(false);
     }
 
-    public void OnInputStarted(InputAction.CallbackContext context)
+    public void escapePress(InputAction.CallbackContext context)
     {
-        Debug.Log(gameManager.isInPause());
-        if (!gameManager.isInPause())
-        {
-            pauseGame();
-        }
+        if (isOptionsOpened) { closeOptionsPanel(); }
         else
         {
-            resumeGame();
+            if (!gameManager.isInPause()) { pauseGame(); }
+            else { resumeGame(); }
         }
     }
 
+
+    // Options Panel
+    public void openOptionsPanel() { isOptionsOpened = true; optionsPanel.SetActive(true); }
+    public void closeOptionsPanel() { isOptionsOpened = false; optionsPanel.SetActive(false); }
+
+
+    // Pause / Resume
     public void pauseGame()
     {
         pausePanel.SetActive(true);
@@ -66,21 +70,5 @@ public class PauseMenu : MonoBehaviour
     {
         pausePanel.SetActive(false);
         gameManager.ResumeGame();
-    }     
-
-    public void goToOptions()
-    {
-        OptionsManager.Instance.setPreviousScene(SceneManager.GetActiveScene().name);
-
-        SceneManager.LoadScene("Options");
     }
-
-    public void goToTitleScreen()
-    {
-        OptionsManager.Instance.setPreviousScene("Title Screen");
-        SceneManager.LoadScene("Title Screen");
-    }
-
-    public void resetGame() { SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
-    public void quit() { Application.Quit(); }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using TMPro;
 using UnityEngine.UI;
-using static VolumeManager;
+using static VolumeField;
 
 public class OptionsManager : MonoBehaviour
 {
@@ -29,15 +29,6 @@ public class OptionsManager : MonoBehaviour
     [SerializeField] bool isEffectsOn = true;
 
 
-    public enum GraphismQuality
-    {
-        ExtraLow = 0,
-        Low = 1,
-        Medium = 2,
-        High = 3,
-        Pcnasa = 4
-
-    }
     public enum Resolution
     {
         R_1920x1080 = 0,
@@ -45,11 +36,8 @@ public class OptionsManager : MonoBehaviour
     }
     /*
     [Header("Graphism")]
-    [SerializeField] GraphismQuality graphismQuality = GraphismQuality.Medium;
     [SerializeField] Resolution resolution = Resolution.R_1920x1080;
     */
-
-    private string previousScene;
 
     private void Awake()
     {
@@ -113,11 +101,6 @@ public class OptionsManager : MonoBehaviour
     }
     public void setPlayerName(string name) { playerName = name; }
 
-    // Previous Scene
-    public string getPreviousScene() { return previousScene; }
-    public void setPreviousScene(string previousScene) { this.previousScene = previousScene; }
-
-
     public bool isReady()
     {
         if (chosenArena != 0)
@@ -131,6 +114,7 @@ public class OptionsManager : MonoBehaviour
         return false;
     }
 
+    // Graphic Quality
     public void ChangeQuality(int qualityValue)
     {
         currentQualitySelection = qualityValue;
@@ -154,6 +138,4 @@ public class OptionsManager : MonoBehaviour
                 break;
         }
     }
-
-
 }

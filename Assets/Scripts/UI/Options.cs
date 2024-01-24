@@ -8,15 +8,8 @@ using UnityEngine.UIElements;
 
 public class Options : MonoBehaviour
 {
-    [SerializeField] TMP_Dropdown QualitySelection;
-
     [Header("Input System")]
     [SerializeField] private InputActionReference returnAction;
-
-    private void Start()
-    {
-        QualitySelection.value = OptionsManager.Instance.currentQualitySelection;
-    }
 
     private void OnEnable()
     {
@@ -30,26 +23,5 @@ public class Options : MonoBehaviour
         returnAction.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
         returnAction.action.started -= OnInputStarted;
     }
-    public void OnInputStarted(InputAction.CallbackContext context)
-    {
-        returnToPreviousScene();
-    }
-
-    public void returnToPreviousScene() 
-    {
-        if (OptionsManager.Instance.getPreviousScene() != null)
-        {
-            SceneManager.LoadScene(OptionsManager.Instance.getPreviousScene());
-        }
-        else
-        {
-            Debug.Log("There is no precedent scene");
-        }
-        
-    }
-    public void SetQuality()
-    {
-        OptionsManager.Instance.ChangeQuality(QualitySelection.value);
-
-    }
+    public void OnInputStarted(InputAction.CallbackContext context) { SceneManager.LoadScene("Title Screen"); }
 }

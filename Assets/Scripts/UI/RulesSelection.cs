@@ -43,39 +43,18 @@ public class RulesSelection : MonoBehaviour
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // Return Action
     private void OnEnable()
     {
         returnAction.action.Enable(); // Activer l'action d'entrée lorsque le script est désactivé
         returnAction.action.started += OnInputStarted; // S'active à la pression initiale des touches
     }
 
-    // On se désabonne aux évènements du Event System
     private void OnDisable()
     {
         returnAction.action.Disable(); // Désactiver l'action d'entrée lorsque le script est désactivé
         returnAction.action.started -= OnInputStarted;
     }
-    public void OnInputStarted(InputAction.CallbackContext context)
-    {
-        goToTitleScreen();
-    }
-
-    public void goToTitleScreen()
-    {
-        SceneManager.LoadScene("Title Screen");
-    }
+    public void OnInputStarted(InputAction.CallbackContext context) { SceneManager.LoadScene("Title Screen"); }
 
 }
