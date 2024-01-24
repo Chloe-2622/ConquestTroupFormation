@@ -2256,14 +2256,14 @@ PrefabInstance:
     - target: {fileID: 1688222025582380238, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1995184554}
+      objectReference: {fileID: 1995184555}
     - target: {fileID: 1688222025582380238, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: goToTitleScreen
       objectReference: {fileID: 0}
     - target: {fileID: 1688222025582380238, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: RulesSelection, Assembly-CSharp
+      value: CommonButtonFunctions, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 1750019723215444181, guid: 91b979513c0718d47873e00a4d10da6b, type: 3}
       propertyPath: m_text
@@ -2428,6 +2428,7 @@ GameObject:
   - component: {fileID: 1995184550}
   - component: {fileID: 1995184553}
   - component: {fileID: 1995184554}
+  - component: {fileID: 1995184555}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -2511,6 +2512,18 @@ MonoBehaviour:
   arenaSelection: {fileID: 592863962}
   playerNameInput: {fileID: 1599957911}
   returnAction: {fileID: -3169318288096097693, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
+--- !u!114 &1995184555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1995184548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb750ab473c8bcf4ead8f9077ce01ea6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2030479133
 GameObject:
   m_ObjectHideFlags: 0

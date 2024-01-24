@@ -14,13 +14,15 @@ public class InGameUI : MonoBehaviour
     /* 
     TODO
 
-    Catapulte
-    Belier
-    
-    Revoir l'esthétisme de l'UI
-            - Agrandir l'UI en haut (noms + or)
-            - Trouver de jolis fonds
-            - Ajouter les choix des options en jeu
+    Dans l'ordre :
+        - Options
+        - Touches
+        - Catapulte
+
+
+
+   Trouver de jolis fonds
+   Ajouter les choix des options en jeu
    
     Cherche comment changer la résolution
         
@@ -106,6 +108,9 @@ public class InGameUI : MonoBehaviour
     {
         forcePersistentFormationAction.action.Disable();
         forcePersistentFormationAction.action.started -= checkBoxKeyBoardUpdate;
+
+        unitIconsSection.SetActive(false);
+        checkBox.SetActive(false);
     }
 
 
@@ -215,7 +220,7 @@ public class InGameUI : MonoBehaviour
 
 
 
-
+    // Timer
     public void startTimer()
     {
         StartCoroutine(Timer());

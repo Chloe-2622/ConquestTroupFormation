@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 
-public class VolumeManager : MonoBehaviour
+public class VolumeField : MonoBehaviour
 {
     [SerializeField] Sprite lowVolume;
     [SerializeField] Sprite mediumVolume;
@@ -18,13 +17,8 @@ public class VolumeManager : MonoBehaviour
     }
     public VolumeType volumeType;
 
-
     private Slider slider;
     private Image soundIcon;
-
-
-
-
 
     // Start is called before the first frame update
     void Start()
@@ -47,7 +41,6 @@ public class VolumeManager : MonoBehaviour
         OptionsManager.Instance.setVolumeOn(volumeType, !OptionsManager.Instance.isVolumeOn(volumeType));
         updateSoundIcon();
     }
-
 
     public void updateSoundIcon()
     {

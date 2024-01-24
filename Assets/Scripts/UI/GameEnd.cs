@@ -29,21 +29,4 @@ public class GameEnd : MonoBehaviour
             defeatPanel.gameObject.SetActive(true);
         }
     }
-
-    public void retry()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void goToRules()
-    {
-        OptionsManager.Instance.setPreviousScene("Title Screen");
-        SceneManager.LoadScene("Rules Selection");
-    }
-
-    public void goToTitleScreen()
-    {
-        OptionsManager.Instance.setPreviousScene("Title Screen");
-        SceneManager.LoadScene("Title Screen");
-    }
 }
