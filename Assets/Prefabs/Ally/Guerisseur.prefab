@@ -5488,7 +5488,7 @@ MonoBehaviour:
   positionThreshold: 1
   attackDamage: 0
   attackRechargeTime: 0
-  attackRange: 5
+  defaultAttackRange: 0
   specialAbilityRechargeTime: 0
   isChosingPatrol: 0
   isFollowingEnemy: 0
@@ -5498,8 +5498,10 @@ MonoBehaviour:
   currentFollowedTroup: {fileID: 0}
   specialAbilityDelay: 0
   isVisible: 1
-  moveTargetDestination: {x: 0, y: 0, z: 0}
   isAddedWhenAwake: 0
+  moveTargetDestination: {x: 0, y: 0, z: 0}
+  timeBeforeNextAction: 0
+  isMovingToKing: 0
   healAmount: 10
   healRange: 10
   healRechargeTime: 1
@@ -5510,6 +5512,7 @@ MonoBehaviour:
   healEffect: {fileID: 866451567971719953, guid: ad990d9b14317854a9e81dc21dbe059c, type: 3}
   healEffectSpawnPoint: {fileID: 98119589824181803}
   healEffectSpeed: 0.5
+  IAminimumTroupToRevive: 0
   closestInjuredAllyDetected: {fileID: 0}
   isFollowingAlly: 0
   isHealing: 0
@@ -5557,7 +5560,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2
+  m_Height: 3
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &763401979748312093

@@ -166,15 +166,22 @@ public class Tombe : MonoBehaviour
             GameObject spawnedUnit = Instantiate(gameManager.Combattant, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
             spawnedUnit.GetComponent<Troup>().addToGroup();
+            Color color;
+            if (tombeTroupType == TombeTroupType.Enemy && ColorUtility.TryParseHtmlString("#FF5733", out color))
+            {
+                Debug.Log("Couleur de la troup rez : " + color);
+                spawnedUnit.GetComponent<Outline>().OutlineColor = color;
+            }
         }
         if (tombeUnitType == TombeUnitType.Archer)
         {
             GameObject spawnedUnit = Instantiate(gameManager.Archer, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
             spawnedUnit.GetComponent<Troup>().addToGroup();
-            Color color = new Color();
-            if (ColorUtility.TryParseHtmlString("#FF5733", out color))
+            Color color;
+            if (tombeTroupType == TombeTroupType.Enemy && ColorUtility.TryParseHtmlString("#FF5733", out color))
             {
+                Debug.Log("Couleur de la troup rez : " + color);
                 spawnedUnit.GetComponent<Outline>().OutlineColor = color;
             }
         }
@@ -183,36 +190,72 @@ public class Tombe : MonoBehaviour
             GameObject spawnedUnit = Instantiate(gameManager.Cavalier, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
             spawnedUnit.GetComponent<Troup>().addToGroup();
+            Color color;
+            if (tombeTroupType == TombeTroupType.Enemy && ColorUtility.TryParseHtmlString("#FF5733", out color))
+            {
+                Debug.Log("Couleur de la troup rez : " + color);
+                spawnedUnit.GetComponent<Outline>().OutlineColor = color;
+            }
         }
         if (tombeUnitType == TombeUnitType.Guerisseur)
         {
             GameObject spawnedUnit = Instantiate(gameManager.Guerisseur, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
             spawnedUnit.GetComponent<Troup>().addToGroup();
+            Color color;
+            if (tombeTroupType == TombeTroupType.Enemy && ColorUtility.TryParseHtmlString("#FF5733", out color))
+            {
+                Debug.Log("Couleur de la troup rez : " + color);
+                spawnedUnit.GetComponent<Outline>().OutlineColor = color;
+            }
         }
         if (tombeUnitType == TombeUnitType.Catapulte)
         {
             GameObject spawnedUnit = Instantiate(gameManager.Catapulte, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
             spawnedUnit.GetComponent<Troup>().addToGroup();
+            Color color;
+            if (tombeTroupType == TombeTroupType.Enemy && ColorUtility.TryParseHtmlString("#FF5733", out color))
+            {
+                Debug.Log("Couleur de la troup rez : " + color);
+                spawnedUnit.GetComponent<Outline>().OutlineColor = color;
+            }
         }
         if (tombeUnitType == TombeUnitType.Porte_bouclier)
         {
             GameObject spawnedUnit = Instantiate(gameManager.Porte_bouclier, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
             spawnedUnit.GetComponent<Troup>().addToGroup();
+            Color color;
+            if (tombeTroupType == TombeTroupType.Enemy && ColorUtility.TryParseHtmlString("#FF5733", out color))
+            {
+                Debug.Log("Couleur de la troup rez : " + color);
+                spawnedUnit.GetComponent<Outline>().OutlineColor = color;
+            }
         }
         if (tombeUnitType == TombeUnitType.Porte_etendard)
         {
             GameObject spawnedUnit = Instantiate(gameManager.Porte_etendard, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
             spawnedUnit.GetComponent<Troup>().addToGroup();
+            Color color;
+            if (tombeTroupType == TombeTroupType.Enemy && ColorUtility.TryParseHtmlString("#FF5733", out color))
+            {
+                Debug.Log("Couleur de la troup rez : " + color);
+                spawnedUnit.GetComponent<Outline>().OutlineColor = color;
+            }
         }
         if (tombeUnitType == TombeUnitType.Batisseur)
         {
             GameObject spawnedUnit = Instantiate(gameManager.Batisseur, transform.position - .8f * transform.right, Quaternion.identity);
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
             spawnedUnit.GetComponent<Troup>().addToGroup();
+            Color color;
+            if (tombeTroupType == TombeTroupType.Enemy && ColorUtility.TryParseHtmlString("#FF5733", out color))
+            {
+                Debug.Log("Couleur de la troup rez : " + color);
+                spawnedUnit.GetComponent<Outline>().OutlineColor = color;
+            }
         }
         if (tombeUnitType == TombeUnitType.Belier)
         {
@@ -220,11 +263,13 @@ public class Tombe : MonoBehaviour
             spawnedUnit.GetComponent<Troup>().troupType = (Troup.TroupType)(tombeTroupType);
             spawnedUnit.GetComponent<Troup>().addToGroup();
             Color color;
-            if (ColorUtility.TryParseHtmlString("FF5733", out color))
+            if (tombeTroupType == TombeTroupType.Enemy && ColorUtility.TryParseHtmlString("#FF5733", out color))
             {
+                Debug.Log("Couleur de la troup rez : " + color);
                 spawnedUnit.GetComponent<Outline>().OutlineColor = color;
             }
         }
+
         
 
         StopCoroutine(Timer());

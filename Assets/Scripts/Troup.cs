@@ -62,6 +62,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected bool isAddedWhenAwake = false;
     [SerializeField] public Vector3 moveTargetDestination;
     [SerializeField] protected float timeBeforeNextAction;
+    [SerializeField] protected float turnTime;
     private Wall wallComponent;
     private bool isPlayingCircleAnim;
     private bool isChosingPlacement;
@@ -124,6 +125,8 @@ public abstract class Troup : MonoBehaviour
 
     protected virtual void Awake() 
     {
+        turnTime = .3f;
+
         if (troupType == TroupType.Ally && unitType != UnitType.Mur)
         {
             QueueUI = transform.Find("Canvas").Find("Queue").gameObject;
@@ -137,12 +140,13 @@ public abstract class Troup : MonoBehaviour
         {
             agent = GetComponent<NavMeshAgent>();
             agent.speed = movingSpeed;
+            attackRange = defaultAttackRange + agent.radius;
         }
         
 
         // Setup range
         
-        attackRange = defaultAttackRange + agent.radius;
+        
         // Debug.Log("agent radius " + agent.radius + " , radius = " + attackRange + " , default = " + defaultAttackRange);
 
         // GameManager variable setup
@@ -786,6 +790,31 @@ public abstract class Troup : MonoBehaviour
         return maxSpeed;
     }
 
+    public IEnumerator TurnTo(Vector3 targetPosition)
+    {
+        // Calculate the rotation needed to face the target position
+        Quaternion startRotation = transform.rotation;
+        Quaternion targetRotation = Quaternion.LookRotation(targetPosition - transform.position);
+
+        // Time elapsed
+        float elapsedTime = 0f;
+
+        while (elapsedTime < turnTime)
+        {
+            // Interpolate between start and target rotations
+            transform.rotation = Quaternion.Slerp(startRotation, targetRotation, elapsedTime / turnTime);
+
+            // Update the elapsed time
+            elapsedTime += Time.deltaTime;
+
+            // Wait for the next frame
+            yield return null;
+        }
+
+        // Ensure the final rotation is the target rotation
+        transform.rotation = targetRotation;
+    }
+
     private void OnDrawGizmos()
     {
         if (selectionManager != null && selectionManager.isSelected(this.gameObject))
@@ -806,7 +835,7 @@ public abstract class Troup : MonoBehaviour
         // If King is present, attack it instead
         if (hasCrown) { return; }
 
-        if (troupType == TroupType.Enemy && gameManager.isCrownCollected)
+        if (troupType == TroupType.Enemy && gameManager.isCrownCollected && gameManager.king != null)
         {
             AttackKingBehaviour();
             return;
@@ -952,6 +981,7 @@ public abstract class Troup : MonoBehaviour
                 actionQueue.Enqueue(new Standby());
                 StartCoroutine(currentActionCoroutine);
 
+                StartCoroutine(TurnTo(currentAttackedTroup.transform.position));
                 attackCoroutine = Attack(currentAttackedTroup.GetComponent<Troup>());
                 StartCoroutine(attackCoroutine);
                 isAttackingEnemy = true;
@@ -971,8 +1001,8 @@ public abstract class Troup : MonoBehaviour
         {
             Vector3 targetPosition = currentAttackedTroup.transform.position;
             targetPosition.y = transform.position.y;
-
-            transform.LookAt(targetPosition);
+            // if (targetPosition.y != transform.position.y) { StartCoroutine(currentAttackedTroup.GetComponent<Troup>().TurnTo(currentAttackedTroup)); }
+            
         }
     }
 
