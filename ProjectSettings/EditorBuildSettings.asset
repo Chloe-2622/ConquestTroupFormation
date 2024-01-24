@@ -29,4 +29,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Arene_5.unity
     guid: 72a43194759625f49a113f7f12504d00
+  - enabled: 1
+    path: Assets/Scenes/Descriptions.unity
+    guid: 3c4c543a62708864691ec982707194c2
   m_configObjects: {}

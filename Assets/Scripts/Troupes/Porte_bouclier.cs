@@ -27,7 +27,7 @@ public class Porte_bouclier : Troup
         shield = transform.Find("Shield").gameObject;
         
 
-        if (troupType == TroupType.Enemy) { IAminimumTroupToBoost = 5; }
+        if (troupType == TroupType.Enemy) { IAminimumTroupToBoost = 3; }
         
         positionThreshold = 2f;
     }
@@ -48,10 +48,16 @@ public class Porte_bouclier : Troup
         float totalHealth = 0f;
         float totalMaxHealth = 0f;
         HashSet<Troup> troupToCheck = troupType == TroupType.Ally ? GameManager.Instance.getAllies() : GameManager.Instance.getEnemies();
-        foreach (Troup troup in troupToCheck)
+        Collider[] detectedColliders = Physics.OverlapSphere(transform.position, boostRadius, troupMask);
+        foreach (Collider detectedCollider in detectedColliders)
         {
-            totalHealth += troup.getHealth();
-            totalMaxHealth += troup.getMaxHealth();
+            Troup detectedTroup = detectedCollider.GetComponent<Troup>();
+            if (detectedTroup != null && detectedTroup.gameObject != gameObject && detectedTroup.troupType ==TroupType.Enemy)
+            {
+                troupToCheck.Add(detectedTroup);
+                totalHealth += detectedTroup.getHealth();
+                totalMaxHealth += detectedTroup.getMaxHealth();
+            }
         }
 
         if (troupToCheck.Count >= IAminimumTroupToBoost) { canBoost = totalHealth < .5f * totalMaxHealth; }

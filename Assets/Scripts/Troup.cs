@@ -63,6 +63,7 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] public Vector3 moveTargetDestination;
     [SerializeField] protected float timeBeforeNextAction;
     [SerializeField] protected float turnTime;
+    protected Vector3 defaultPosition;
     private Wall wallComponent;
     private bool isPlayingCircleAnim;
     private bool isChosingPlacement;
@@ -132,6 +133,8 @@ public abstract class Troup : MonoBehaviour
         {
             QueueUI = transform.Find("Canvas").Find("Queue").gameObject;
         }
+
+        defaultPosition = transform.position;
 
         // Setup and show Health Bar
         maxHealth = health;
@@ -604,13 +607,53 @@ public abstract class Troup : MonoBehaviour
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
                 // Debug.Log("Target position clicked : " + hit.point);
-                firstPos = hit.point;
                 // Debug.Log("firstPos : " + firstPos);
                 FirstPatrolPoint.transform.position = new Vector3(firstPos.x, firstPos.y + 0.1f, firstPos.z);
             }
 
             if (Input.GetMouseButtonDown(0))
             {
+                // Debug.Log("c'est tard0");
+                float selectionCount = selectionManager.numberOfSelected();
+                // Debug.Log("c'est tard1");
+
+                if (selectionCount == 1)
+                {
+                    firstPos = hit.point;
+                }
+                else if (selectionCount > 1)
+                {
+                    Vector3 center = new Vector3(0, 0, 0);
+
+                    foreach (GameObject troup in selectionManager.getCurrentSelection())
+                    {
+                        if (troup != null) { center += troup.transform.position / selectionCount; }
+
+                    }
+
+                    NavMeshPath navMeshPath = new NavMeshPath();
+                    agent.CalculatePath(hit.point + transform.position - center, navMeshPath);
+
+                    if (navMeshPath.status == NavMeshPathStatus.PathComplete)
+                    {
+                        firstPos = hit.point + transform.position - center;
+                    }
+                    else
+                    {
+                        NavMeshHit closestHit;
+
+
+                        if (NavMesh.SamplePosition(hit.point, out closestHit, 10, 1))
+                        {
+                            firstPos = closestHit.position;
+                        }
+                        else
+                        {
+                            closestHit.position = hit.point;
+                        }
+                    }
+                }
+
                 hasSelectedFistPos = true;
                 PatrolSelectionPopUp1.enabled = false;
             }
@@ -634,12 +677,52 @@ public abstract class Troup : MonoBehaviour
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
                 // Debug.Log("Target position clicked : " + hit.point);
-                secondPos = hit.point;
                 SecondPatrolPoint.transform.position = new Vector3(secondPos.x, secondPos.y + 0.1f, secondPos.z);
             }
 
             if (Input.GetMouseButtonDown(0))
             {
+                // Debug.Log("c'est tard0");
+                float selectionCount = selectionManager.numberOfSelected();
+                // Debug.Log("c'est tard1");
+
+                if (selectionCount == 1)
+                {
+                    secondPos = hit.point;
+                }
+                else if (selectionCount > 1)
+                {
+                    Vector3 center = new Vector3(0, 0, 0);
+
+                    foreach (GameObject troup in selectionManager.getCurrentSelection())
+                    {
+                        if (troup != null) { center += troup.transform.position / selectionCount; }
+
+                    }
+
+                    NavMeshPath navMeshPath = new NavMeshPath();
+                    agent.CalculatePath(hit.point + transform.position - center, navMeshPath);
+
+                    if (navMeshPath.status == NavMeshPathStatus.PathComplete)
+                    {
+                        secondPos = hit.point + transform.position - center;
+                    }
+                    else
+                    {
+                        NavMeshHit closestHit;
+
+
+                        if (NavMesh.SamplePosition(hit.point, out closestHit, 10, 1))
+                        {
+                            secondPos = closestHit.position;
+                        }
+                        else
+                        {
+                            closestHit.position = hit.point;
+                        }
+                    }
+                }
+
                 hasSelectedSecondPos = true;
                 PatrolSelectionPopUp2.enabled = false;
             }
@@ -782,11 +865,15 @@ public abstract class Troup : MonoBehaviour
 
         foreach (GameObject troup in selection)
         {
-            float troupSpeed = troup.GetComponent<Troup>().getMaxSpeed();
-            if (troupSpeed < maxSpeed)
+            if (troup != null)
             {
-                maxSpeed = troupSpeed;
+                float troupSpeed = troup.GetComponent<Troup>().getMaxSpeed();
+                if (troupSpeed < maxSpeed)
+                {
+                    maxSpeed = troupSpeed;
+                }
             }
+            
         }
 
         return maxSpeed;
