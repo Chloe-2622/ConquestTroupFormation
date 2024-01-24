@@ -168,8 +168,6 @@ public class PurchaseUI : MonoBehaviour
         popUp.gameObject.SetActive(true);
     }
 
-
-
     public void enterUI() { troupPurchase.set_isOnUI(true); }
     public void exitUI() { troupPurchase.set_isOnUI(false); }
 }

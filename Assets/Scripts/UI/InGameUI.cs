@@ -15,8 +15,8 @@ public class InGameUI : MonoBehaviour
     TODO
 
     Dans l'ordre :
-        - Options
-        - Touches
+        - 
+        - 
         - Catapulte
 
 
@@ -29,8 +29,8 @@ public class InGameUI : MonoBehaviour
     Bonus: Faire l'indication des dégats        
 
     
-
-
+    Touches                                                         DONE
+    Options                                                         DONE
     Refresh la sélection des troupes lors de la supression          DONE
     Bug des golds qui reapparaissent                                DONE
     Bug Camera quand on tiens troupe                                DONE      

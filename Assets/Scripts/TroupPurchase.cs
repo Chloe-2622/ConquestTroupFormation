@@ -38,7 +38,7 @@ public class TroupPurchase : MonoBehaviour
     private GameObject preview;
     private Troup previewTroupComponent;
     private Troup.UnitType currentSelectedUnitType;
-    private InputAction.CallbackContext lastContext;
+    private InputAction.CallbackContext lastContext = new InputAction.CallbackContext();
 
     // Place Troup
     private List<GameObject> unitPrefabs;
@@ -110,7 +110,7 @@ public class TroupPurchase : MonoBehaviour
 
     public void refreshPreview()
     {
-        if (!lastContext.Equals(null))
+        if (!InputAction.CallbackContext.Equals(lastContext, new InputAction.CallbackContext()))
         {
             showPlacement(lastContext);
         }

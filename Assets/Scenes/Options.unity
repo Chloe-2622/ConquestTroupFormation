@@ -1115,8 +1115,8 @@ GameObject:
   - component: {fileID: 1995184551}
   - component: {fileID: 1995184550}
   - component: {fileID: 1995184549}
-  - component: {fileID: 1995184552}
   - component: {fileID: 1995184553}
+  - component: {fileID: 1995184554}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -1174,19 +1174,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1995184552
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1995184548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c60db8f63408ad04285d73a205a8977b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  returnAction: {fileID: -3169318288096097693, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
 --- !u!114 &1995184553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1199,6 +1186,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb750ab473c8bcf4ead8f9077ce01ea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1995184554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1995184548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24ec3547e93fb68479a962f98e3808c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  returnAction: {fileID: -3169318288096097693, guid: d86d14698927f0042819d3b9b4c91230, type: 3}
 --- !u!1001 &236852470879058781
 PrefabInstance:
   m_ObjectHideFlags: 0

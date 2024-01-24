@@ -919,10 +919,10 @@ GameObject:
   - component: {fileID: 7935898198155487177}
   - component: {fileID: 2081391671169810418}
   - component: {fileID: 8085429279557207350}
-  - component: {fileID: 3410021225126253725}
   - component: {fileID: 7133949426430743617}
+  - component: {fileID: 2275966440490571499}
   m_Layer: 8
-  m_Name: CatapulteEnemy
+  m_Name: Catapulte
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1022,24 +1022,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &3410021225126253725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7307699464318762355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineMode: 0
-  outlineColor: {r: 0, g: 0.9054296, b: 1, a: 1}
-  outlineWidth: 4
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!136 &7133949426430743617
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1063,6 +1045,24 @@ CapsuleCollider:
   m_Height: 5.21
   m_Direction: 1
   m_Center: {x: 0, y: 0.52, z: 0}
+--- !u!114 &2275966440490571499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7307699464318762355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 0, g: 0.9054296, b: 1, a: 1}
+  outlineWidth: 4
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &481634011723226043
 PrefabInstance:
   m_ObjectHideFlags: 0
