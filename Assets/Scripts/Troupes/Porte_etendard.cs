@@ -60,30 +60,17 @@ public class Porte_etendard : Troup
             IAminimumTroupToBoost = 1;
         }
 
-        float minX = Mathf.Infinity;
-        foreach (Troup ally in gameManager.getEnemies())
+        Vector3 center = new Vector3(0, 0, 0);
+
+        HashSet<Troup> enemies = gameManager.getEnemies();
+
+        foreach (Troup troup in enemies)
         {
-            if (ally.unitType != UnitType.Porte_bouclier && ally.unitType != UnitType.Guerisseur) { minX = Mathf.Min(minX, ally.transform.position.x); }
+            if (troup != null) { center += troup.transform.position / enemies.Count; }
+
         }
 
-        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
-        {
-            int nextActionIndex = Random.Range(0, 2);
-
-            if (nextActionIndex == 0)
-            {
-                actionQueue.Enqueue(new MoveToPosition(agent, new Vector3(minX - 5f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f)), positionThreshold));
-            }
-            else
-            {
-                Vector3 pos1 = new Vector3(minX - 5f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f));
-                Vector3 pos2 = new Vector3(minX - 5f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f));
-                actionQueue.Enqueue(new Patrol(agent, pos1, pos2));
-            }
-
-            timeBeforeNextAction = Random.Range(5f, 10f);
-            StartCoroutine(IAactionCountdown());
-        }
+        actionQueue.Enqueue(new MoveToPosition(agent, center, positionThreshold));
     }
 
     protected override IEnumerator Attack(Troup enemy)
@@ -136,6 +123,8 @@ public class Porte_etendard : Troup
 
         GameObject etendard = Instantiate(etendardPrefab, transform.position + transform.forward + - .2f * transform.up, Quaternion.identity, null);
         etendard.GetComponent<Etendard>().isPlaced = true;
+
+        isBoosting = true;
 
         abilityBar.fillAmount = 0f;
         specialAbilityDelay = -1;

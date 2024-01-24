@@ -589,8 +589,10 @@ public abstract class Troup : MonoBehaviour
             {
                 // Debug.Log("Target position clicked : " + hit.point);
                 // Debug.Log("firstPos : " + firstPos);
-                FirstPatrolPoint.transform.position = new Vector3(firstPos.x, firstPos.y + 0.1f, firstPos.z);
+                
             }
+
+            FirstPatrolPoint.transform.position = new Vector3(hit.point.x, hit.point.y + 0.1f, hit.point.z);
 
             if (Input.GetMouseButtonDown(0))
             {
@@ -637,6 +639,7 @@ public abstract class Troup : MonoBehaviour
 
                 hasSelectedFistPos = true;
                 PatrolSelectionPopUp1.enabled = false;
+
             }
 
             yield return null;
@@ -658,7 +661,7 @@ public abstract class Troup : MonoBehaviour
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
                 // Debug.Log("Target position clicked : " + hit.point);
-                SecondPatrolPoint.transform.position = new Vector3(secondPos.x, secondPos.y + 0.1f, secondPos.z);
+                SecondPatrolPoint.transform.position = new Vector3(hit.point.x, hit.point.y + 0.1f, hit.point.z);
             }
 
             if (Input.GetMouseButtonDown(0))
@@ -1067,12 +1070,13 @@ public abstract class Troup : MonoBehaviour
         }
 
         // Look at current attacked troup
-        if (currentAttackedTroup != null && currentAttackedTroup != null && currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur)
+        if (currentAttackedTroup != null && currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur)
         {
-            Vector3 targetPosition = currentAttackedTroup.transform.position;
-            targetPosition.y = transform.position.y;
-            // if (targetPosition.y != transform.position.y) { StartCoroutine(currentAttackedTroup.GetComponent<Troup>().TurnTo(currentAttackedTroup)); }
-            
+            if (Quaternion.Angle(transform.rotation, Quaternion.LookRotation(currentAttackedTroup.transform.position - transform.position)) > 10)
+            {
+                StartCoroutine(TurnTo(currentAttackedTroup.transform.position));
+            }
+
         }
     }
 
