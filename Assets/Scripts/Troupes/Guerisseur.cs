@@ -56,7 +56,7 @@ public class Guerisseur : Troup
 
         if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
         {
-            actionQueue.Enqueue(new FollowUnit(agent, RandomTroupInTeam(gameManager.getEnemies()).gameObject));
+            actionQueue.Enqueue(new FollowUnit(agent, RandomTroupInTeam(gameManager.getEnemies(), 10f).gameObject));
 
             timeBeforeNextAction = Random.Range(5f, 10f);
             StartCoroutine(IAactionCountdown());

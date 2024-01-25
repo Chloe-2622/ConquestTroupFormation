@@ -54,12 +54,12 @@ MonoBehaviour:
   maxRemoveDistance: 2
   unitRotation: 45
   debugMode: 0
-  refreshPreview:
-    m_PersistentCalls:
-      m_Calls: []
   goldUpdate:
     m_PersistentCalls:
       m_Calls: []
   notEnoughtGold:
+    m_PersistentCalls:
+      m_Calls: []
+  resetSelection:
     m_PersistentCalls:
       m_Calls: []

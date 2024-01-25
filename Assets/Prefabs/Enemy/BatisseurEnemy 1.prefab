@@ -468,7 +468,6 @@ MonoBehaviour:
   attackRechargeTime: 2
   defaultAttackRange: 1
   specialAbilityRechargeTime: 30
-  showTimeDamages: 3
   isChosingPatrol: 0
   isFollowingEnemy: 0
   isAttackingEnemy: 0
@@ -483,9 +482,8 @@ MonoBehaviour:
   turnTime: 0
   isPlacingWall: 0
   isMovingToKing: 0
-  swingTime: 0
-  wallRechargeTime: 0
-  constructionRange: 0
+  swingTime: 1
+  constructionRange: 2
 --- !u!195 &8753042273054374063
 NavMeshAgent:
   m_ObjectHideFlags: 0

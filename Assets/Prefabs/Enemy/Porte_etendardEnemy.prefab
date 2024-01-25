@@ -244,10 +244,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troupType: 1
-  unitType: 6
+  unitType: 7
   isSelected: 0
   hasCrown: 0
-  goldCost: 0
+  goldCost: 10
   movingSpeed: 7
   health: 75
   armor: 0
@@ -275,7 +275,7 @@ MonoBehaviour:
   damageBoost: 10
   attackSpeedBoost: 1.5
   zoneRadius: 10
-  IAminimumTroupToBoost: 1
+  IAminimumTroupToBoost: 3
   etendardPrefab: {fileID: 5196883738447267751, guid: d8f2c3aaf1b64664aa63576a2acb0925, type: 3}
   isBoosting: 0
 --- !u!195 &8753042273054374063

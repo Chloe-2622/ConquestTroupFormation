@@ -40,6 +40,7 @@ public class Combattant : Troup
         while (enemy != null && !isFollowingOrders)
         {
             StartCoroutine(SwingSword());
+            MusicManager.Instance.PlaySound(MusicManager.SoundEffect.Sword, transform.position);
             if (enemy.unitType == UnitType.Archer)
             {
                 enemy.TakeDamage(2 * attackDamage);
@@ -67,10 +68,10 @@ public class Combattant : Troup
 
             if (nextActionIndex == 0)
             {
-                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(defaultPosition, 20f), positionThreshold));
+                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(defaultPosition, 5f), positionThreshold));
             } else
             {
-                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(defaultPosition, 20f), RandomVectorInFlatCircle(defaultPosition, 20f)));
+                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(defaultPosition, 5f), RandomVectorInFlatCircle(defaultPosition, 5f)));
             }
 
             timeBeforeNextAction = Random.Range(5f, 10f);

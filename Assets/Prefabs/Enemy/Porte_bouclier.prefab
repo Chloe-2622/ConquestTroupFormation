@@ -357,7 +357,7 @@ MonoBehaviour:
   hasCrown: 0
   goldCost: 5
   movingSpeed: 4
-  health: 400
+  health: 200
   armor: 15
   detectionRange: 15
   positionThreshold: 2

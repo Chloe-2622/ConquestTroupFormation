@@ -383,10 +383,10 @@ MonoBehaviour:
   unitType: 1
   isSelected: 0
   hasCrown: 0
-  goldCost: 1
+  goldCost: 2
   movingSpeed: 7
   health: 150
-  armor: 15
+  armor: 10
   detectionRange: 15
   positionThreshold: 1
   attackDamage: 20

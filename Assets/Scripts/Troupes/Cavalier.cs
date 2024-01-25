@@ -79,11 +79,11 @@ public class Cavalier : Troup
 
             if (nextActionIndex == 0)
             {
-                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(GameManager.Instance.CrownPosition.transform.position, 20f), positionThreshold));
+                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(defaultPosition, 5f), positionThreshold));
             }
             else
             {
-                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(GameManager.Instance.CrownPosition.transform.position, 20f), RandomVectorInFlatCircle(GameManager.Instance.CrownPosition.transform.position, 20f)));
+                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(defaultPosition, 5f), RandomVectorInFlatCircle(defaultPosition, 5f)));
             }
 
             timeBeforeNextAction = Random.Range(5f, 10f);

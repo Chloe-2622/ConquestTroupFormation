@@ -563,7 +563,7 @@ MonoBehaviour:
   unitType: 2
   isSelected: 0
   hasCrown: 0
-  goldCost: 0
+  goldCost: 2
   movingSpeed: 10
   health: 75
   armor: 0

@@ -2730,7 +2730,7 @@ MonoBehaviour:
   positionThreshold: 2
   attackDamage: 30
   attackRechargeTime: 1.5
-  defaultAttackRange: 2
+  defaultAttackRange: 1
   specialAbilityRechargeTime: 30
   showTimeDamages: 3
   isChosingPatrol: 0
