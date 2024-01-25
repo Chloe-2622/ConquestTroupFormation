@@ -23,7 +23,6 @@ public class Belier : Troup
 
     IEnumerator moveAnimation;
     private IEnumerator attackCoroutine;
-    private LayerMask wallMask;
 
     protected override void Awake()
     {
@@ -42,7 +41,6 @@ public class Belier : Troup
         ram = transform.Find("Model").Find("Belier").Find("Ram").gameObject;
 
         moveAnimation = MoveAnimation();
-        wallMask = gameManager.wallMask;
     }
 
     // Update is called once per frame
