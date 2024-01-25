@@ -72,7 +72,7 @@ public class Porte_bouclier : Troup
         float minX = Mathf.Infinity;
         foreach (Troup ally in gameManager.getEnemies())
         {
-            if (ally.unitType != UnitType.Porte_bouclier && ally.unitType != UnitType.Guerisseur) { minX = Mathf.Min(minX, ally.transform.position.x); }
+            if (ally.unitType != UnitType.Porte_bouclier && ally.unitType != UnitType.Guerisseur && Vector3.Distance(transform.position, ally.transform.position) <= 10f) { minX = Mathf.Min(minX, ally.transform.position.x); }
         }
 
         if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
@@ -81,12 +81,12 @@ public class Porte_bouclier : Troup
 
             if (nextActionIndex == 0)
             {
-                actionQueue.Enqueue(new MoveToPosition(agent, new Vector3(minX - 5f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f)), positionThreshold));
+                actionQueue.Enqueue(new MoveToPosition(agent, new Vector3(minX - 2f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f)), positionThreshold));
             }
             else
             {
-                Vector3 pos1 = new Vector3(minX - 5f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f));
-                Vector3 pos2 = new Vector3(minX - 5f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f));
+                Vector3 pos1 = new Vector3(minX - 2f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f));
+                Vector3 pos2 = new Vector3(minX - 2f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f));
                 actionQueue.Enqueue(new Patrol(agent, pos1, pos2));
             }
 

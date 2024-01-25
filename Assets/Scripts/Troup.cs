@@ -854,7 +854,7 @@ public abstract class Troup : MonoBehaviour
 
     public float FormationSpeed()
     {
-        float maxSpeed = Mathf.Infinity;
+        float maxSpeed = movingSpeed;
 
         List<GameObject> selection = selectionManager.getCurrentSelection();
 

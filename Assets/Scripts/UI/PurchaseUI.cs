@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
-using UnityEditor.PackageManager;
 
 public class PurchaseUI : MonoBehaviour
 {
@@ -29,6 +28,13 @@ public class PurchaseUI : MonoBehaviour
     private GameManager gameManager;
     private TroupPurchase troupPurchase;
 
+    private void Awake()
+    {
+        gameManager = GameManager.Instance;
+        troupPurchase = gameManager.troupPurchase;
+        troupPurchase.goldUpdate.AddListener(updateGoldCount);
+        troupPurchase.notEnoughtGold.AddListener(notEnoughtGoldShow);
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -37,8 +43,8 @@ public class PurchaseUI : MonoBehaviour
         gameManager  = GameManager.Instance;
         troupPurchase = gameManager.troupPurchase;
 
-        troupPurchase.goldUpdate.AddListener(updateGoldCount);
-        troupPurchase.notEnoughtGold.AddListener(notEnoughtGoldShow);
+        // troupPurchase.goldUpdate.AddListener(updateGoldCount);
+        // troupPurchase.notEnoughtGold.AddListener(notEnoughtGoldShow);
 
         inGameUI = this.GetComponent<InGameUI>();
         //inGameUI.timer.SetActive(false);

@@ -372,7 +372,7 @@ MonoBehaviour:
   unitType: 9
   isSelected: 0
   hasCrown: 0
-  goldCost: 0
+  goldCost: 20
   movingSpeed: 2
   health: 200
   armor: 0
@@ -398,6 +398,8 @@ MonoBehaviour:
   isPlacingWall: 0
   isMovingToKing: 0
   wheelRotationSpeed: 10
+  maxRamDistance: 1000
+  ramTravelTime: 20
 --- !u!195 &8753042273054374063
 NavMeshAgent:
   m_ObjectHideFlags: 0
