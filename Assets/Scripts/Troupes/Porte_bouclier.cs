@@ -190,9 +190,13 @@ public class Porte_bouclier : Troup
     {
         foreach (Troup troup in troupToBoost)
         {
-            troup.AddArmor(-armureBoost);
-            troup.ActivateArmorBoostParticle(false);
-            Debug.Log("Desaction de l'armur pour : " + troup.gameObject);
+            if (troup != null)
+            {
+                troup.AddArmor(-armureBoost);
+                troup.ActivateArmorBoostParticle(false);
+                Debug.Log("Desaction de l'armur pour : " + troup.gameObject);
+            }
+            
         }
     }
 }

@@ -791,14 +791,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6321822962273219229}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0014070885, y: -0, z: -0, w: 0.99999905}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.0075683594, y: -0.15573692, z: 1.2961121}
   m_LocalScale: {x: 0.3481783, y: 0.05218034, z: 0.34817833}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 655269618097624654}
   m_Father: {fileID: 5503955627628882955}
-  m_LocalEulerAnglesHint: {x: 23.408325, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1248527947244962952
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -971,11 +971,11 @@ MonoBehaviour:
   movingSpeed: 2
   health: 200
   armor: 0
-  detectionRange: 15
+  detectionRange: 25
   positionThreshold: 2
   attackDamage: 0
   attackRechargeTime: 4
-  defaultAttackRange: 0
+  defaultAttackRange: 20
   specialAbilityRechargeTime: 30
   isChosingPatrol: 0
   isFollowingEnemy: 0
@@ -989,6 +989,7 @@ MonoBehaviour:
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
   turnTime: 0
+  isPlacingWall: 0
   isMovingToKing: 0
   wheelRotationSpeed: 20
   croix: {fileID: 0}
@@ -999,6 +1000,9 @@ MonoBehaviour:
   heightAttenuation: 3
   timeAttenuation: 10
   isLauchingBoulder: 0
+  reloadFraction: 0.5
+  stayFraction: 0.4
+  swingFraction: 0.1
   newBoulder: {fileID: 0}
 --- !u!195 &8085429279557207350
 NavMeshAgent:
