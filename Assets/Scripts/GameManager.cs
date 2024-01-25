@@ -41,6 +41,9 @@ public class GameManager : MonoBehaviour
     [Header("Archer")]
     public GameObject ArrowPrefab;
 
+    [Header("Belier")]
+    public GameObject RamPrefab;
+
     [Header("Batisseur")]
     public GameObject WallPrefab;
     public GameObject EnemieWallPrefab;

@@ -573,6 +573,7 @@ MonoBehaviour:
   attackRechargeTime: 1
   defaultAttackRange: 5
   specialAbilityRechargeTime: 30
+  showTimeDamages: 3
   isChosingPatrol: 0
   isFollowingEnemy: 0
   isAttackingEnemy: 0

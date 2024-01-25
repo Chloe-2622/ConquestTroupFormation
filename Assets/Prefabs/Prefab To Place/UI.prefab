@@ -898,7 +898,7 @@ Transform:
   m_GameObject: {fileID: 2234711246118503527}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -230.58003, y: -132.53163, z: -0.076675415}
+  m_LocalPosition: {x: -733, y: -132.53163, z: -237}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -989,18 +989,18 @@ MonoBehaviour:
   AIName_UI: {fileID: 3147131407797438742}
   AIUnitCounter: {fileID: 1109406717823989445}
   iconPosition: {x: 70, y: -30, z: 0}
-  pading: 70
+  pading: 40
   unitIconsSection: {fileID: 6177650631723916211}
   unitIconPrefab: {fileID: 5649814149038635741, guid: 3a6b5d85397d6e74cabc63934feecff3, type: 3}
-  combatantColor: {r: 0, g: 0, b: 0, a: 0}
-  archerColor: {r: 0, g: 0, b: 0, a: 0}
-  cavalierColor: {r: 0, g: 0, b: 0, a: 0}
-  guerisseurColor: {r: 0, g: 0, b: 0, a: 0}
-  catapulteColor: {r: 0, g: 0, b: 0, a: 0}
-  porte_bouclierColor: {r: 0, g: 0, b: 0, a: 0}
-  porte_etendardColor: {r: 0, g: 0, b: 0, a: 0}
-  batisseurColor: {r: 0, g: 0, b: 0, a: 0}
-  belierColor: {r: 0, g: 0, b: 0, a: 0}
+  combatantColor: {r: 0.9960785, g: 0.9960785, b: 0.42352945, a: 1}
+  archerColor: {r: 0.90196085, g: 0.2627451, b: 0.9960785, a: 1}
+  cavalierColor: {r: 0.37254903, g: 0.18039216, b: 0.09411766, a: 1}
+  guerisseurColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  catapulteColor: {r: 0.52156866, g: 0.30980393, b: 0.1254902, a: 1}
+  porte_bouclierColor: {r: 0.22352943, g: 0.5294118, b: 0.15294118, a: 1}
+  porte_etendardColor: {r: 0.15686275, g: 0.023529414, b: 0.9960785, a: 1}
+  batisseurColor: {r: 0.8196079, g: 0.5372549, b: 0.20000002, a: 1}
+  belierColor: {r: 0.29803923, g: 0.16862746, b: 0.027450982, a: 1}
   bars: {fileID: 4235820849400654248}
   checkBox: {fileID: 875159769646233960}
   forcePersistentFormationAction: {fileID: 8291691667327827382, guid: d86d14698927f0042819d3b9b4c91230, type: 3}

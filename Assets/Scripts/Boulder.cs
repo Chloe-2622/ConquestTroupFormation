@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Boulder : MonoBehaviour
 {
@@ -11,7 +12,11 @@ public class Boulder : MonoBehaviour
     [SerializeField] private float damage;
     [SerializeField] private float hitRadius;
     [SerializeField] private float touchGroundThreshold;
+    [SerializeField] private float wallFactor;
     public Troup.TroupType boulderType;
+
+    private LayerMask wallMask;
+    private LayerMask troupMask;
 
     private HashSet<GameObject> hitObjects = new HashSet<GameObject>();
     private LayerMask floorMask;
@@ -24,13 +29,14 @@ public class Boulder : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, hitRadius);
+        Collider[] troupColliders = Physics.OverlapSphere(transform.position, hitRadius, troupMask);
 
-        foreach (Collider collider in colliders)
+        foreach (Collider collider in troupColliders)
         {
             Troup troup = collider.GetComponent<Troup>();
             if (troup != null && troup.troupType != boulderType)
             {
+                Debug.Log("--- troup " + collider);
                 if (oneShot)
                 {
                     troup.TakeDamage(Mathf.Infinity);
@@ -43,6 +49,23 @@ public class Boulder : MonoBehaviour
                         Debug.Log("**** Touchéééé : " + collider.gameObject);
                         troup.TakeDamage(damage);
                     }
+                }
+            }
+        }
+
+        Collider[] wallColliders = Physics.OverlapSphere(transform.position, hitRadius, wallMask);
+
+        foreach (Collider collider in wallColliders)
+        {
+            Wall wall = collider.transform.parent.GetComponent<Wall>();
+            if (wall != null && wall.troupType != boulderType)
+            {
+                Debug.Log("--- wall " + collider);
+                if (!hitObjects.Contains(collider.gameObject))
+                {
+                    hitObjects.Add(collider.gameObject);
+                    Debug.Log("**** Touchéééé : " + collider.gameObject);
+                    wall.TakeDamage(damage * wallFactor);
                 }
             }
         }

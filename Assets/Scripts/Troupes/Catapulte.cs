@@ -27,7 +27,8 @@ public class Catapulte : Troup
     // Boulders
     private GameObject boulderPrefab;
     private GameObject boulderSpawnPoint;
-    private GameObject newBoulder;
+    private Boulder launchedBoulder;
+    private GameObject boulderShown;
 
     // Lance
     private float baseRotationLance;
@@ -54,8 +55,8 @@ public class Catapulte : Troup
 
         boulderPrefab = gameManager.BoulderPrefab;
 
-        newBoulder = Instantiate(boulderPrefab, transform.Find("Model").Find("Lance").Find("BoulderSpawnPoint").position, Quaternion.identity, transform);
-        newBoulder.GetComponent<Boulder>().boulderType = troupType;
+        boulderShown = Instantiate(boulderPrefab, transform.Find("Model").Find("Lance").Find("BoulderSpawnPoint").position, Quaternion.identity, transform);
+        boulderShown.GetComponent<Boulder>().boulderType = troupType;
 
         croix = Instantiate(GameManager.Instance.CatapulteCroixPrefab, GameManager.Instance.CatapulteCroix.transform);
         boulderSpawnPoint = transform.Find("Model").Find("Lance").Find("BoulderSpawnPoint").gameObject;
@@ -167,6 +168,9 @@ public class Catapulte : Troup
             yield return null;
         }
         lance.transform.localEulerAngles = new Vector3(32f, 0f, 0f);
+        boulderShown.SetActive(false);
+
+        launchedBoulder = Instantiate(boulderPrefab, boulderSpawnPoint.transform.position, Quaternion.identity, transform).GetComponent<Boulder>();
 
         StartCoroutine(LaunchBoulder());
         StartCoroutine(LoadBoulder());
@@ -186,43 +190,42 @@ public class Catapulte : Troup
             yield return null;
         }
         lance.transform.localEulerAngles = Vector3.zero;
+        boulderShown.SetActive(true);
 
         Debug.Log("*** Catapulte Reloaded");
 
-        newBoulder = Instantiate(boulderPrefab, boulderSpawnPoint.transform.position, Quaternion.identity, transform);
-        newBoulder.GetComponent<Boulder>().boulderType = troupType;
+        
         yield return new WaitForSeconds(stayFraction*attackRechargeTime);
         Debug.Log("*** Ready to Shoot");
 
         if (isTargetSelected) { StartCoroutine(SwingBoulder()); }
     }
 
-    
-
     private IEnumerator LaunchBoulder()
     {
         Debug.Log("*** Boulder launched");
         Vector3 spawnPoint = boulderSpawnPoint.transform.position;
         Vector3 endPoint = shootPoint;
-        Boulder boulder = newBoulder.GetComponent<Boulder>();
+        launchedBoulder.boulderType = troupType;
 
         float hauteur = Vector3.Distance(spawnPoint, endPoint) / heightAttenuation;
         float travelTime = Vector3.Distance(spawnPoint, endPoint) / timeAttenuation;
 
         float t = 0f;
-        while (boulder != null)
+        while (launchedBoulder != null)
         {
             t += Time.deltaTime;
 
             float height = Mathf.Sin(Mathf.PI * (t / travelTime)) * hauteur;
 
             Vector3 newPosition = Vector3.Lerp(spawnPoint, endPoint, t / travelTime) + Vector3.up * height;
-            boulder.transform.Rotate(new Vector3(0, 1, 1));
-            boulder.transform.position = newPosition;
+            launchedBoulder.transform.Rotate(new Vector3(0, 1, 1));
+            launchedBoulder.transform.position = newPosition;
             yield return null;
         }
         Debug.Log("*** boulder arrived");
     }
+
     protected override void IAEnemy() { }
 
     protected override IEnumerator Attack(Troup enemy) { yield return null; }
