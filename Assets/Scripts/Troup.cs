@@ -27,11 +27,14 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected float defaultAttackRange;
     [SerializeField] protected float specialAbilityRechargeTime;
 
+    [Header("Damages")]
+    [SerializeField] protected float showTimeDamages;
+
     // Private variables ------------------------------------------------------------------------------------------
     [Header("Debug Variables")]
     [SerializeField] private bool isChosingPatrol;
-    [SerializeField] private bool isFollowingEnemy;
-    [SerializeField] private bool isAttackingEnemy;
+    [SerializeField] protected bool isFollowingEnemy;
+    [SerializeField] protected bool isAttackingEnemy;
     [SerializeField] private bool isPatroling;
     [SerializeField] protected GameObject currentAttackedTroup;
     [SerializeField] protected GameObject currentFollowedTroup;
@@ -86,6 +89,7 @@ public abstract class Troup : MonoBehaviour
     protected TextMeshProUGUI FollowSelectionPopUp;
     protected Image healthBar;
     protected Image abilityBar;
+    protected TextMeshProUGUI damageText;
     protected GameObject unitBar;
     protected GameObject Bars;
 
@@ -153,9 +157,9 @@ public abstract class Troup : MonoBehaviour
         unitBar = Instantiate(gameManager.unitBarsPrefab, gameManager.eventSystem.GetComponent<InGameUI>().bars.transform);
         healthBar = unitBar.transform.GetChild(0).GetComponent<Image>();
         abilityBar = unitBar.transform.GetChild(1).GetComponent<Image>();
+        damageText = unitBar.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
 
         troupMask = gameManager.troupMask;
-        wallMask = gameManager.wallMask;
         floorMask = gameManager.floorMask;
 
         isPlacingWall = false;
@@ -902,6 +906,7 @@ public abstract class Troup : MonoBehaviour
     // Attack and ability -----------------------------------------------------------------------------------------
     protected void AttackBehaviour()
     {
+        if (!gameManager.hasGameStarted()) { return;  }
 
         // If King is present, attack it instead
         if (hasCrown) { return; }
@@ -1218,6 +1223,7 @@ public abstract class Troup : MonoBehaviour
         float beforeHealth = health;
 
         health -= Mathf.Max(damage - armor, 0);
+        StartCoroutine(ShowDamages(Mathf.Max(damage - armor, 0)));
 
         ParticleSystem damageParticle = Instantiate(gameManager.DamageParticlePrefab.GetComponent<ParticleSystem>(), transform.position, Quaternion.identity);
         damageParticle.transform.localEulerAngles = new Vector3(-90f, 0f, 0f);
@@ -1256,6 +1262,19 @@ public abstract class Troup : MonoBehaviour
             StartCoroutine(UpdateHealthBar());
         }
     }
+
+
+    public IEnumerator ShowDamages(float damages)
+    {
+        if ( damages < 0f )
+        {
+            damageText.text = "- " + damages.ToString();
+        }
+        yield return new WaitForSeconds(showTimeDamages);
+        damageText.text = "";
+    }
+
+
 
     public virtual void AddDamage(float damage)
     {
@@ -1531,13 +1550,16 @@ public abstract class Troup : MonoBehaviour
             // navMeshAgent.SetDestination(targetPosition);
 
             Troup unitTypeToFollow = unitToFollow.GetComponent<Troup>();
-            float distanceToCheck = range + unitTypeToFollow.agent.radius;
+            float distanceToCheck = (unitTypeToFollow.agent != null) ? range + unitTypeToFollow.agent.radius : range;
             //(unitTypeToFollow == UnitType.Cavalier || unitTypeToFollow == UnitType.Catapulte || unitTypeToFollow == UnitType.Belier) ? range : range;
 
             // Debug.Log("Following unit at position : " + targetPosition + " et distanceToCheck : " + distanceToCheck + " et disance = " + Vector2.Distance(new Vector2(navMeshAgent.transform.position.x, navMeshAgent.transform.position.z), new Vector2(targetPosition.x, targetPosition.z)));
 
-            while (unitToFollow != null && navMeshAgent != null && Vector2.Distance(new Vector2(navMeshAgent.transform.position.x, navMeshAgent.transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) - unitTypeToFollow.agent.radius - range > 0 && unitToFollow.GetComponent<Troup>().isVisible)
+            Debug.Log("!!! " + distanceToCheck);
+            while (unitToFollow != null && navMeshAgent != null && Vector2.Distance(new Vector2(navMeshAgent.transform.position.x, navMeshAgent.transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) - distanceToCheck > 0 && unitToFollow.GetComponent<Troup>().isVisible)
             {
+                Debug.Log("!!! Dans le while");
+
                 // Debug.Log("Distance actuelle : " + Vector3.Distance(navMeshAgent.transform.position, targetPosition));
                 navMeshAgent.isStopped = false;
                 if (unitToFollow != null) { targetPosition = unitToFollow.transform.position; }

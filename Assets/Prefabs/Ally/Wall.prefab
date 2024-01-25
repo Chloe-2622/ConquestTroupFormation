@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5925346707957578999}
   - component: {fileID: 4606649521571964861}
   - component: {fileID: 1500832691428117568}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: MaxCircle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,7 +114,7 @@ GameObject:
   - component: {fileID: 8507973707865238976}
   - component: {fileID: 8686586556915028147}
   - component: {fileID: 5131779088345012005}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Tower 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -187,7 +187,7 @@ GameObject:
   - component: {fileID: 5465469656773106748}
   - component: {fileID: 2757303381824644538}
   - component: {fileID: 15836204694129039}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -236,8 +236,9 @@ MonoBehaviour:
   positionThreshold: 0
   attackDamage: 0
   attackRechargeTime: 0
-  attackRange: 0
+  defaultAttackRange: 0
   specialAbilityRechargeTime: 0
+  showTimeDamages: 3
   isChosingPatrol: 0
   isFollowingEnemy: 0
   isAttackingEnemy: 0
@@ -249,6 +250,8 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
+  turnTime: 0
+  isPlacingWall: 0
   isMovingToKing: 0
   maxLenght: 30
   wallFusionMaxDistance: 10
@@ -287,7 +290,7 @@ GameObject:
   - component: {fileID: 6666194447635413868}
   - component: {fileID: 247304333811876816}
   - component: {fileID: 5947591106148534350}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Tower 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -361,7 +364,7 @@ GameObject:
   - component: {fileID: 3300208137882376951}
   - component: {fileID: 5241426472040563238}
   - component: {fileID: 7981773882921175171}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -444,7 +447,7 @@ GameObject:
   - component: {fileID: 3600350885231497673}
   - component: {fileID: 1801710626931392288}
   - component: {fileID: 8868742189530660474}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}

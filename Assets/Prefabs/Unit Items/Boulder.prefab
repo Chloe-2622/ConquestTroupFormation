@@ -94,7 +94,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   oneShot: 0
-  damage: 75
-  hitRadius: 1
+  damage: 1000
+  hitRadius: 2
   touchGroundThreshold: 0.2
+  wallFactor: 0
   boulderType: 0

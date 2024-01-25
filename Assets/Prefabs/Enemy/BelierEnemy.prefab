@@ -382,6 +382,7 @@ MonoBehaviour:
   attackRechargeTime: 2
   defaultAttackRange: 2
   specialAbilityRechargeTime: 0
+  showTimeDamages: 3
   isChosingPatrol: 0
   isFollowingEnemy: 0
   isAttackingEnemy: 0
@@ -393,6 +394,8 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
+  turnTime: 0
+  isPlacingWall: 0
   isMovingToKing: 0
   wheelRotationSpeed: 10
 --- !u!195 &8753042273054374063

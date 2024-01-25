@@ -977,6 +977,7 @@ MonoBehaviour:
   attackRechargeTime: 4
   defaultAttackRange: 20
   specialAbilityRechargeTime: 30
+  showTimeDamages: 3
   isChosingPatrol: 0
   isFollowingEnemy: 0
   isAttackingEnemy: 0
@@ -996,14 +997,11 @@ MonoBehaviour:
   shootPoint: {x: 0, y: 0, z: 0}
   oneShotTime: 12
   isSelectingPlacement: 0
-  isShooting: 0
   heightAttenuation: 3
   timeAttenuation: 10
-  isLauchingBoulder: 0
   reloadFraction: 0.5
   stayFraction: 0.4
   swingFraction: 0.1
-  newBoulder: {fileID: 0}
 --- !u!195 &8085429279557207350
 NavMeshAgent:
   m_ObjectHideFlags: 0

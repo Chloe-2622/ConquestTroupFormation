@@ -5490,6 +5490,7 @@ MonoBehaviour:
   attackRechargeTime: 0
   defaultAttackRange: 0
   specialAbilityRechargeTime: 0
+  showTimeDamages: 3
   isChosingPatrol: 0
   isFollowingEnemy: 0
   isAttackingEnemy: 0
@@ -5501,6 +5502,8 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
+  turnTime: 0
+  isPlacingWall: 0
   isMovingToKing: 0
   healAmount: 10
   healRange: 10
