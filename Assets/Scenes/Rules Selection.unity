@@ -899,6 +899,8 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Arena 2
       m_Image: {fileID: 0}
+    - m_Text: Arena 3
+      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
