@@ -14,7 +14,7 @@ public class Belier : Troup
     private GameObject ramPrefab;
     private bool isRamLaunched;
 
-    private Ram ram;
+    private GameObject ram;
 
     private Animator mAnimator;
     private bool isRolling;
@@ -39,7 +39,7 @@ public class Belier : Troup
         roues.Add(transform.Find("Model").Find("Belier").Find("Roue6").gameObject);
 
         ramPrefab = gameManager.RamPrefab;
-        ram = transform.Find("Model").Find("Belier").Find("Ram").GetComponent<Ram>();
+        ram = transform.Find("Model").Find("Belier").Find("Ram").gameObject;
 
         moveAnimation = MoveAnimation();
         wallMask = gameManager.wallMask;
