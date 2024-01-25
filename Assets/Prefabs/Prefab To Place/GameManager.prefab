@@ -83,7 +83,7 @@ MonoBehaviour:
   Archer: {fileID: 3630770809780813079, guid: 9786ae7cb6327624a9f2cee6018ac599, type: 3}
   Cavalier: {fileID: 3630770809780813079, guid: 309db510fae1b7548a3f8d14bcf8427c, type: 3}
   Guerisseur: {fileID: 3630770809780813079, guid: 3d22409efb8f8e340816ac548896391a, type: 3}
-  Catapulte: {fileID: 7307699464318762355, guid: a5e04dcb2b9d8d742a7ac83b9fd9bbe4, type: 3}
+  Catapulte: {fileID: 7307699464318762355, guid: a63f128d1ad80dc4e90b7611121a2582, type: 3}
   Porte_bouclier: {fileID: 3630770809780813079, guid: bb87a4eeeb5e12240aa48057e18e96d8, type: 3}
   Porte_etendard: {fileID: 3630770809780813079, guid: 0062b60676c4a004d8827e9fa5501e44, type: 3}
   Batisseur: {fileID: 3630770809780813079, guid: 39e2cfba802b14840a634f7414c98a91, type: 3}
@@ -101,13 +101,13 @@ MonoBehaviour:
   BigBoulderPrefab: {fileID: 1488345525442576840, guid: 6d1da80999474c84fa8579bd167a4afe, type: 3}
   ArrowPrefab: {fileID: 2897191137781764108, guid: fecae67398f66c947b095718df9880c9, type: 3}
   WallPrefab: {fileID: 2114470120617509491, guid: 03f6c398b1d78b64c90668522e027f68, type: 3}
-  EnemieWallPrefab: {fileID: 2114470120617509491, guid: 0f97d50385c2d3f4eb8c3c2fdee0385e, type: 3}
+  EnemieWallPrefab: {fileID: 2114470120617509491, guid: dc5f343665b25ec42b504c82fd4ba8b6, type: 3}
   mainCamera: {fileID: 0}
   selectionManager: {fileID: 0}
   troupPurchase: {fileID: 0}
   eventSystem: {fileID: 0}
-  PatrolingCircles: {fileID: 1061220208115533391}
-  SelectionParticleCircles: {fileID: 8101969785001855467}
+  PatrolingCircles: {fileID: 0}
+  SelectionParticleCircles: {fileID: 0}
   CrownPosition: {fileID: 0}
   floorMask:
     serializedVersion: 2
@@ -121,22 +121,22 @@ MonoBehaviour:
   wallMask:
     serializedVersion: 2
     m_Bits: 512
-  selectionArrow: {fileID: -8679921383154817045, guid: 00a85a373062c63479e4b487e7d50b2e, type: 3}
+  selectionArrow: {fileID: 0}
   tombe: {fileID: 8754737974659679140, guid: cf5713f7f4e857340ac275da5ea97ef3, type: 3}
   BoostParticles: {fileID: 2786005768850215309}
   isFormationShapeForced: 0
   defaultHeight: 2
   outlineWidth: 4
-  goldPerArena: e80300006e00000078000000820000008c000000
+  goldPerArena: 190000006e00000078000000820000008c000000
   TroupSelectionPopUp: {fileID: 0}
   PlaceSelectionPopUp: {fileID: 0}
   PatrolSelectionPopUp1: {fileID: 0}
   PatrolSelectionPopUp2: {fileID: 0}
   FollowSelectionPopUp: {fileID: 0}
-  crownArrived: You succesfully stole the crown
+  crownArrived: You succesfully ... stole, the crown
   allEnemiesDead: ' Tatakae !!!'
   deathOfKing: A bas la monarchie !
-  noUnitsRemaining: "Ils sont pass\xE9s o\xF9 ?"
+  noUnitsRemaining: Elles sont passees ou mes troupes ?
   isCrownCollected: 0
   king: {fileID: 0}
   updateTroupCounter:

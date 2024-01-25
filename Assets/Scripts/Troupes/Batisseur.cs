@@ -154,7 +154,7 @@ public class Batisseur : Troup
 
     public void findNearestWall()
     {
-        HashSet<Wall> allyWalls = GameManager.Instance.getAllyWalls();
+        HashSet<Wall> allyWalls = (troupType == TroupType.Ally) ? GameManager.Instance.getAllyWalls() : GameManager.Instance.getEnemyWalls();
 
         float minDistanceTower_1 = wallPrefab.GetComponent<Wall>().wallFusionMaxDistance;
         Vector3 nearestPosition_1 = new Vector3();
@@ -194,7 +194,7 @@ public class Batisseur : Troup
         isBuilding = true;
         findNearestWall();
 
-        Debug.Log("Go to " + firstPos);
+        Debug.Log("Go to first pos" + firstPos);
         AddAction(new MoveToPosition(agent, firstPos, positionThreshold));
         yield return new WaitWhile(() => Vector3.Distance(transform.position, firstPos) > constructionRange);
         AddAction(new Standby());
@@ -216,7 +216,7 @@ public class Batisseur : Troup
         newWallComponent.setTower_2_Position(firstPos);
         newWallComponent.addToGroup();
 
-        Debug.Log("Go to " + secondPos);
+        Debug.Log("Go to second pos" + secondPos);
         AddAction(new MoveToPosition(agent, secondPos, positionThreshold));
         yield return new WaitWhile(() => Vector3.Distance(transform.position, secondPos) > constructionRange);
         AddAction(new Standby());
@@ -284,11 +284,11 @@ public class Batisseur : Troup
             specialAbilityDelay = specialAbilityRechargeTime;
             
 
-            int nextActionIndex = Random.Range(0, 2);
+            int nextActionIndex = gameManager.getEnemyWalls().Count > 0 ? Random.Range(0, 2) : 0;
 
             if (nextActionIndex == 0)
             {
-                Vector3 firstBuildLocation = RandomVectorInFlatCircle(transform.position, 10f);
+                Vector3 firstBuildLocation = RandomVectorInFlatCircle(transform.position, 5f);
                 Vector3 secondBuildLocation = RandomVectorInFlatCircle(firstBuildLocation, wallPrefab.GetComponent<Wall>().getMaxLength());
                 IABuildWall(firstBuildLocation, secondBuildLocation);
             }

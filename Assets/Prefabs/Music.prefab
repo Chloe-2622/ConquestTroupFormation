@@ -48,9 +48,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MainMenuMusic: {fileID: 8336309410599610323}
   ArenaMusic: {fileID: 6315000898044241504}
-  Sword: {fileID: 8300000, guid: 3d72599f5b117504e89c2aafaaee9f36, type: 3}
-  BowLoad: {fileID: 8300000, guid: 6b73615564ecad74b98aa8f89592bd4d, type: 3}
-  BowShoot: {fileID: 8300000, guid: 4b811d5a0b3396d4cb67d1205c1e6300, type: 3}
+  Sword: {fileID: 8300000, guid: baaba42dd16b8ba4a8b74b194e8da3ba, type: 3}
+  BowLoad: {fileID: 8300000, guid: c3ae524bd54f2ab4b81c104a47b48b2f, type: 3}
+  BowShoot: {fileID: 8300000, guid: 970cf9ced06b8144fb25784ab79c3582, type: 3}
+  Hammer1: {fileID: 8300000, guid: e1b2df7686f4ac84187920fe2ff8de2a, type: 3}
+  Hammer2: {fileID: 8300000, guid: ea2c07877cb316b4ab633e3b39527921, type: 3}
 --- !u!82 &8336309410599610323
 AudioSource:
   m_ObjectHideFlags: 0

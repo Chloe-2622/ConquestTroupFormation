@@ -47,9 +47,9 @@ MonoBehaviour:
   urpAsset: {fileID: 11400000, guid: c174d56ca51485a4088f4c05848e7f1f, type: 2}
   currentQualitySelection: 2
   chosenArena: 1
-  generalVolume: 1
+  generalVolume: 0.5
   isGeneralOn: 1
-  musicVolume: 0
+  musicVolume: 0.5
   isMusicOn: 1
-  effectsVolume: 0.3
-  isEffectsOn: 0
+  effectsVolume: 0.5
+  isEffectsOn: 1
