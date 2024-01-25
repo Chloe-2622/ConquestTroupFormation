@@ -217,6 +217,13 @@ public class Batisseur : Troup
         newWallComponent.addToGroup();
 
         Debug.Log("Go to second pos" + secondPos);
+
+        if (NavMesh.SamplePosition(hit_1.point, out closestHit_1, 10, 1))
+        {
+            lastFirstPosition = closestHit_1.position;
+            showPreview(lastFirstPosition, lastFirstPosition);
+        }
+
         AddAction(new MoveToPosition(agent, secondPos, positionThreshold));
         yield return new WaitWhile(() => Vector3.Distance(transform.position, secondPos) > constructionRange);
         AddAction(new Standby());

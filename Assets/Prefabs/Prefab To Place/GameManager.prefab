@@ -127,7 +127,7 @@ MonoBehaviour:
   isFormationShapeForced: 0
   defaultHeight: 2
   outlineWidth: 4
-  goldPerArena: 190000006e00000078000000820000008c000000
+  goldPerArena: 190000006400000078000000820000008c000000
   TroupSelectionPopUp: {fileID: 0}
   PlaceSelectionPopUp: {fileID: 0}
   PatrolSelectionPopUp1: {fileID: 0}
