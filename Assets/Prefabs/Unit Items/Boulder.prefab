@@ -96,4 +96,5 @@ MonoBehaviour:
   oneShot: 0
   damage: 75
   hitRadius: 1
-  boulderTroupType: 0
+  touchGroundThreshold: 0.2
+  boulderType: 0

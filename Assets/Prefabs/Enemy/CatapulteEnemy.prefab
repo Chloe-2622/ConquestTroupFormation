@@ -971,11 +971,11 @@ MonoBehaviour:
   movingSpeed: 2
   health: 200
   armor: 0
-  detectionRange: 15
+  detectionRange: 25
   positionThreshold: 2
   attackDamage: 0
   attackRechargeTime: 4
-  defaultAttackRange: 0
+  defaultAttackRange: 20
   specialAbilityRechargeTime: 30
   isChosingPatrol: 0
   isFollowingEnemy: 0

@@ -401,8 +401,6 @@ public abstract class Troup : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.F) && specialAbilityDelay == 0)
             {
-                // Debug.Log("-- Activate Ability");
-                Debug.Log("--- Start Ability");
                 StartCoroutine(SpecialAbility());
                 specialAbilityDelay = -1f;
             }
@@ -1071,7 +1069,7 @@ public abstract class Troup : MonoBehaviour
         }
 
         // Clear current attacked troup if no ennemies are in range (and therefore current attacked troup is not in range)
-        if (closestEnemyInRange == null)
+        if (closestEnemyInRange == null && currentAttackedTroup != null && currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur)
         {
             // Debug.Log("BBBBBB");
             currentAttackedTroup = null;
@@ -1079,7 +1077,7 @@ public abstract class Troup : MonoBehaviour
         }
 
         // Look at current attacked troup
-        if (currentAttackedTroup != null && currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur)
+        if (currentAttackedTroup != null)
         {
             if (Quaternion.Angle(transform.rotation, Quaternion.LookRotation(currentAttackedTroup.transform.position - transform.position)) > 10)
             {
@@ -1171,8 +1169,9 @@ public abstract class Troup : MonoBehaviour
             }
         }
 
+        Debug.Log("--- " + (currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur));
         // Clear current attacked troup if no ennemies are in range (and therefore current attacked troup is not in range)
-        if (closestEnemyInRange == null)
+        if (closestEnemyInRange == null && currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur)
         {
             currentAttackedTroup = null;
             isAttackingEnemy = false;

@@ -28,7 +28,6 @@ public class Wall : Troup
 
     public override void addToGroup()
     {
-        Debug.Log("--- " + this);
         maxLenghtCircle.SetActive(false);
         if (troupType == TroupType.Ally)
         {
