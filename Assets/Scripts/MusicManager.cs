@@ -87,7 +87,7 @@ public class MusicManager : MonoBehaviour
     {
         if (optionManager != null)
         {
-            float musicVolume = optionManager.isVolumeOn(VolumeField.VolumeType.Music) ? optionManager.getVolume(VolumeField.VolumeType.Music) * optionManager.getVolume(VolumeField.VolumeType.General) : 0f;
+            float musicVolume = (optionManager.isVolumeOn(VolumeField.VolumeType.Music) && optionManager.isVolumeOn(VolumeField.VolumeType.General)) ? optionManager.getVolume(VolumeField.VolumeType.Music) * optionManager.getVolume(VolumeField.VolumeType.General) : 0f;
             MainMenuMusic.volume = musicVolume;
             ArenaMusic.volume = musicVolume;
         }
@@ -96,7 +96,7 @@ public class MusicManager : MonoBehaviour
 
     public void PlaySound(SoundEffect soundEffect, Vector3 position)
     {
-        float volume = optionManager.isVolumeOn(VolumeField.VolumeType.Effects) ? optionManager.getVolume(VolumeField.VolumeType.Effects) * optionManager.getVolume(VolumeField.VolumeType.General) : 0f;
+        float volume = (optionManager.isVolumeOn(VolumeField.VolumeType.Effects) && optionManager.isVolumeOn(VolumeField.VolumeType.General)) ? optionManager.getVolume(VolumeField.VolumeType.Effects) * optionManager.getVolume(VolumeField.VolumeType.General) : 0f;
 
         if (soundEffect == SoundEffect.Sword)
         {

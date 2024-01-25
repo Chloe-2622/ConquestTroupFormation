@@ -237,7 +237,7 @@ public class Guerisseur : Troup
         while (troup.gameObject != null || troup.IsInjured())
         {
             
-            GameObject currentHealEffect = Instantiate(healEffect, healEffectSpawnPoint.transform);
+            GameObject currentHealEffect = Instantiate(healEffect, healEffectSpawnPoint.transform.position, Quaternion.identity);
             StartCoroutine(HealEffectAnimation(troup, currentHealEffect, healEffectSpawnPoint.transform.position, troup.gameObject.transform.position + new Vector3(0, 1f, 0), healEffectSpeed));
             
             yield return new WaitForSeconds(healRechargeTime);
