@@ -479,11 +479,11 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
-  isMovingToKing: 0
-  swingTime: 0
-  wallRechargeTime: 0
-  constructionRange: 0
+  turnTime: 0
   isPlacingWall: 0
+  isMovingToKing: 0
+  swingTime: 1
+  constructionRange: 2
 --- !u!195 &8753042273054374063
 NavMeshAgent:
   m_ObjectHideFlags: 0

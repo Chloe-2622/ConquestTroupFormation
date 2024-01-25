@@ -67,7 +67,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1706e03cb09b7454d8b2c91f331c198d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goalScale: {x: 5, y: 1, z: 5}
+  goalScale: {x: 5, y: 11.23, z: 5}
 --- !u!1001 &6497186585002203591
 PrefabInstance:
   m_ObjectHideFlags: 0

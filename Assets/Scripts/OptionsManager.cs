@@ -9,7 +9,7 @@ using static VolumeField;
 
 public class OptionsManager : MonoBehaviour
 {
-    public static OptionsManager Instance;
+    public static OptionsManager Instance { get; private set; }
     public UniversalRenderPipelineAsset urpAsset;
     public int currentQualitySelection;
 

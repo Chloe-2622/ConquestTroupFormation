@@ -45,11 +45,11 @@ public class Archer : Troup
 
             if (nextActionIndex == 0)
             {
-                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(defaultPosition, 20f), positionThreshold));
+                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(defaultPosition, 5f), positionThreshold));
             }
             else
             {
-                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(defaultPosition, 20f), RandomVectorInFlatCircle(defaultPosition, 20f)));
+                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(defaultPosition, 5f), RandomVectorInFlatCircle(defaultPosition, 5f)));
             }
 
             timeBeforeNextAction = Random.Range(5f, 10f);
@@ -62,6 +62,7 @@ public class Archer : Troup
         while (enemy != null && currentAttackedTroup != null)
         {
             StartCoroutine(BowAnimation());
+            MusicManager.Instance.PlaySound(MusicManager.SoundEffect.BowLoad, transform.position);
             StartCoroutine(ShootArrow(enemy));
             
             yield return new WaitForSeconds(attackRechargeTime);
@@ -124,6 +125,7 @@ public class Archer : Troup
         if (enemy != null)
         {
             GameObject arrow = Instantiate(GameManager.Instance.ArrowPrefab, arrowSpawnPoint.transform.position, Quaternion.identity, null);
+            MusicManager.Instance.PlaySound(MusicManager.SoundEffect.BowShoot, transform.position);
             arrows.Add(arrow);
             arrow.transform.LookAt(enemy.transform.position);
             arrow.transform.eulerAngles = new Vector3(0f, arrow.transform.eulerAngles.y + 180, arrow.transform.eulerAngles.z);

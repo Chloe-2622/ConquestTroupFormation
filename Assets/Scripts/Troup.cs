@@ -808,17 +808,26 @@ public abstract class Troup : MonoBehaviour
         return new Vector3(x, y, z);
     }
 
-    public Troup RandomTroupInTeam(HashSet<Troup> team)
+    public Troup RandomTroupInTeam(HashSet<Troup> team, float radius)
     {
         if (team == null || team.Count == 0)
         {
             return null;
         }
 
-        int randomIndex = Random.Range(0, team.Count);
+        HashSet<Troup> troupToCheck = new HashSet<Troup>();
+        foreach (Troup troup in team)
+        {
+            if (Vector3.Distance(troup.transform.position, transform.position) <= radius)
+            {
+                troupToCheck.Add(troup);
+            }
+        }
+
+        int randomIndex = Random.Range(0, troupToCheck.Count);
         int currentIndex = 0;
 
-        foreach (Troup troup in team)
+        foreach (Troup troup in troupToCheck)
         {
             if (currentIndex == randomIndex)
             {
@@ -1076,7 +1085,6 @@ public abstract class Troup : MonoBehaviour
             {
                 StartCoroutine(TurnTo(currentAttackedTroup.transform.position));
             }
-
         }
     }
 
@@ -1171,12 +1179,12 @@ public abstract class Troup : MonoBehaviour
         }
 
         // Look at current attacked troup
-        if (currentAttackedTroup != null)
+        if (currentAttackedTroup != null && currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur)
         {
-            Vector3 targetPosition = currentAttackedTroup.transform.position;
-            targetPosition.y = transform.position.y;
-
-            transform.LookAt(targetPosition);
+            if (Quaternion.Angle(transform.rotation, Quaternion.LookRotation(currentAttackedTroup.transform.position - transform.position)) > 10)
+            {
+                StartCoroutine(TurnTo(currentAttackedTroup.transform.position));
+            }
         }
     }
 

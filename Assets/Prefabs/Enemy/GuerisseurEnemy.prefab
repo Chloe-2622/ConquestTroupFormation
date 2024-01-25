@@ -517,7 +517,7 @@ MonoBehaviour:
   unitType: 4
   isSelected: 0
   hasCrown: 0
-  goldCost: 4
+  goldCost: 10
   movingSpeed: 7
   health: 75
   armor: 0
@@ -538,6 +538,8 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
+  turnTime: 0
+  isPlacingWall: 0
   isMovingToKing: 0
   healAmount: 10
   healRange: 10
@@ -547,9 +549,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   healEffect: {fileID: 866451567971719953, guid: ad990d9b14317854a9e81dc21dbe059c, type: 3}
-  healEffectSpawnPoint: {fileID: 98119589824181803}
+  healEffectSpawnPoint: {fileID: 98119589824181803, guid: 3d22409efb8f8e340816ac548896391a, type: 3}
   healEffectSpeed: 0.5
-  IAminimumTroupToRevive: 0
+  IAminimumTroupToRevive: 4
   closestInjuredAllyDetected: {fileID: 0}
   isFollowingAlly: 0
   isHealing: 0

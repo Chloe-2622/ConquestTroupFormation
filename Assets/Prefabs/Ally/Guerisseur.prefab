@@ -5480,7 +5480,7 @@ MonoBehaviour:
   unitType: 4
   isSelected: 0
   hasCrown: 0
-  goldCost: 4
+  goldCost: 10
   movingSpeed: 7
   health: 75
   armor: 0
@@ -5501,6 +5501,8 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
+  turnTime: 0
+  isPlacingWall: 0
   isMovingToKing: 0
   healAmount: 10
   healRange: 10

@@ -61,14 +61,16 @@ public class Porte_etendard : Troup
         }
 
         Vector3 center = new Vector3(0, 0, 0);
+        int count = 0;
 
         HashSet<Troup> enemies = gameManager.getEnemies();
 
         foreach (Troup troup in enemies)
         {
-            if (troup != null) { center += troup.transform.position / enemies.Count; }
+            if (troup != null && Vector3.Distance(transform.position, troup.transform.position) < 10) { center += troup.transform.position; count++; }
 
         }
+        center /= count;
 
         actionQueue.Enqueue(new MoveToPosition(agent, center, positionThreshold));
     }

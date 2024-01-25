@@ -40,6 +40,8 @@ public class Wall : Troup
         }
     }
 
+    public float getMaxLength() { return maxLenght; }
+
     // Update is called once per frame
     protected override void Update()
     {

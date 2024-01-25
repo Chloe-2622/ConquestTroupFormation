@@ -988,11 +988,12 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
+  turnTime: 0
+  isPlacingWall: 0
   isMovingToKing: 0
   wheelRotationSpeed: 20
   croix: {fileID: 0}
   shootPoint: {x: 0, y: 0, z: 0}
-  maxShootingRange: 50
   oneShotTime: 12
   isSelectingPlacement: 0
   isShooting: 0
@@ -1000,7 +1001,6 @@ MonoBehaviour:
   timeAttenuation: 10
   isLauchingBoulder: 0
   newBoulder: {fileID: 0}
-  hasSelected: 0
 --- !u!195 &8085429279557207350
 NavMeshAgent:
   m_ObjectHideFlags: 0

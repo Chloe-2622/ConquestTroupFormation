@@ -563,13 +563,13 @@ MonoBehaviour:
   unitType: 2
   isSelected: 0
   hasCrown: 0
-  goldCost: 0
+  goldCost: 2
   movingSpeed: 10
   health: 75
   armor: 0
   detectionRange: 15
   positionThreshold: 1
-  attackDamage: 10
+  attackDamage: 20
   attackRechargeTime: 1
   defaultAttackRange: 5
   specialAbilityRechargeTime: 30
@@ -584,11 +584,13 @@ MonoBehaviour:
   isAddedWhenAwake: 0
   moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
+  turnTime: 0
+  isPlacingWall: 0
   isMovingToKing: 0
   invisibleTime: 10
   invisibleMaterial: {fileID: 2100000, guid: b2893209e057c48409a2c339ff33e055, type: 2}
   arrowSpeed: 0.5
-  bow: {fileID: 5562275753640233679}
+  bow: {fileID: 5562275753640233679, guid: 9786ae7cb6327624a9f2cee6018ac599, type: 3}
 --- !u!195 &8753042273054374063
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1571,11 +1573,6 @@ PrefabInstance:
 --- !u!4 &5078649704054444149 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8636203590895719989, guid: 1410f98c9747e4848899f41a8aaf0c14, type: 3}
-  m_PrefabInstance: {fileID: 3576713076285900352}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &5562275753640233679 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8976278532422012047, guid: 1410f98c9747e4848899f41a8aaf0c14, type: 3}
   m_PrefabInstance: {fileID: 3576713076285900352}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5841136041264098155

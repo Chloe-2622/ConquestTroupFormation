@@ -9,10 +9,11 @@ public class Batisseur : Troup
 {
     [Header("Batisseur properties")]
     [SerializeField] private float swingTime;
-    [SerializeField] private float wallRechargeTime;
     [SerializeField] private float constructionRange;
 
     private LayerMask floorMaskLayer;
+
+    [SerializeField] private bool isBuilding;
 
     private GameObject hammer;
     private GameObject wallPrefab;
@@ -21,8 +22,8 @@ public class Batisseur : Troup
     private GameObject preview;
     private Wall previewWallComponent;
 
-    private Vector3 firstPos = new Vector3(0,0,0);
-    private Vector3 secondPos = new Vector3(0, 0, 0);
+    [SerializeField] private Vector3 firstPos = new Vector3(0,0,0);
+    [SerializeField] private Vector3 secondPos = new Vector3(0, 0, 0);
 
 
     protected override void Awake()
@@ -45,6 +46,8 @@ public class Batisseur : Troup
 
         if (!GameManager.Instance.hasGameStarted()) { return; }
         AttackBehaviour();
+        Debug.Log(troupType);
+        if (troupType == TroupType.Enemy) { IAEnemy(); }
     }
 
     protected override IEnumerator SpecialAbility()
@@ -143,27 +146,20 @@ public class Batisseur : Troup
 
     public IEnumerator DecreaseAbilityBar()
     {
-        float elapsedTime = 0f;
-        while (elapsedTime < wallRechargeTime)
-        {
-            abilityBar.fillAmount = 1 - elapsedTime / wallRechargeTime;
-            elapsedTime += Time.deltaTime;
-
-            yield return null;
-        }
         abilityBar.fillAmount = 0;
 
         specialAbilityDelay = specialAbilityRechargeTime;
+        yield return null;
     }
 
     public void findNearestWall()
     {
         HashSet<Wall> allyWalls = GameManager.Instance.getAllyWalls();
 
-        float minDistanceTower_1 = previewWallComponent.wallFusionMaxDistance;
+        float minDistanceTower_1 = wallPrefab.GetComponent<Wall>().wallFusionMaxDistance;
         Vector3 nearestPosition_1 = new Vector3();
 
-        float minDistanceTower_2 = previewWallComponent.wallFusionMaxDistance;
+        float minDistanceTower_2 = wallPrefab.GetComponent<Wall>().wallFusionMaxDistance;
         Vector3 nearestPosition_2 = new Vector3();
 
 
@@ -189,12 +185,13 @@ public class Batisseur : Troup
                 }
             }
         }
-        if (minDistanceTower_1 != previewWallComponent.wallFusionMaxDistance) { firstPos = nearestPosition_1; }
-        if (minDistanceTower_2 != previewWallComponent.wallFusionMaxDistance) { secondPos = nearestPosition_2; }
+        if (minDistanceTower_1 != wallPrefab.GetComponent<Wall>().wallFusionMaxDistance) { firstPos = nearestPosition_1; }
+        if (minDistanceTower_2 != wallPrefab.GetComponent<Wall>().wallFusionMaxDistance) { secondPos = nearestPosition_2; }
     }
 
     protected IEnumerator BuildWall()
     {
+        isBuilding = true;
         findNearestWall();
 
         Debug.Log("Go to " + firstPos);
@@ -204,6 +201,8 @@ public class Batisseur : Troup
 
         GameObject newWall;
         StartCoroutine(SwingHammer());
+        MusicManager.Instance.PlaySound(MusicManager.SoundEffect.Hammer1, transform.position);
+        MusicManager.Instance.PlaySound(MusicManager.SoundEffect.Hammer2, transform.position);
         if (troupType == Troup.TroupType.Ally)
         {
             newWall = Instantiate(wallPrefab, firstPos, new Quaternion(0, 0, 0, 0));
@@ -221,9 +220,12 @@ public class Batisseur : Troup
         AddAction(new MoveToPosition(agent, secondPos, positionThreshold));
         yield return new WaitWhile(() => Vector3.Distance(transform.position, secondPos) > constructionRange);
         AddAction(new Standby());
-
+        StartCoroutine(SwingHammer());
+        MusicManager.Instance.PlaySound(MusicManager.SoundEffect.Hammer1, transform.position);
+        MusicManager.Instance.PlaySound(MusicManager.SoundEffect.Hammer2, transform.position);
         newWallComponent.setTower_2_Position(secondPos);
         isPlacingWall = false;
+        isBuilding = false;
 
         StartCoroutine(SpecialAbilityCountdown());
     }
@@ -265,5 +267,69 @@ public class Batisseur : Troup
         hammer.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
     }
 
-    protected override void IAEnemy() { }
+    private void IABuildWall(Vector3 firstLocation, Vector3 secondLocation)
+    {
+        firstPos = firstLocation;
+        secondPos = secondLocation;
+
+        StartCoroutine(BuildWall());
+    }
+
+    protected override void IAEnemy()
+    {
+        Debug.Log(specialAbilityDelay);
+
+        if (specialAbilityDelay == 0f)
+        {
+            specialAbilityDelay = specialAbilityRechargeTime;
+            
+
+            int nextActionIndex = Random.Range(0, 2);
+
+            if (nextActionIndex == 0)
+            {
+                Vector3 firstBuildLocation = RandomVectorInFlatCircle(transform.position, 10f);
+                Vector3 secondBuildLocation = RandomVectorInFlatCircle(firstBuildLocation, wallPrefab.GetComponent<Wall>().getMaxLength());
+                IABuildWall(firstBuildLocation, secondBuildLocation);
+            }
+            else
+            {
+                HashSet<Wall> enemyWalls = gameManager.getEnemyWalls();
+                int index = Random.Range(0, enemyWalls.Count);
+                int currentIndex = 0;
+
+                foreach (Wall enemyWall in enemyWalls)
+                {
+                    if (currentIndex == index)
+                    {
+                        List<Vector3> towers = enemyWall.getTowersPosition();
+                        int i = Random.Range(0, 2);
+
+                        Vector3 firstBuildLocation = (i == 0) ? towers[0] : towers[1];
+                        Vector3 secondBuildLocation = RandomVectorInFlatCircle(firstBuildLocation, wallPrefab.GetComponent<Wall>().getMaxLength());
+                        IABuildWall(firstBuildLocation, secondBuildLocation);
+                    }
+
+                    currentIndex++;
+                }
+            }
+        }
+
+        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null && !isBuilding)
+        {
+            int nextActionIndex = Random.Range(0, 2);
+
+            if (nextActionIndex == 0)
+            {
+                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(defaultPosition, 5f), positionThreshold));
+            }
+            else
+            {
+                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(defaultPosition, 5f), RandomVectorInFlatCircle(defaultPosition, 5f)));
+            }
+
+            timeBeforeNextAction = Random.Range(5f, 10f);
+            StartCoroutine(IAactionCountdown());
+        }
+    }
 }
