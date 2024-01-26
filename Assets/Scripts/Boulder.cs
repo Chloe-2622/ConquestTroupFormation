@@ -19,6 +19,11 @@ public class Boulder : MonoBehaviour
     private HashSet<GameObject> hitObjects = new HashSet<GameObject>();
     private LayerMask floorMask;
 
+    private void Awake()
+    {
+        troupMask = GameManager.Instance.troupMask;
+    }
+
     public void OnEnable()
     {
         floorMask = GameManager.Instance.floorMask;

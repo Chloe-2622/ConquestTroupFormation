@@ -5,15 +5,24 @@ using UnityEngine.AI;
 
 public class Archer : Troup
 {
-    [Header("Archer properties")]
+
+    [Header("------------------ Archer ------------------ ")]
+    [Header("General stats")]
     [SerializeField] private float invisibleTime;
+
+    [Header("Special ability parameters")]
     [SerializeField] private Material invisibleMaterial;
+
+    [Header("Animation parameters")]
     [SerializeField] private float arrowSpeed;
     [SerializeField] private GameObject bow;
 
+    // Private variables
     private GameObject arrowSpawnPoint;
     HashSet<GameObject> arrows = new HashSet<GameObject>();
 
+
+    // Main Functions ---------------------------------------------------------------------------------------------
     protected override void Awake()
     {
         base.Awake();
@@ -22,7 +31,6 @@ public class Archer : Troup
         arrowSpawnPoint = transform.Find("ArrowSpawnPoint").gameObject;
     }
 
-    // Update is called once per frame
     protected override void Update()
     {
         base.Update();
@@ -31,32 +39,15 @@ public class Archer : Troup
         if (troupType == TroupType.Enemy) { IAEnemy(); }
     }
 
-    protected override void IAEnemy()
+    private void OnDestroy()
     {
-        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
+        foreach (GameObject arrow in arrows)
         {
-            StartCoroutine(SpecialAbility());
-            specialAbilityDelay = -1f;
-        }
-
-        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
-        {
-            int nextActionIndex = Random.Range(0, 2);
-
-            if (nextActionIndex == 0)
-            {
-                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(defaultPosition, 5f), positionThreshold));
-            }
-            else
-            {
-                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(defaultPosition, 5f), RandomVectorInFlatCircle(defaultPosition, 5f)));
-            }
-
-            timeBeforeNextAction = Random.Range(5f, 10f);
-            StartCoroutine(IAactionCountdown());
+            Destroy(arrow);
         }
     }
 
+    // Attack and ability -----------------------------------------------------------------------------------------
     protected override IEnumerator Attack(Troup enemy)
     {
         while (enemy != null && currentAttackedTroup != null)
@@ -94,6 +85,34 @@ public class Archer : Troup
         StartCoroutine(SpecialAbilityCountdown());
     }
 
+    // IA Enemy ---------------------------------------------------------------------------------------------------
+    protected override void IAEnemy()
+    {
+        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
+        {
+            StartCoroutine(SpecialAbility());
+            specialAbilityDelay = -1f;
+        }
+
+        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
+        {
+            int nextActionIndex = Random.Range(0, 2);
+
+            if (nextActionIndex == 0)
+            {
+                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(defaultPosition, 5f), positionThreshold));
+            }
+            else
+            {
+                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(defaultPosition, 5f), RandomVectorInFlatCircle(defaultPosition, 5f)));
+            }
+
+            timeBeforeNextAction = Random.Range(5f, 10f);
+            StartCoroutine(IAactionCountdown());
+        }
+    }
+
+    // Animation --------------------------------------------------------------------------------------------------
     private IEnumerator BowAnimation()
     {
         float t = 0f;
@@ -167,11 +186,4 @@ public class Archer : Troup
         }
     }
 
-    private void OnDestroy()
-    {
-        foreach (GameObject arrow in arrows)
-        {
-            Destroy(arrow);
-        }
-    }
 }

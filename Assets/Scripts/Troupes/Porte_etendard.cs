@@ -5,17 +5,23 @@ using UnityEngine.AI;
 
 public class Porte_etendard : Troup
 {
-    [Header("Combattant properties")]
+
+    [Header("------------------ Porte étendard ------------------ ")]
+    [Header("General stats")]
     [SerializeField] private float damageBoost;
     [SerializeField] private float attackSpeedBoost;
     [SerializeField] private float zoneRadius;
     [SerializeField] private float IAminimumTroupToBoost;
+
+    [Header("Special ability parameters")]
     [SerializeField] private GameObject etendardPrefab;
 
-    [SerializeField] private bool isBoosting;
-
+    // Private variables
+    private bool isBoosting;
     HashSet<Troup> troupToBoost = new HashSet<Troup>();
 
+
+    // Main Functions ---------------------------------------------------------------------------------------------
     protected override void Awake()
     {
         base.Awake();
@@ -23,7 +29,6 @@ public class Porte_etendard : Troup
         if (troupType == TroupType.Enemy) { IAminimumTroupToBoost = 3; }
     }
 
-    // Update is called once per frame
     protected override void Update()
     {
         base.Update();
@@ -32,49 +37,20 @@ public class Porte_etendard : Troup
         if (troupType == TroupType.Enemy && currentFollowedTroup == null && currentAttackedTroup == null) { IAEnemy(); }
     }
 
-    protected override void IAEnemy() 
+    private void OnDestroy()
     {
-        bool canBoost = false;
-
-        float totalHealth = 0f;
-        float totalMaxHealth = 0f;
-        HashSet<Troup> troupToCheck = troupType == TroupType.Ally ? GameManager.Instance.getAllies() : GameManager.Instance.getEnemies();
-        Collider[] detectedColliders = Physics.OverlapSphere(transform.position, zoneRadius, troupMask);
-        foreach (Collider detectedCollider in detectedColliders)
+        foreach (Troup troup in troupToBoost)
         {
-            Troup detectedTroup = detectedCollider.GetComponent<Troup>();
-            if (detectedTroup != null && detectedTroup.gameObject != gameObject && detectedTroup.troupType == TroupType.Enemy)
-            {
-                troupToCheck.Add(detectedTroup);
-                totalHealth += detectedTroup.getHealth();
-                totalMaxHealth += detectedTroup.getMaxHealth();
-            }
+            troup.ActivateBoostParticle(false);
         }
-
-        if (troupToCheck.Count >= IAminimumTroupToBoost) { canBoost = totalHealth < .5f * totalMaxHealth; }
-
-        if (!isBoosting && canBoost) { StartCoroutine(SpecialAbility()); }
-
-        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
-        {
-            IAminimumTroupToBoost = 1;
-        }
-
-        Vector3 center = new Vector3(0, 0, 0);
-        int count = 0;
-
-        HashSet<Troup> enemies = gameManager.getEnemies();
-
-        foreach (Troup troup in enemies)
-        {
-            if (troup != null && Vector3.Distance(transform.position, troup.transform.position) < 10) { center += troup.transform.position; count++; }
-
-        }
-        center /= count;
-
-        actionQueue.Enqueue(new MoveToPosition(agent, center, positionThreshold));
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(transform.position, zoneRadius);
+    }
+
+    // Attack and ability -----------------------------------------------------------------------------------------
     protected override IEnumerator Attack(Troup enemy)
     {
         // Le porte étendard n'attaque pas
@@ -134,16 +110,48 @@ public class Porte_etendard : Troup
         yield return null;
     }
 
-    private void OnDestroy()
+    // IA Enemy ---------------------------------------------------------------------------------------------------
+    protected override void IAEnemy() 
     {
-        foreach (Troup troup in troupToBoost)
+        bool canBoost = false;
+
+        float totalHealth = 0f;
+        float totalMaxHealth = 0f;
+        HashSet<Troup> troupToCheck = troupType == TroupType.Ally ? GameManager.Instance.getAllies() : GameManager.Instance.getEnemies();
+        Collider[] detectedColliders = Physics.OverlapSphere(transform.position, zoneRadius, troupMask);
+        foreach (Collider detectedCollider in detectedColliders)
         {
-            troup.ActivateBoostParticle(false);
+            Troup detectedTroup = detectedCollider.GetComponent<Troup>();
+            if (detectedTroup != null && detectedTroup.gameObject != gameObject && detectedTroup.troupType == TroupType.Enemy)
+            {
+                troupToCheck.Add(detectedTroup);
+                totalHealth += detectedTroup.getHealth();
+                totalMaxHealth += detectedTroup.getMaxHealth();
+            }
         }
+
+        if (troupToCheck.Count >= IAminimumTroupToBoost) { canBoost = totalHealth < .5f * totalMaxHealth; }
+
+        if (!isBoosting && canBoost) { StartCoroutine(SpecialAbility()); }
+
+        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
+        {
+            IAminimumTroupToBoost = 1;
+        }
+
+        Vector3 center = new Vector3(0, 0, 0);
+        int count = 0;
+
+        HashSet<Troup> enemies = gameManager.getEnemies();
+
+        foreach (Troup troup in enemies)
+        {
+            if (troup != null && Vector3.Distance(transform.position, troup.transform.position) < 10) { center += troup.transform.position; count++; }
+
+        }
+        center /= count;
+
+        actionQueue.Enqueue(new MoveToPosition(agent, center, positionThreshold));
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.DrawWireSphere(transform.position, zoneRadius);
-    }
 }

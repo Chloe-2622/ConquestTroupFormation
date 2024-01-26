@@ -5,25 +5,27 @@ using UnityEngine.AI;
 
 public class Batisseur : Troup
 {
-    [Header("Batisseur properties")]
-    [SerializeField] private float swingTime;
+
+    [Header("------------------ Batisseur ------------------ ")]
+    [Header("General stats")]
     [SerializeField] private float constructionRange;
 
-    private LayerMask floorMaskLayer;
+    [Header("Animation parameters")]
+    [SerializeField] private float swingTime;
 
+    // Debug variables
+    [SerializeField] private LayerMask floorMaskLayer;
     [SerializeField] private bool isBuilding;
-
-    private GameObject hammer;
-    private GameObject wallPrefab;
-    private GameObject enemieWallPrefab;
-
-    private GameObject preview;
-    private Wall previewWallComponent;
-
+    [SerializeField] private GameObject hammer;
+    [SerializeField] private GameObject wallPrefab;
+    [SerializeField] private GameObject enemieWallPrefab;
+    [SerializeField] private GameObject preview;
+    [SerializeField] private Wall previewWallComponent;
     [SerializeField] private Vector3 firstPos = new Vector3(0,0,0);
     [SerializeField] private Vector3 secondPos = new Vector3(0, 0, 0);
 
 
+    // Main Functions ---------------------------------------------------------------------------------------------
     protected override void Awake()
     {
         base.Awake();
@@ -35,7 +37,6 @@ public class Batisseur : Troup
         floorMaskLayer = gameManager.floorMask;
     }
 
-    // Update is called once per frame
     protected override void Update()
     {
         base.Update();
@@ -46,6 +47,17 @@ public class Batisseur : Troup
         AttackBehaviour();
         Debug.Log(troupType);
         if (troupType == TroupType.Enemy) { IAEnemy(); }
+    }
+
+    // Attack and ability -----------------------------------------------------------------------------------------
+    protected override IEnumerator Attack(Troup enemy)
+    {
+        while (enemy != null)
+        {
+            StartCoroutine(SwingHammer());
+            enemy.TakeDamage(attackDamage);
+            yield return new WaitForSeconds(attackRechargeTime);
+        }
     }
 
     protected override IEnumerator SpecialAbility()
@@ -142,51 +154,6 @@ public class Batisseur : Troup
         previewWallComponent.setTower_2_Position(tower_2_Position);
     }
 
-    public IEnumerator DecreaseAbilityBar()
-    {
-        abilityBar.fillAmount = 0;
-
-        specialAbilityDelay = specialAbilityRechargeTime;
-        yield return null;
-    }
-
-    public void findNearestWall()
-    {
-        HashSet<Wall> allyWalls = (troupType == TroupType.Ally) ? GameManager.Instance.getAllyWalls() : GameManager.Instance.getEnemyWalls();
-
-        float minDistanceTower_1 = wallPrefab.GetComponent<Wall>().wallFusionMaxDistance;
-        Vector3 nearestPosition_1 = new Vector3();
-
-        float minDistanceTower_2 = wallPrefab.GetComponent<Wall>().wallFusionMaxDistance;
-        Vector3 nearestPosition_2 = new Vector3();
-
-
-        foreach (Wall allyWall in allyWalls)
-        {
-            List<Vector3> towersPositions = allyWall.getTowersPosition();
-            for (int i = 0; i < towersPositions.Count; i++)
-            {
-                if (Vector3.Distance(firstPos, towersPositions[i]) < minDistanceTower_1)
-                {
-                    minDistanceTower_1 = Vector3.Distance(firstPos, towersPositions[i]);
-                    nearestPosition_1 = towersPositions[i];
-
-                    Debug.Log("Previous " + allyWall + " " + nearestPosition_1);
-                }
-
-                if (Vector3.Distance(secondPos, towersPositions[i]) < minDistanceTower_2)
-                {
-                    minDistanceTower_2 = Vector3.Distance(firstPos, towersPositions[i]);
-                    nearestPosition_2 = towersPositions[i];
-
-                    Debug.Log("Next " + allyWall + " " + nearestPosition_2);
-                }
-            }
-        }
-        if (minDistanceTower_1 != wallPrefab.GetComponent<Wall>().wallFusionMaxDistance) { firstPos = nearestPosition_1; }
-        if (minDistanceTower_2 != wallPrefab.GetComponent<Wall>().wallFusionMaxDistance) { secondPos = nearestPosition_2; }
-    }
-
     protected IEnumerator BuildWall()
     {
         isBuilding = true;
@@ -229,43 +196,52 @@ public class Batisseur : Troup
         StartCoroutine(SpecialAbilityCountdown());
     }
 
-    // Attack
-    protected override IEnumerator Attack(Troup enemy)
+    public void findNearestWall()
     {
-        while (enemy != null)
+        HashSet<Wall> allyWalls = (troupType == TroupType.Ally) ? GameManager.Instance.getAllyWalls() : GameManager.Instance.getEnemyWalls();
+
+        float minDistanceTower_1 = wallPrefab.GetComponent<Wall>().wallFusionMaxDistance;
+        Vector3 nearestPosition_1 = new Vector3();
+
+        float minDistanceTower_2 = wallPrefab.GetComponent<Wall>().wallFusionMaxDistance;
+        Vector3 nearestPosition_2 = new Vector3();
+
+
+        foreach (Wall allyWall in allyWalls)
         {
-            StartCoroutine(SwingHammer());
-            enemy.TakeDamage(attackDamage);
-            yield return new WaitForSeconds(attackRechargeTime);
+            List<Vector3> towersPositions = allyWall.getTowersPosition();
+            for (int i = 0; i < towersPositions.Count; i++)
+            {
+                if (Vector3.Distance(firstPos, towersPositions[i]) < minDistanceTower_1)
+                {
+                    minDistanceTower_1 = Vector3.Distance(firstPos, towersPositions[i]);
+                    nearestPosition_1 = towersPositions[i];
+
+                    Debug.Log("Previous " + allyWall + " " + nearestPosition_1);
+                }
+
+                if (Vector3.Distance(secondPos, towersPositions[i]) < minDistanceTower_2)
+                {
+                    minDistanceTower_2 = Vector3.Distance(firstPos, towersPositions[i]);
+                    nearestPosition_2 = towersPositions[i];
+
+                    Debug.Log("Next " + allyWall + " " + nearestPosition_2);
+                }
+            }
         }
+        if (minDistanceTower_1 != wallPrefab.GetComponent<Wall>().wallFusionMaxDistance) { firstPos = nearestPosition_1; }
+        if (minDistanceTower_2 != wallPrefab.GetComponent<Wall>().wallFusionMaxDistance) { secondPos = nearestPosition_2; }
     }
 
-    private IEnumerator SwingHammer()
+    public IEnumerator DecreaseAbilityBar()
     {
-        float timer = 0f;
-        Debug.Log("I am swinging hammer");
+        abilityBar.fillAmount = 0;
 
-        while (timer < swingTime / 2)
-        {
-            timer += Time.deltaTime;
-            hammer.transform.RotateAround(hammer.transform.position, hammer.transform.right, 90 * (Time.deltaTime / (swingTime / 2)));
-            Debug.Log("swingR : " + hammer.transform.localEulerAngles.x);
-
-            yield return null;
-        }
-        hammer.transform.localEulerAngles = new Vector3(90f, 0f, 0f);
-        Debug.Log("swingRL");
-        while (timer < swingTime)
-        {
-            timer += Time.deltaTime;
-            hammer.transform.RotateAround(hammer.transform.position, hammer.transform.right, -90 * (Time.deltaTime / (swingTime / 2)));
-            Debug.Log("swingL : " + hammer.transform.localEulerAngles.x);
-
-            yield return null;
-        }
-        hammer.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+        specialAbilityDelay = specialAbilityRechargeTime;
+        yield return null;
     }
 
+    // IA Enemy ---------------------------------------------------------------------------------------------------
     private void IABuildWall(Vector3 firstLocation, Vector3 secondLocation)
     {
         firstPos = firstLocation;
@@ -307,6 +283,8 @@ public class Batisseur : Troup
                         Vector3 firstBuildLocation = (i == 0) ? towers[0] : towers[1];
                         Vector3 secondBuildLocation = RandomVectorInFlatCircle(firstBuildLocation, wallPrefab.GetComponent<Wall>().getMaxLength());
                         IABuildWall(firstBuildLocation, secondBuildLocation);
+
+                        currentIndex++;
                     }
 
                     currentIndex++;
@@ -330,5 +308,32 @@ public class Batisseur : Troup
             timeBeforeNextAction = Random.Range(5f, 10f);
             StartCoroutine(IAactionCountdown());
         }
+    }
+
+    // Animation --------------------------------------------------------------------------------------------------
+    private IEnumerator SwingHammer()
+    {
+        float timer = 0f;
+        Debug.Log("I am swinging hammer");
+
+        while (timer < swingTime / 2)
+        {
+            timer += Time.deltaTime;
+            hammer.transform.RotateAround(hammer.transform.position, hammer.transform.right, 90 * (Time.deltaTime / (swingTime / 2)));
+            Debug.Log("swingR : " + hammer.transform.localEulerAngles.x);
+
+            yield return null;
+        }
+        hammer.transform.localEulerAngles = new Vector3(90f, 0f, 0f);
+        Debug.Log("swingRL");
+        while (timer < swingTime)
+        {
+            timer += Time.deltaTime;
+            hammer.transform.RotateAround(hammer.transform.position, hammer.transform.right, -90 * (Time.deltaTime / (swingTime / 2)));
+            Debug.Log("swingL : " + hammer.transform.localEulerAngles.x);
+
+            yield return null;
+        }
+        hammer.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
     }
 }

@@ -5,16 +5,20 @@ using UnityEngine.AI;
 
 public class Combattant : Troup
 {
-    [Header("Combattant properties")]
+    [Header("------------------ Combattant ------------------ ")]
+    [Header("General stats")]
     [SerializeField] private float enragedTime;
     [SerializeField] private float enragedSpeed;
     [SerializeField] private float enragedAttackRechargeTime;
+
+    [Header("Animation parameters")]
     [SerializeField] private float swingTime;
 
-
+    // Private variables
     private GameObject sword;
-    
 
+
+    // Main Functions ---------------------------------------------------------------------------------------------
     protected override void Awake()
     {
         base.Awake();
@@ -22,7 +26,6 @@ public class Combattant : Troup
         sword = transform.Find("Sword").gameObject;
     }
 
-    // Update is called once per frame
     protected override void Update()
     {
         base.Update();
@@ -35,6 +38,7 @@ public class Combattant : Troup
         if (troupType == TroupType.Enemy && !gameManager.isCrownCollected) { IAEnemy(); }
     }
 
+    // Attack and ability -----------------------------------------------------------------------------------------
     protected override IEnumerator Attack(Troup enemy)
     {
         while (enemy != null && !isFollowingOrders)
@@ -50,32 +54,6 @@ public class Combattant : Troup
                 enemy.TakeDamage(attackDamage);
             }
             yield return new WaitForSeconds(attackRechargeTime);
-        }
-    }
-    
-    protected override void IAEnemy()
-    {
-
-        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
-        {
-            StartCoroutine(SpecialAbility());
-            specialAbilityDelay = -1f;
-        }
-
-        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
-        {
-            int nextActionIndex = Random.Range(0, 2);
-
-            if (nextActionIndex == 0)
-            {
-                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(defaultPosition, 5f), positionThreshold));
-            } else
-            {
-                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(defaultPosition, 5f), RandomVectorInFlatCircle(defaultPosition, 5f)));
-            }
-
-            timeBeforeNextAction = Random.Range(5f, 10f);
-            StartCoroutine(IAactionCountdown());
         }
     }
 
@@ -105,6 +83,34 @@ public class Combattant : Troup
         StartCoroutine(SpecialAbilityCountdown());
     }
 
+    // IA Enemy ---------------------------------------------------------------------------------------------------
+    protected override void IAEnemy()
+    {
+
+        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
+        {
+            StartCoroutine(SpecialAbility());
+            specialAbilityDelay = -1f;
+        }
+
+        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
+        {
+            int nextActionIndex = Random.Range(0, 2);
+
+            if (nextActionIndex == 0)
+            {
+                actionQueue.Enqueue(new MoveToPosition(agent, RandomVectorInFlatCircle(defaultPosition, 5f), positionThreshold));
+            } else
+            {
+                actionQueue.Enqueue(new Patrol(agent, RandomVectorInFlatCircle(defaultPosition, 5f), RandomVectorInFlatCircle(defaultPosition, 5f)));
+            }
+
+            timeBeforeNextAction = Random.Range(5f, 10f);
+            StartCoroutine(IAactionCountdown());
+        }
+    }
+
+    // Animation --------------------------------------------------------------------------------------------------
     private IEnumerator SwingSword()
     {
         float timer = 0f;

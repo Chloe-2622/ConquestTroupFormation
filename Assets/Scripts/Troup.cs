@@ -41,32 +41,28 @@ public abstract class Troup : MonoBehaviour
     [SerializeField] protected float specialAbilityDelay = 0f;
     [SerializeField] protected bool isVisible = true;
     [SerializeField] protected bool isAddedWhenAwake = false;
-    [SerializeField] public Vector3 moveTargetDestination;
     [SerializeField] protected float timeBeforeNextAction;
     [SerializeField] protected float turnTime;
+    [SerializeField] private bool isMovingToKing;
+    [SerializeField] public Vector3 moveTargetDestination;
+    protected bool isFollowingOrders;
+    protected float maxHealth;
     protected Vector3 defaultPosition;
+    protected IEnumerator currentActionCoroutine;
     private Wall wallComponent;
     private bool isPlayingCircleAnim;
     private bool isChosingPlacement;
     private bool isChosingFollow;
-    public bool isPlacingWall;
-    protected bool isFollowingOrders;
     private bool hasSpawnedTombe;
-    [SerializeField] private bool isMovingToKing;
     private bool isBoosted;
-    protected float maxHealth;
     private float attackRange;
-    protected IEnumerator currentActionCoroutine;
     private IEnumerator attackCoroutine;
-    private IEnumerator goToPosition;
-
-
+    public bool isPlacingWall;
     HashSet<GameObject> detectedEnemies = new HashSet<GameObject>();
     HashSet<GameObject> inRangeEnemies = new HashSet<GameObject>();
 
     // Scene objects
     protected Camera camera1;
-    protected SelectionManager selectionManager;
     protected GameObject selectionArrow;
     protected GameObject tombe;
     protected Transform SelectionCircle;
@@ -93,8 +89,9 @@ public abstract class Troup : MonoBehaviour
     protected GameObject unitBar;
     protected GameObject Bars;
 
-
+    // Singleton Instances
     protected GameManager gameManager;
+    protected SelectionManager selectionManager;
 
     // Troup types ------------------------------------------------------------------------------------------------
     public enum TroupType { Ally, Enemy }
@@ -244,27 +241,8 @@ public abstract class Troup : MonoBehaviour
     // Update
     protected virtual void Update()
     {
-        // Debug.Log("start------------------------------------");
-        foreach (GameObject enemy in inRangeEnemies)
-        {
-            // Debug.Log(enemy);
-        }
-        // Debug.Log("end------------------------------------");
         isSelected = selectionManager.isSelected(this.gameObject);
 
-        
-        /*
-
-        if (currentFollowedTroup != null)
-        {
-            Troup currentFollowedTroupComponent = currentFollowedTroup.GetComponent<Troup>();
-            attackRange = (currentFollowedTroupComponent.unitType == UnitType.Cavalier || currentFollowedTroupComponent.unitType == UnitType.Catapulte || currentFollowedTroupComponent.unitType == UnitType.Belier || currentFollowedTroupComponent.unitType == UnitType.Porte_bouclier) ? defaultAttackRange + 1.1f : defaultAttackRange;
-        }
-        if (currentAttackedTroup != null)
-        {
-            Troup currentAttackedTroupComponent = currentAttackedTroup.GetComponent<Troup>();
-            attackRange = (currentAttackedTroupComponent.unitType == UnitType.Cavalier || currentAttackedTroupComponent.unitType == UnitType.Catapulte || currentAttackedTroupComponent.unitType == UnitType.Belier || currentAttackedTroupComponent.unitType == UnitType.Porte_bouclier) ? defaultAttackRange + 1.1f : defaultAttackRange;
-        } */
 
         if (isFollowingOrders)
         {
@@ -279,6 +257,7 @@ public abstract class Troup : MonoBehaviour
             if (transform.Find("Crown").gameObject.activeSelf == true)
             {
                 hasCrown = true;
+                agent.speed = movingSpeed / 2f;
                 gameManager.isCrownCollected = true;
                 gameManager.king = gameObject;
             }
@@ -314,10 +293,10 @@ public abstract class Troup : MonoBehaviour
 
         if (selectionManager.getCurrentSelection().Count > 1 && gameManager.isFormationShapeForced)
         {
-            agent.speed = FormationSpeed();
+            agent.speed = !hasCrown ? FormationSpeed() : FormationSpeed() / 2f;
         } else
         {
-            agent.speed = movingSpeed;
+            agent.speed = !hasCrown ? movingSpeed : movingSpeed / 2f;
         }
 
         SelectionParticleCircle.transform.position = new Vector3(transform.position.x, transform.position.y + 0.3f, transform.position.z);
@@ -1109,20 +1088,21 @@ public abstract class Troup : MonoBehaviour
 
             // Debug.Log("Getting closer to enemy : " + closestEnemy);
             StopCoroutine(currentActionCoroutine);
-            actionQueue.Enqueue(new MoveToUnit(agent, closestEnemy, attackRange));
+            actionQueue.Enqueue(new MoveToUnit(agent, closestEnemy, attackRange -.5f));
             StartCoroutine(currentActionCoroutine);
         }
 
         // Clear currentFollowedTroup if it's too far or die
         // Debug.Log("Distance to king = " + Vector3.Distance(transform.position, currentFollowedTroup.transform.position) + " and attackrange = " + attackRange);
-        if (currentFollowedTroup != null && Vector3.Distance(transform.position, currentFollowedTroup.transform.position) - attackRange - king.GetComponent<NavMeshAgent>().radius > 0)
+        if (currentAttackedTroup != null && Vector3.Distance(transform.position, currentFollowedTroup.transform.position) - attackRange - king.GetComponent<NavMeshAgent>().radius > 0)
         {
-            currentFollowedTroup = null;
-        }
-        if (currentFollowedTroup == null)
-        {
+            // currentFollowedTroup = null;
             isFollowingEnemy = false;
         }
+        /* if (currentFollowedTroup == null)
+        {
+            isFollowingEnemy = false;
+        } */
 
         // Clear currentFollowedTroup and currentAttackedTroup if it becomes invisible
         if ((currentFollowedTroup != null && !currentFollowedTroup.GetComponent<Troup>().isVisible) || (currentAttackedTroup != null && !currentAttackedTroup.GetComponent<Troup>().isVisible))
@@ -1141,9 +1121,10 @@ public abstract class Troup : MonoBehaviour
 
         // Sets king as closest enemy in range if in range
         GameObject closestEnemyInRange = null;
-        if (Vector3.Distance(transform.position, king.transform.position) - attackRange - king.GetComponent<NavMeshAgent>().radius < 0)
+        if (king.GetComponent<Troup>().isVisible && Vector3.Distance(transform.position, king.transform.position) - attackRange - king.GetComponent<NavMeshAgent>().radius < 0)
         {
             closestEnemyInRange = king;
+            Debug.Log(gameObject + " sees the king in range");
         }
 
         // Starts attacking closest enemy in range
@@ -1174,9 +1155,14 @@ public abstract class Troup : MonoBehaviour
             }
         }
 
-        Debug.Log("--- " + (currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur));
+        if (currentAttackedTroup != null)
+        {
+            isFollowingEnemy = false;
+        }
+
+        // Debug.Log("--- " + (currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur));
         // Clear current attacked troup if no ennemies are in range (and therefore current attacked troup is not in range)
-        if (closestEnemyInRange == null && currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur)
+        if (currentAttackedTroup != null && closestEnemyInRange == null && currentAttackedTroup.GetComponent<Troup>().unitType != Troup.UnitType.Mur)
         {
             currentAttackedTroup = null;
             isAttackingEnemy = false;
@@ -1271,7 +1257,6 @@ public abstract class Troup : MonoBehaviour
         }
     }
 
-
     public IEnumerator ShowDamages(float damages)
     {
         if ( damages < 0f )
@@ -1281,8 +1266,6 @@ public abstract class Troup : MonoBehaviour
         yield return new WaitForSeconds(showTimeDamages);
         damageText.text = "";
     }
-
-
 
     public virtual void AddDamage(float damage)
     {

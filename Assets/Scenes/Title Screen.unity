@@ -504,7 +504,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0c049ffdf12f2a943af63e2ab2b3311d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3feb7fbf364b8eb41803e016a5702861, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1389,26 +1389,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2816585935043904659, guid: e22680e540a8c6643a4534d6a94f2af1, type: 3}
-      propertyPath: Sword
-      value: 
-      objectReference: {fileID: 8300000, guid: baaba42dd16b8ba4a8b74b194e8da3ba, type: 3}
-    - target: {fileID: 2816585935043904659, guid: e22680e540a8c6643a4534d6a94f2af1, type: 3}
-      propertyPath: BowLoad
-      value: 
-      objectReference: {fileID: 8300000, guid: c3ae524bd54f2ab4b81c104a47b48b2f, type: 3}
-    - target: {fileID: 2816585935043904659, guid: e22680e540a8c6643a4534d6a94f2af1, type: 3}
-      propertyPath: Hammer1
-      value: 
-      objectReference: {fileID: 8300000, guid: e1b2df7686f4ac84187920fe2ff8de2a, type: 3}
-    - target: {fileID: 2816585935043904659, guid: e22680e540a8c6643a4534d6a94f2af1, type: 3}
-      propertyPath: Hammer2
-      value: 
-      objectReference: {fileID: 8300000, guid: ea2c07877cb316b4ab633e3b39527921, type: 3}
-    - target: {fileID: 2816585935043904659, guid: e22680e540a8c6643a4534d6a94f2af1, type: 3}
-      propertyPath: BowShoot
-      value: 
-      objectReference: {fileID: 8300000, guid: 970cf9ced06b8144fb25784ab79c3582, type: 3}
     - target: {fileID: 6215409024651747882, guid: e22680e540a8c6643a4534d6a94f2af1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 93.73784

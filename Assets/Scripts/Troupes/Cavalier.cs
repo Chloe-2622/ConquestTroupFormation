@@ -5,23 +5,29 @@ using UnityEngine.AI;
 
 public class Cavalier : Troup
 {
-    [Header("Cavalier properties")]
+
+    [Header("------------------ Cavalier ------------------ ")]
+    [Header("General stats")]
     [SerializeField] private float chargeTime;
     [SerializeField] private float chargeSpeed;
+
+    [Header("Animation parameters")]
     [SerializeField] private float baseJambeRotationSpeed;
     [SerializeField] private float jambeRotationSpeed;
     [SerializeField] private float angleJambes;
     [SerializeField] private float swingTime;
     [SerializeField] private float swingAngle;
 
+    // Private variables
     private bool isRunning;
     private GameObject[] jambes1 = new GameObject[2];
     private GameObject[] jambes2 = new GameObject[2];
     private GameObject head;
-
     IEnumerator animJambe1;
     IEnumerator animJambe2;
 
+
+    // Main Functions ---------------------------------------------------------------------------------------------
     protected override void Awake()
     {
         base.Awake();
@@ -37,7 +43,6 @@ public class Cavalier : Troup
         animJambe2 = MoveAnimation(false);
     }
 
-    // Update is called once per frame
     protected override void Update()
     {
         base.Update();
@@ -65,6 +70,47 @@ public class Cavalier : Troup
         if (troupType == TroupType.Enemy) { IAEnemy(); }
     }
 
+    // Attack and ability -----------------------------------------------------------------------------------------
+    protected override IEnumerator Attack(Troup enemy)
+    {
+        while (enemy != null)
+        {
+            StartCoroutine(SwingHead());
+            if (enemy.unitType == UnitType.Combattant)
+            {
+                enemy.TakeDamage(2 * attackDamage);
+            } else
+            {
+                enemy.TakeDamage(attackDamage);
+            }
+            
+            yield return new WaitForSeconds(attackRechargeTime);
+        }
+    }
+
+    protected override IEnumerator SpecialAbility()
+    {
+        Debug.Log("Cavalier special ability activated");
+
+        agent.speed = chargeSpeed;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < chargeTime)
+        {
+            abilityBar.fillAmount = 1 - elapsedTime / chargeTime;
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+        abilityBar.fillAmount = 0;
+
+        agent.speed = movingSpeed;
+
+        specialAbilityDelay = specialAbilityRechargeTime;
+        StartCoroutine(SpecialAbilityCountdown());
+    }
+
+    // IA Enemy ---------------------------------------------------------------------------------------------------
     protected override void IAEnemy() 
     {
         if (gameManager.isCrownCollected && specialAbilityDelay == 0)
@@ -91,6 +137,7 @@ public class Cavalier : Troup
         }
     }
 
+    // Animation --------------------------------------------------------------------------------------------------
     private IEnumerator MoveAnimation(bool isRight)
     {
         GameObject[] jambes;
@@ -225,45 +272,6 @@ public class Cavalier : Troup
             }
         }
 
-    }
-
-    protected override IEnumerator Attack(Troup enemy)
-    {
-        while (enemy != null)
-        {
-            StartCoroutine(SwingHead());
-            if (enemy.unitType == UnitType.Combattant)
-            {
-                enemy.TakeDamage(2 * attackDamage);
-            } else
-            {
-                enemy.TakeDamage(attackDamage);
-            }
-            
-            yield return new WaitForSeconds(attackRechargeTime);
-        }
-    }
-
-    protected override IEnumerator SpecialAbility()
-    {
-        Debug.Log("Cavalier special ability activated");
-
-        agent.speed = chargeSpeed;
-
-        float elapsedTime = 0f;
-        while (elapsedTime < chargeTime)
-        {
-            abilityBar.fillAmount = 1 - elapsedTime / chargeTime;
-            elapsedTime += Time.deltaTime;
-
-            yield return null;
-        }
-        abilityBar.fillAmount = 0;
-
-        agent.speed = movingSpeed;
-
-        specialAbilityDelay = specialAbilityRechargeTime;
-        StartCoroutine(SpecialAbilityCountdown());
     }
 
     private IEnumerator SwingHead()

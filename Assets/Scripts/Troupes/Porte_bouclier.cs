@@ -5,20 +5,25 @@ using UnityEngine.AI;
 
 public class Porte_bouclier : Troup
 {
-    [Header("Combattant properties")]
+
+    [Header("------------------ Porte bouclier ------------------ ")]
+    [Header("General stats")]
     [SerializeField] private float armureBoost;
     [SerializeField] private float boostTime;
     [SerializeField] private float boostRadius;
     [SerializeField] private float IAminimumTroupToBoost;
+
+    [Header("Animation parameters")]
     [SerializeField] private float bashTime;
 
-    [SerializeField] private bool isBoosting;
+    // Private variables
+    private bool isBoosting;
     Vector3 shieldDefaultPosition;
-
     private GameObject shield;
-
     HashSet<Troup> troupToBoost = new HashSet<Troup>();
 
+
+    // Main Functions ---------------------------------------------------------------------------------------------
     protected override void Awake()
     {
         base.Awake();
@@ -32,7 +37,6 @@ public class Porte_bouclier : Troup
         positionThreshold = 2f;
     }
 
-    // Update is called once per frame
     protected override void Update()
     {
         base.Update();
@@ -41,60 +45,21 @@ public class Porte_bouclier : Troup
         if (troupType == TroupType.Enemy) { IAEnemy(); }
     }
 
-    protected override void IAEnemy() 
+    private void OnDestroy()
     {
-        bool canBoost = false;
-
-        float totalHealth = 0f;
-        float totalMaxHealth = 0f;
-        HashSet<Troup> troupToCheck = troupType == TroupType.Ally ? GameManager.Instance.getAllies() : GameManager.Instance.getEnemies();
-        Collider[] detectedColliders = Physics.OverlapSphere(transform.position, boostRadius, troupMask);
-        foreach (Collider detectedCollider in detectedColliders)
+        foreach (Troup troup in troupToBoost)
         {
-            Troup detectedTroup = detectedCollider.GetComponent<Troup>();
-            if (detectedTroup != null && detectedTroup.gameObject != gameObject && detectedTroup.troupType ==TroupType.Enemy)
+            if (troup != null)
             {
-                troupToCheck.Add(detectedTroup);
-                totalHealth += detectedTroup.getHealth();
-                totalMaxHealth += detectedTroup.getMaxHealth();
+                troup.AddArmor(-armureBoost);
+                troup.ActivateArmorBoostParticle(false);
+                Debug.Log("Desaction de l'armur pour : " + troup.gameObject);
             }
-        }
-
-        if (troupToCheck.Count >= IAminimumTroupToBoost) { canBoost = totalHealth < .5f * totalMaxHealth; }
-
-        if (!isBoosting && canBoost) { StartCoroutine(SpecialAbility()); }
-
-        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
-        {
-            IAminimumTroupToBoost = 1;
-        }
-
-        float minX = Mathf.Infinity;
-        foreach (Troup ally in gameManager.getEnemies())
-        {
-            if (ally.unitType != UnitType.Porte_bouclier && ally.unitType != UnitType.Guerisseur && Vector3.Distance(transform.position, ally.transform.position) <= 10f) { minX = Mathf.Min(minX, ally.transform.position.x); }
-        }
-
-        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
-        {
-            int nextActionIndex = Random.Range(0, 2);
-
-            if (nextActionIndex == 0)
-            {
-                actionQueue.Enqueue(new MoveToPosition(agent, new Vector3(minX - 2f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f)), positionThreshold));
-            }
-            else
-            {
-                Vector3 pos1 = new Vector3(minX - 2f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f));
-                Vector3 pos2 = new Vector3(minX - 2f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f));
-                actionQueue.Enqueue(new Patrol(agent, pos1, pos2));
-            }
-
-            timeBeforeNextAction = Random.Range(5f, 10f);
-            StartCoroutine(IAactionCountdown());
+            
         }
     }
 
+    // Attack and ability -----------------------------------------------------------------------------------------
     protected override IEnumerator Attack(Troup enemy)
     {
         while (enemy != null)
@@ -165,6 +130,62 @@ public class Porte_bouclier : Troup
         }
     }
 
+    // IA Enemy ---------------------------------------------------------------------------------------------------
+    protected override void IAEnemy() 
+    {
+        bool canBoost = false;
+
+        float totalHealth = 0f;
+        float totalMaxHealth = 0f;
+        HashSet<Troup> troupToCheck = troupType == TroupType.Ally ? GameManager.Instance.getAllies() : GameManager.Instance.getEnemies();
+        Collider[] detectedColliders = Physics.OverlapSphere(transform.position, boostRadius, troupMask);
+        foreach (Collider detectedCollider in detectedColliders)
+        {
+            Troup detectedTroup = detectedCollider.GetComponent<Troup>();
+            if (detectedTroup != null && detectedTroup.gameObject != gameObject && detectedTroup.troupType ==TroupType.Enemy)
+            {
+                troupToCheck.Add(detectedTroup);
+                totalHealth += detectedTroup.getHealth();
+                totalMaxHealth += detectedTroup.getMaxHealth();
+            }
+        }
+
+        if (troupToCheck.Count >= IAminimumTroupToBoost) { canBoost = totalHealth < .5f * totalMaxHealth; }
+
+        if (!isBoosting && canBoost) { StartCoroutine(SpecialAbility()); }
+
+        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
+        {
+            IAminimumTroupToBoost = 1;
+        }
+
+        float minX = Mathf.Infinity;
+        foreach (Troup ally in gameManager.getEnemies())
+        {
+            if (ally.unitType != UnitType.Porte_bouclier && ally.unitType != UnitType.Guerisseur && Vector3.Distance(transform.position, ally.transform.position) <= 10f) { minX = Mathf.Min(minX, ally.transform.position.x); }
+        }
+
+        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
+        {
+            int nextActionIndex = Random.Range(0, 2);
+
+            if (nextActionIndex == 0)
+            {
+                actionQueue.Enqueue(new MoveToPosition(agent, new Vector3(minX - 2f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f)), positionThreshold));
+            }
+            else
+            {
+                Vector3 pos1 = new Vector3(minX - 2f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f));
+                Vector3 pos2 = new Vector3(minX - 2f, transform.position.y, gameManager.CrownPosition.transform.position.z + Random.Range(-10f, 10f));
+                actionQueue.Enqueue(new Patrol(agent, pos1, pos2));
+            }
+
+            timeBeforeNextAction = Random.Range(5f, 10f);
+            StartCoroutine(IAactionCountdown());
+        }
+    }
+
+    // Animation --------------------------------------------------------------------------------------------------
     private IEnumerator BashShield()
     {
         float t = 0f;
@@ -186,17 +207,4 @@ public class Porte_bouclier : Troup
         shield.transform.position = shieldDefaultPosition;
     }
 
-    private void OnDestroy()
-    {
-        foreach (Troup troup in troupToBoost)
-        {
-            if (troup != null)
-            {
-                troup.AddArmor(-armureBoost);
-                troup.ActivateArmorBoostParticle(false);
-                Debug.Log("Desaction de l'armur pour : " + troup.gameObject);
-            }
-            
-        }
-    }
 }

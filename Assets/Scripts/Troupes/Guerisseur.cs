@@ -4,21 +4,19 @@ using UnityEngine;
 
 public class Guerisseur : Troup
 {
-    [Header("Guerisseur properties")]
+    [Header("------------------ Guerisseur ------------------ ")]
+    [Header("General stats")]
     [SerializeField] private float healAmount;
     [SerializeField] private float healRange;
     [SerializeField] private float healRechargeTime;
     [SerializeField] private float resurrectionRadius;
+    [SerializeField] private int IAminimumTroupToRevive;
+
+    [Header("Animation parameters")]
     [SerializeField] private LayerMask tombeMask;
     [SerializeField] private GameObject healEffect;
     [SerializeField] private GameObject healEffectSpawnPoint;
     [SerializeField] float healEffectSpeed;
-
-    [SerializeField] private int IAminimumTroupToRevive;
-
-    private IEnumerator healCoroutine;
-
-    
 
     [Header("Debug Variables")]
     [SerializeField] private GameObject closestInjuredAllyDetected;
@@ -27,7 +25,11 @@ public class Guerisseur : Troup
     [SerializeField] private GameObject currentFollowedAlly;
     [SerializeField] private GameObject currentHealedAlly;
 
+    // Private variables
+    private IEnumerator healCoroutine;
 
+
+    // Main Functions ---------------------------------------------------------------------------------------------
     protected override void Awake()
     {
         base.Awake();
@@ -35,7 +37,6 @@ public class Guerisseur : Troup
         IAminimumTroupToRevive = troupType == TroupType.Ally ? 1 : 3;
     }
 
-    // Update is called once per frame
     protected override void Update()
     {
         base.Update();
@@ -44,27 +45,50 @@ public class Guerisseur : Troup
         if (troupType == TroupType.Enemy && currentFollowedTroup == null && currentAttackedTroup == null) { IAEnemy(); }
     }
 
-    protected override void IAEnemy() 
+    private void OnDrawGizmosSelected()
     {
-
-        StartCoroutine(SpecialAbility());
-
-        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
-        {
-            IAminimumTroupToRevive = 1;
-        }
-
-        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
-        {
-            actionQueue.Enqueue(new FollowUnit(agent, RandomTroupInTeam(gameManager.getEnemies(), 10f).gameObject));
-
-            timeBeforeNextAction = Random.Range(5f, 10f);
-            StartCoroutine(IAactionCountdown());
-        }
+        Gizmos.DrawWireSphere(transform.position, resurrectionRadius);
     }
 
+    // Attack and ability -----------------------------------------------------------------------------------------
     protected override IEnumerator Attack(Troup enemy)
     {
+        yield return null;
+    }
+
+    protected override IEnumerator SpecialAbility()
+    {
+        Debug.Log("Guerisseur ability activated");
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, resurrectionRadius, tombeMask);
+
+        HashSet<Tombe> troupToRevive = new HashSet<Tombe>();
+
+        foreach(Collider collider in colliders)
+        {
+            Debug.Log(collider);
+            
+            if (troupType == TroupType.Ally && collider.GetComponent<Tombe>().tombeTroupType == Tombe.TombeTroupType.Ally)
+            {
+                troupToRevive.Add(collider.GetComponent<Tombe>());
+            }
+            if (troupType == TroupType.Enemy && collider.GetComponent<Tombe>().tombeTroupType == Tombe.TombeTroupType.Enemy)
+            {
+                troupToRevive.Add(collider.GetComponent<Tombe>());
+            }
+        }
+
+        if (troupToRevive.Count >= IAminimumTroupToRevive)
+        {
+            foreach (Tombe tombe in troupToRevive)
+            {
+                if (!tombe.HasRevived()) { tombe.Revive(); }
+            }
+
+            abilityBar.fillAmount = 0f;
+            specialAbilityDelay = -1;
+        }
+
         yield return null;
     }
 
@@ -245,6 +269,27 @@ public class Guerisseur : Troup
         yield return null;
     }
 
+    // IA Enemy ---------------------------------------------------------------------------------------------------
+    protected override void IAEnemy() 
+    {
+
+        StartCoroutine(SpecialAbility());
+
+        if (health <= (maxHealth / 2) && specialAbilityDelay == 0)
+        {
+            IAminimumTroupToRevive = 1;
+        }
+
+        if (timeBeforeNextAction == 0f && currentFollowedTroup == null && currentAttackedTroup == null)
+        {
+            actionQueue.Enqueue(new FollowUnit(agent, RandomTroupInTeam(gameManager.getEnemies(), 10f).gameObject));
+
+            timeBeforeNextAction = Random.Range(5f, 10f);
+            StartCoroutine(IAactionCountdown());
+        }
+    }
+
+    // Animation --------------------------------------------------------------------------------------------------
     private IEnumerator HealEffectAnimation(Troup target, GameObject effect, Vector3 spawnPoint, Vector3 endpoint, float healEffectSpeed)
     {
         effect.transform.position = spawnPoint;
@@ -267,44 +312,4 @@ public class Guerisseur : Troup
 
     }
 
-    protected override IEnumerator SpecialAbility()
-    {
-        Debug.Log("Guerisseur ability activated");
-
-        Collider[] colliders = Physics.OverlapSphere(transform.position, resurrectionRadius, tombeMask);
-
-        HashSet<Tombe> troupToRevive = new HashSet<Tombe>();
-
-        foreach(Collider collider in colliders)
-        {
-            Debug.Log(collider);
-            
-            if (troupType == TroupType.Ally && collider.GetComponent<Tombe>().tombeTroupType == Tombe.TombeTroupType.Ally)
-            {
-                troupToRevive.Add(collider.GetComponent<Tombe>());
-            }
-            if (troupType == TroupType.Enemy && collider.GetComponent<Tombe>().tombeTroupType == Tombe.TombeTroupType.Enemy)
-            {
-                troupToRevive.Add(collider.GetComponent<Tombe>());
-            }
-        }
-
-        if (troupToRevive.Count >= IAminimumTroupToRevive)
-        {
-            foreach (Tombe tombe in troupToRevive)
-            {
-                if (!tombe.HasRevived()) { tombe.Revive(); }
-            }
-
-            abilityBar.fillAmount = 0f;
-            specialAbilityDelay = -1;
-        }
-
-        yield return null;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.DrawWireSphere(transform.position, resurrectionRadius);
-    }
 }

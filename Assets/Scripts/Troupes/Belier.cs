@@ -4,27 +4,25 @@ using UnityEngine;
 
 public class Belier : Troup
 {
-    [Header("Belier properties")]
+    [Header("------------------ Bélier ------------------ ")]
+    [Header("Animation parameters")]
     [SerializeField] private float wheelRotationSpeed;
-
-    [Header("Ram properties")]
     [SerializeField] private float maxRamDistance;
     [SerializeField] private float ramTravelTime;
 
+    // Private variables
     private GameObject ramPrefab;
-    private bool isRamLaunched;
-
     private GameObject ram;
-
-    private Animator mAnimator;
+    private bool isRamLaunched;
     private bool isRolling;
+    private Animator mAnimator;
     private HashSet<GameObject> roues = new HashSet<GameObject>();
-
-
     IEnumerator moveAnimation;
     private IEnumerator attackCoroutine;
     private LayerMask wallMask;
 
+
+    // Main Functions ---------------------------------------------------------------------------------------------
     protected override void Awake()
     {
         base.Awake();
@@ -45,7 +43,6 @@ public class Belier : Troup
         wallMask = gameManager.wallMask;
     }
 
-    // Update is called once per frame
     protected override void Update()
     {
         base.Update();
@@ -76,31 +73,56 @@ public class Belier : Troup
         else { AttackBehaviour(); }
     }
 
-    public Wall detectNearestWall()
+    // Attack and ability -----------------------------------------------------------------------------------------
+    protected override IEnumerator Attack(Troup enemy)
     {
-        if (!gameManager.hasGameStarted()) { return null; }
-
-        Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRange, wallMask);
-        Wall nearestWall = null;
-        float wallDistance = detectionRange;
-
-        foreach (Collider collider in colliders)
+        while (enemy != null && !isFollowingOrders)
         {
-            Debug.Log("collider : " + collider.gameObject);
-            Wall wall = collider.transform.parent.GetComponent<Wall>();
-
-            if (wall != null && collider.name == "JunctionWall" && wall.troupType != troupType)
+            if (enemy.unitType == UnitType.Mur)
             {
-                if (Vector3.Distance(transform.position, wall.transform.position) < wallDistance)
-                {
-                    wallDistance = Vector3.Distance(transform.position, wall.transform.position);
-                    nearestWall = wall;
-                }
+                enemy.TakeDamage(50 * attackDamage);
             }
+            else
+            {
+                enemy.TakeDamage(attackDamage);
+            }
+            yield return new WaitForSeconds(attackRechargeTime);
         }
-        return nearestWall;
+        Debug.Log("Belier attack");
+        yield return null;
     }
+    
+    protected override IEnumerator SpecialAbility()
+    {
+        Debug.Log("Belier special ability activated");
 
+        Vector3 exPos = ram.transform.position;
+        Quaternion exQua = ram.transform.rotation;
+        GameObject.Destroy(ram.gameObject);
+
+        Ram newRam = Instantiate(ramPrefab, exPos, exQua).GetComponent<Ram>();
+        newRam.transform.localScale = new Vector3(21f, 21f, 21f);
+        newRam.ramType = troupType;
+        
+        
+        Vector3 endPoint = transform.position + transform.forward * maxRamDistance;
+        Debug.Log("!!! endpoint " +  endPoint);
+
+        newRam.isLaunch = true;
+        float t = 0f;
+        while (t < ramTravelTime)
+        {
+            t += Time.deltaTime;
+            Debug.Log("!!! " + newRam.transform.position);
+            Debug.Log("!!! Lerp " + Vector3.Lerp(transform.position, endPoint, t / ramTravelTime));
+            Vector3 newPosition = Vector3.Lerp(transform.position, endPoint, t / ramTravelTime);
+            newRam.transform.position = newPosition;
+            yield return null;
+        }
+        GameObject.Destroy(newRam.gameObject);
+        isRamLaunched = true;
+    }
+    
     public void AttackWallBehaviour(Troup wall)
     {
         // If King is present, attack it instead
@@ -185,59 +207,36 @@ public class Belier : Troup
         
         
     }
+    
+    public Wall detectNearestWall()
+    {
+        if (!gameManager.hasGameStarted()) { return null; }
 
+        Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRange, wallMask);
+        Wall nearestWall = null;
+        float wallDistance = detectionRange;
 
+        foreach (Collider collider in colliders)
+        {
+            Debug.Log("collider : " + collider.gameObject);
+            Wall wall = collider.transform.parent.GetComponent<Wall>();
+
+            if (wall != null && collider.name == "JunctionWall" && wall.troupType != troupType)
+            {
+                if (Vector3.Distance(transform.position, wall.transform.position) < wallDistance)
+                {
+                    wallDistance = Vector3.Distance(transform.position, wall.transform.position);
+                    nearestWall = wall;
+                }
+            }
+        }
+        return nearestWall;
+    }
+
+    // IA Enemy ---------------------------------------------------------------------------------------------------
     protected override void IAEnemy() { }
 
-    protected override IEnumerator Attack(Troup enemy)
-    {
-        while (enemy != null && !isFollowingOrders)
-        {
-            if (enemy.unitType == UnitType.Mur)
-            {
-                enemy.TakeDamage(50 * attackDamage);
-            }
-            else
-            {
-                enemy.TakeDamage(attackDamage);
-            }
-            yield return new WaitForSeconds(attackRechargeTime);
-        }
-        Debug.Log("Belier attack");
-        yield return null;
-    }
-
-    protected override IEnumerator SpecialAbility()
-    {
-        Debug.Log("Belier special ability activated");
-
-        Vector3 exPos = ram.transform.position;
-        Quaternion exQua = ram.transform.rotation;
-        GameObject.Destroy(ram.gameObject);
-
-        Ram newRam = Instantiate(ramPrefab, exPos, exQua).GetComponent<Ram>();
-        newRam.transform.localScale = new Vector3(21f, 21f, 21f);
-        newRam.ramType = troupType;
-        
-        
-        Vector3 endPoint = transform.position + transform.forward * maxRamDistance;
-        Debug.Log("!!! endpoint " +  endPoint);
-
-        newRam.isLaunch = true;
-        float t = 0f;
-        while (t < ramTravelTime)
-        {
-            t += Time.deltaTime;
-            Debug.Log("!!! " + newRam.transform.position);
-            Debug.Log("!!! Lerp " + Vector3.Lerp(transform.position, endPoint, t / ramTravelTime));
-            Vector3 newPosition = Vector3.Lerp(transform.position, endPoint, t / ramTravelTime);
-            newRam.transform.position = newPosition;
-            yield return null;
-        }
-        GameObject.Destroy(newRam.gameObject);
-        isRamLaunched = true;
-    }
-
+    // Animation --------------------------------------------------------------------------------------------------
     private IEnumerator MoveAnimation()
     {
         while (true)
