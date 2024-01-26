@@ -1,5 +1,6 @@
 # ConquestTroupFormation
-Projet AMJV
+
+Projet AMJV - TABS (anciennement ConquestTroupFormation)
 
 ---------------------- DEROULE DU JEU----------------------
 
@@ -55,7 +56,6 @@ Divers :
 ------------------------ BUG CONNUS ------------------------
 
 La catapulte si on lui redonne un ordre garde en mémoire l'ordre précédent et tire deux fois plus
-La catapulte continue de tirer même si elle roule
 
 Le batisseur peut se retrouver bloqué dans son pathfinding (on crois)
 
@@ -65,5 +65,5 @@ Le bélier peut avoir du mal à Focus les murs
 ------------------ PISTES D'AMELIORATION ------------------
 
 Plus d'arène (en cours)
-Des ennemis placé aléatoirement tout en suivant une logique dans leur compositon et leur placement du côté adverse.
+Des ennemis placés aléatoirement tout en suivant une logique dans leur compositon et leur placement du côté adverse.
 IA de la catapulte et du bélier adverse à implémenter.

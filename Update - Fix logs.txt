@@ -1,0 +1,7 @@
+26/01
+C: Catapult stops attacking when movingToPosition. Players now have to select a new place to shoot again after moving.
+C: Catapult now shoot boulder continuously whithout them freezing in the air.
+C: Fixed camera sliding on the ground when continuing to zoom while being at the lowest y value
+C: Fixed catapulte shooting twice when selecting a new position
+C: Catapult works correctly now.
+C: Catapult now resumes shooting after getting the order to movingToPosition

@@ -125,17 +125,21 @@ public class CameraMovement : MonoBehaviour
         newPosition.y = Mathf.Clamp(newPosition.y, 6f, 30f);
 
         // Physics.Raycast(transform.position, Vector3.down, 5f);
+        
 
-        if (Physics.Raycast(transform.position, Vector3.down, 5f))
+        if (Physics.Raycast(transform.position, Vector3.down, 6f))
         {
+            Debug.Log("Zoomvector : " + zoomVector.y);
             if (zoomVector.y < 0)
             {
+                Debug.Log(zoomVector);
                 transform.position = newPosition;
             }
         } else if (newPosition.y == 30f)
         {
             if (zoomVector.y > 0)
             {
+                Debug.Log(zoomVector);
                 transform.position = newPosition;
             }
         } else

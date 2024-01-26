@@ -393,12 +393,12 @@ MonoBehaviour:
   specialAbilityDelay: 0
   isVisible: 1
   isAddedWhenAwake: 0
-  moveTargetDestination: {x: 0, y: 0, z: 0}
   timeBeforeNextAction: 0
   turnTime: 0
-  isPlacingWall: 0
   isMovingToKing: 0
-  wheelRotationSpeed: 10
+  moveTargetDestination: {x: 0, y: 0, z: 0}
+  isPlacingWall: 0
+  wheelRotationSpeed: 20
   maxRamDistance: 1000
   ramTravelTime: 20
 --- !u!195 &8753042273054374063

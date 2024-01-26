@@ -49,14 +49,14 @@ public class Cavalier : Troup
 
         AttackBehaviour();
 
-        Debug.Log("Vitesste = " + agent.velocity.magnitude);
+        // Debug.Log("Vitesste = " + agent.velocity.magnitude);
 
         jambeRotationSpeed = baseJambeRotationSpeed * agent.velocity.magnitude;
 
         if (agent.velocity.magnitude > 0 && !isRunning)
         {
             isRunning = true;
-            Debug.Log("Je tourne");
+            // Debug.Log("Je tourne");
             StartCoroutine(animJambe1);
             StartCoroutine(animJambe2);
         }
@@ -90,7 +90,7 @@ public class Cavalier : Troup
 
     protected override IEnumerator SpecialAbility()
     {
-        Debug.Log("Cavalier special ability activated");
+        // Debug.Log("Cavalier special ability activated");
 
         agent.speed = chargeSpeed;
 
@@ -185,19 +185,19 @@ public class Cavalier : Troup
                     timer += Time.deltaTime;
                     jambe00.transform.RotateAround(jambe00.transform.position, jambe00.transform.right, -angleJambes * Time.deltaTime * jambeRotationSpeed);
                     jambe01.transform.RotateAround(jambe01.transform.position, jambe01.transform.right, -angleJambes * Time.deltaTime * jambeRotationSpeed);
-                    Debug.Log("swingR : " + jambe00.transform.localEulerAngles.x);
+                    // Debug.Log("swingR : " + jambe00.transform.localEulerAngles.x);
 
                     yield return null;
                 }
                 jambe00.transform.localEulerAngles = new Vector3(360f - angleJambes, 0f, 0f);
                 jambe01.transform.localEulerAngles = new Vector3(360f - angleJambes, 0f, 0f);
-                Debug.Log("swingRFinal ---------------- : " + jambe00.transform.localEulerAngles.x + " et " + (jambe00.transform.localEulerAngles.x > 0 && jambe00.transform.localEulerAngles.x <= 31f));
+                // Debug.Log("swingRFinal ---------------- : " + jambe00.transform.localEulerAngles.x + " et " + (jambe00.transform.localEulerAngles.x > 0 && jambe00.transform.localEulerAngles.x <= 31f));
                 while (jambe00.transform.localEulerAngles.x >= 359f - angleJambes && jambe00.transform.localEulerAngles.x < 360f)
                 {
                     timer += Time.deltaTime;
                     jambe00.transform.RotateAround(jambe00.transform.position, jambe00.transform.right, angleJambes * Time.deltaTime * jambeRotationSpeed);
                     jambe01.transform.RotateAround(jambe01.transform.position, jambe01.transform.right, angleJambes * Time.deltaTime * jambeRotationSpeed);
-                    Debug.Log("swingL : " + jambe00.transform.localEulerAngles.x);
+                    // Debug.Log("swingL : " + jambe00.transform.localEulerAngles.x);
 
                     yield return null;
                 }
@@ -225,19 +225,19 @@ public class Cavalier : Troup
                     timer += Time.deltaTime;
                     jambe00.transform.RotateAround(jambe00.transform.position, jambe00.transform.right, -angleJambes * Time.deltaTime * jambeRotationSpeed);
                     jambe01.transform.RotateAround(jambe01.transform.position, jambe01.transform.right, -angleJambes * Time.deltaTime * jambeRotationSpeed);
-                    Debug.Log("swingR : " + jambe00.transform.localEulerAngles.x);
+                    // Debug.Log("swingR : " + jambe00.transform.localEulerAngles.x);
 
                     yield return null;
                 }
                 jambe00.transform.localEulerAngles = new Vector3(360f - angleJambes, 0f, 0f);
                 jambe01.transform.localEulerAngles = new Vector3(360f - angleJambes, 0f, 0f);
-                Debug.Log("swingRFinal ---------------- : " + jambe00.transform.localEulerAngles.x + " et " + (jambe00.transform.localEulerAngles.x > 0 && jambe00.transform.localEulerAngles.x <= 31f));
+                // Debug.Log("swingRFinal ---------------- : " + jambe00.transform.localEulerAngles.x + " et " + (jambe00.transform.localEulerAngles.x > 0 && jambe00.transform.localEulerAngles.x <= 31f));
                 while (jambe00.transform.localEulerAngles.x >= 359f - angleJambes && jambe00.transform.localEulerAngles.x < 360f)
                 {
                     timer += Time.deltaTime;
                     jambe00.transform.RotateAround(jambe00.transform.position, jambe00.transform.right, angleJambes * Time.deltaTime * jambeRotationSpeed);
                     jambe01.transform.RotateAround(jambe01.transform.position, jambe01.transform.right, angleJambes * Time.deltaTime * jambeRotationSpeed);
-                    Debug.Log("swingL : " + jambe00.transform.localEulerAngles.x);
+                    // Debug.Log("swingL : " + jambe00.transform.localEulerAngles.x);
 
                     yield return null;
                 }
@@ -277,23 +277,23 @@ public class Cavalier : Troup
     private IEnumerator SwingHead()
     {
         float timer = 0f;
-        Debug.Log("I am swinging sword");
+        // Debug.Log("I am swinging sword");
 
         while (timer < swingTime / 2)
         {
             timer += Time.deltaTime;
             head.transform.RotateAround(head.transform.position, head.transform.right, -swingAngle * (Time.deltaTime / (swingTime / 2)));
-            Debug.Log("swingR : " + head.transform.localEulerAngles.x);
+            // Debug.Log("swingR : " + head.transform.localEulerAngles.x);
 
             yield return null;
         }
         head.transform.localEulerAngles = new Vector3(-swingAngle, 0f, 0f);
-        Debug.Log("swingRL");
+        // Debug.Log("swingRL");
         while (timer < swingTime)
         {
             timer += Time.deltaTime;
             head.transform.RotateAround(head.transform.position, head.transform.right, +swingAngle * (Time.deltaTime / (swingTime / 2)));
-            Debug.Log("swingL : " + head.transform.localEulerAngles.x);
+            // Debug.Log("swingL : " + head.transform.localEulerAngles.x);
 
             yield return null;
         }

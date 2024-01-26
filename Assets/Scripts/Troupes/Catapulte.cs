@@ -30,8 +30,9 @@ public class Catapulte : Troup
     private GameObject boulderPrefab;
     private GameObject boulderSpawnPoint;
     private GameObject boulderLancePoint;
-    private Boulder launchedBoulder;
+    [SerializeField] private Boulder launchedBoulder;
     private GameObject boulderShown;
+    [SerializeField] private bool isShooting;
 
     // Lance
     private float baseRotationLance;
@@ -46,6 +47,7 @@ public class Catapulte : Troup
     private bool firstTargetChoosen;
     private bool isTargetSelected;
     private Vector3 lastCrossPosition;
+    private bool isWaiting;
 
     private IEnumerator moveAnimation;
 
@@ -117,6 +119,10 @@ public class Catapulte : Troup
         boulderPrefab = GameManager.Instance.BigBoulderPrefab;
         boulderPrefab.GetComponent<Boulder>().OneShotMode(true);
 
+        Vector3 boulderShowPosition = boulderShown.transform.position;
+        Destroy(boulderShown);
+        boulderShown = Instantiate(boulderPrefab, boulderShowPosition, Quaternion.identity);
+
         float elapsedTime = 0f;
         while (elapsedTime < oneShotTime)
         {
@@ -129,6 +135,10 @@ public class Catapulte : Troup
 
         boulderPrefab = GameManager.Instance.BoulderPrefab;
         boulderPrefab.GetComponent<Boulder>().OneShotMode(false);
+
+        boulderShowPosition = boulderShown.transform.position;
+        Destroy(boulderShown);
+        boulderShown = Instantiate(boulderPrefab, boulderShowPosition, Quaternion.identity);
 
         Debug.Log("Catapulte special ability ended");
 
@@ -181,37 +191,100 @@ public class Catapulte : Troup
 
     private IEnumerator MoveToRange()
     {
+        Vector3 previousPosition = transform.position;
+        yield return new WaitWhile(() => isShooting);
         AddAction(new MoveToPosition(agent, croix.transform.position, positionThreshold));
-        yield return new WaitWhile(() => Vector3.Distance(transform.position, croix.transform.position) > getAttackRange());
+        yield return new WaitWhile(() => Vector3.Distance(transform.position, shootPoint) > getAttackRange());
+
+        Vector3 newPosition = transform.position;
         Debug.Log("*** Arrived");
         AddAction(new Standby());
 
-        StartCoroutine(SwingBoulder());
+        StartCoroutine(TurnTo(croix.transform.position));
+        if ((previousPosition != newPosition) || (!isWaiting && previousPosition == newPosition)) { StartCoroutine(SwingBoulder()); }
+    }
+
+    private IEnumerator SwingBoulder()
+    {
+        float timer = 0f;
+        isShooting = true;
+
+        // yield return new WaitWhile(() => launchedBoulder != null);
+        while (timer < swingFraction * attackRechargeTime)
+        {
+            timer += Time.deltaTime;
+            lance.transform.RotateAround(lance.transform.position, lance.transform.right, 32 * (Time.deltaTime / (swingFraction * attackRechargeTime)));
+            boulderShown.transform.position = boulderLancePoint.transform.position;
+            Debug.Log("swingR swing : " + lance.transform.localEulerAngles.x);
+
+            yield return null;
+        }
+        lance.transform.localEulerAngles = new Vector3(32f, 0f, 0f);
+        boulderShown.transform.position = boulderSpawnPoint.transform.position;
+        boulderShown.SetActive(false);
+
+        
+        launchedBoulder = Instantiate(boulderPrefab, boulderLancePoint.transform.position, Quaternion.identity, transform).GetComponent<Boulder>();
+
+        StartCoroutine(LaunchBoulder());
+        StartCoroutine(LoadBoulder());
     }
 
     private IEnumerator LaunchBoulder()
     {
+        Boulder currentBoulder = launchedBoulder;
+
         Debug.Log("*** Boulder launched");
         Vector3 spawnPoint = boulderLancePoint.transform.position;
         Vector3 endPoint = shootPoint;
-        launchedBoulder.boulderType = troupType;
+        currentBoulder.boulderType = troupType;
 
         float hauteur = Vector3.Distance(spawnPoint, endPoint) / heightAttenuation;
         float travelTime = Vector3.Distance(spawnPoint, endPoint) / timeAttenuation;
 
         float t = 0f;
-        while (launchedBoulder != null)
+        while (currentBoulder != null)
         {
             t += Time.deltaTime;
 
             float height = Mathf.Sin(Mathf.PI * (t / travelTime)) * hauteur;
 
             Vector3 newPosition = Vector3.Lerp(spawnPoint, endPoint, t / travelTime) + Vector3.up * height;
-            launchedBoulder.transform.Rotate(new Vector3(0, 5, 3));
-            launchedBoulder.transform.position = newPosition;
+            currentBoulder.transform.Rotate(new Vector3(0, 5, 3));
+            currentBoulder.transform.position = newPosition;
             yield return null;
         }
         Debug.Log("*** boulder arrived");
+    }
+
+    private IEnumerator LoadBoulder()
+    {
+        Debug.Log("*** Reloading ");
+        float timer = 0f;
+
+        while (timer < reloadFraction*attackRechargeTime)
+        {
+            timer += Time.deltaTime;
+            lance.transform.RotateAround(lance.transform.position, lance.transform.right, -32 * (Time.deltaTime / (reloadFraction * attackRechargeTime)));
+            Debug.Log("swingR reload : " + lance.transform.localEulerAngles.x);
+
+            yield return null;
+        }
+        lance.transform.localEulerAngles = Vector3.zero;
+        boulderShown.SetActive(true);
+
+        Debug.Log("*** Catapulte Reloaded");
+        isShooting = false;
+
+        isWaiting = true;
+        yield return new WaitForSeconds(stayFraction*attackRechargeTime);
+        isWaiting = false;
+        Debug.Log("*** Ready to Shoot");
+
+        yield return new WaitWhile(() => isRolling);
+        Debug.Log("Shootpoint : " + shootPoint);
+        StartCoroutine(TurnTo(shootPoint));
+        if (isTargetSelected && Vector3.Distance(transform.position, shootPoint) <= getAttackRange()) { StartCoroutine(SwingBoulder()); } 
     }
 
     // IA Enemy ---------------------------------------------------------------------------------------------------
@@ -245,52 +318,4 @@ public class Catapulte : Troup
         }
     }
 
-    private IEnumerator SwingBoulder()
-    {
-        float timer = 0f;
-
-        while (timer < swingFraction * attackRechargeTime)
-        {
-            timer += Time.deltaTime;
-            lance.transform.RotateAround(lance.transform.position, lance.transform.right, 32 * (Time.deltaTime / (swingFraction * attackRechargeTime)));
-            boulderShown.transform.position = boulderLancePoint.transform.position;
-            Debug.Log("swingR swing : " + lance.transform.localEulerAngles.x);
-
-            yield return null;
-        }
-        lance.transform.localEulerAngles = new Vector3(32f, 0f, 0f);
-        boulderShown.transform.position = boulderSpawnPoint.transform.position;
-        boulderShown.SetActive(false);
-
-
-        launchedBoulder = Instantiate(boulderPrefab, boulderSpawnPoint.transform.position, Quaternion.identity, transform).GetComponent<Boulder>();
-
-        StartCoroutine(LaunchBoulder());
-        StartCoroutine(LoadBoulder());
-    }
-
-    private IEnumerator LoadBoulder()
-    {
-        Debug.Log("*** Reloading ");
-        float timer = 0f;
-
-        while (timer < reloadFraction*attackRechargeTime)
-        {
-            timer += Time.deltaTime;
-            lance.transform.RotateAround(lance.transform.position, lance.transform.right, -32 * (Time.deltaTime / (reloadFraction * attackRechargeTime)));
-            Debug.Log("swingR reload : " + lance.transform.localEulerAngles.x);
-
-            yield return null;
-        }
-        lance.transform.localEulerAngles = Vector3.zero;
-        boulderShown.SetActive(true);
-
-        Debug.Log("*** Catapulte Reloaded");
-
-        
-        yield return new WaitForSeconds(stayFraction*attackRechargeTime);
-        Debug.Log("*** Ready to Shoot");
-
-        if (isTargetSelected) { StartCoroutine(SwingBoulder()); }
-    }
 }

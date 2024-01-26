@@ -1007,7 +1007,7 @@ MonoBehaviour:
   positionThreshold: 2
   attackDamage: 0
   attackRechargeTime: 4
-  defaultAttackRange: 20
+  defaultAttackRange: 50
   specialAbilityRechargeTime: 30
   showTimeDamages: 3
   isChosingPatrol: 0
@@ -1034,6 +1034,8 @@ MonoBehaviour:
   stayFraction: 0.4
   swingFraction: 0.1
   isSelectingPlacement: 0
+  launchedBoulder: {fileID: 0}
+  isShooting: 0
 --- !u!195 &8085429279557207350
 NavMeshAgent:
   m_ObjectHideFlags: 0
