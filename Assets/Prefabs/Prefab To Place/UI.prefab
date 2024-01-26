@@ -1019,7 +1019,7 @@ MonoBehaviour:
   controlsSection: {fileID: 6573254251936512584}
   firstPosition: {x: 0, y: -50, z: 0}
   secondPosition: {x: 0, y: -300, z: 0}
-  thirdPosition: {x: 0, y: -530, z: 0}
+  thirdPosition: {x: 0, y: -620, z: 0}
   defaultControlsPrefab: {fileID: 8378336943373406369, guid: ac28f7f10c81ac041a418bb5ae1526a0, type: 3}
   purchaseControlsPrefab: {fileID: 8740234714249122467, guid: f86e50b206c7c5b49a509e645e522686, type: 3}
   unitControlsPrefab: {fileID: 7322169065950479101, guid: adc95d7dc9a2df246b5a543482ee25f1, type: 3}

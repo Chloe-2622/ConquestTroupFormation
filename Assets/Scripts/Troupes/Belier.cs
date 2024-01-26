@@ -19,7 +19,6 @@ public class Belier : Troup
     private HashSet<GameObject> roues = new HashSet<GameObject>();
     IEnumerator moveAnimation;
     private IEnumerator attackCoroutine;
-    private LayerMask wallMask;
 
 
     // Main Functions ---------------------------------------------------------------------------------------------
@@ -40,7 +39,6 @@ public class Belier : Troup
         ram = transform.Find("Model").Find("Belier").Find("Ram").gameObject;
 
         moveAnimation = MoveAnimation();
-        wallMask = gameManager.wallMask;
     }
 
     protected override void Update()
