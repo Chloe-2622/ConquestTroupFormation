@@ -82,6 +82,7 @@ Assets icônes 2D:
 -  https://www.flaticon.com/fr/auteurs/graphics-plazza
 -  https://www.flaticon.com/fr/auteurs/abtocreative
 -  https://www.flaticon.com/fr/auteurs/shohanurrahman13
+- https://www.flaticon.com/fr/auteurs/vector-squad
 
 Assets 3D : https://assetstore.unity.com/packages/3d/environments/fantasy-landscape-103573
 
