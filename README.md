@@ -1,6 +1,6 @@
 # ConquestTroupFormation
 
-Projet AMJV - Totally Not TABS (anciennement ConquestTroupFormation)
+Projet AMJV - Totally Not Totaly Acurate Battle Simulator (anciennement ConquestTroupFormation)
 
 ## DÉROULEMENT DU JEU
 
